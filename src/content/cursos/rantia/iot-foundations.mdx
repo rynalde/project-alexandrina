@@ -1,0 +1,44 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { Cpu } from "lucide-react";
+
+<SectionHeader num="08" title="Fundamentos IoT" subtitle="AIoT, edge AI, TinyML e federated learning" vol="vol. ix" />
+
+<Body>
+
+### IoT
+
+Rede de dispositivos físicos conectados que recolhem e trocam dados e podem agir sobre o ambiente. O loop operacional é: `Sense → Report → Decide → Act`.
+
+### AIoT
+
+<Highlight>Artificial Intelligence of Things</Highlight>: IoT com análise e decisões baseadas em AI. Mencionar tanto conectividade/dados como inteligência/decisão.
+
+### Edge AI
+
+Processamento de dados perto do dispositivo para <Highlight>reduzir latência, bandwidth e riscos de privacidade</Highlight>. Decisões rápidas locais sem esperar pela cloud.
+
+### TinyML
+
+Modelos ML pequenos em dispositivos constrangidos (microcontroladores). Permite inteligência local em hardware limitado.
+
+### Federated Learning
+
+Dispositivos distribuídos contribuem para aprendizagem sem centralizar dados brutos. Preserva privacidade ao partilhar apenas gradientes/modelos.
+
+### Digital Twins
+
+Representações digitais de sistemas físicos para monitorização e análise. Liga o mundo físico ao digital.
+
+</Body>
+
+<Callout icon={Cpu} title="distinção edge vs cloud">
+  Edge = decisões rápidas locais, filtragem, baixa latência. Cloud = escala, história, gestão de frota, integração. Em exame, mencione ambos e explique quando usar cada um.
+</Callout>
+
+<Marginalia label="pontos de exame">
+  AIoT combina IoT + AI. Edge AI processa localmente. TinyML corre em microcontroladores. Federated learning preserva privacidade. Digital twins são representações digitais de sistemas físicos.
+</Marginalia>

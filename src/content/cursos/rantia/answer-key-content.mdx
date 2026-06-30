@@ -1,0 +1,73 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { Key } from "lucide-react";
+
+<SectionHeader num="13" title="Chave de Respostas" subtitle="respostas e explicações da avaliação final" vol="vol. ix" />
+
+<Body>
+
+### Parte A — Respostas
+
+**1.** b) ROS2 usa DDS e não requer ROS Master. ROS1 usa TCPROS e roscore.
+
+**2.** a) `ros2 node list`. `rosnode list` é ROS1.
+
+**3.** c) `ros2 run demo_nodes_cpp talker`. Ordem: pacote primeiro, depois nó.
+
+**4.** d) `ros2 topic hz /topic_name`. `rostopic freq` é ROS1.
+
+**5.** c) Visualização de dados ROS2. RViz2 NÃO é simulador.
+
+**6.** b) URDF = estrutura do robot (links + joints). SDF = modelos + mundos.
+
+**7.** b) Diferença entre simulação e realidade (física, sensores, latência, fricção).
+
+**8.** c) Hue = cor/matiz. S = saturação. V = valor/brilho.
+
+**9.** b) Ligar ROS2/DDS interno a MQTT/IoT externo. NÃO substitui DDS.
+
+**10.** c) Exactly once. QoS 0 = at most once. QoS 1 = at least once.
+
+**11.** b) Exatamente um nível. # = múltiplos níveis.
+
+**12.** b) 5 mA. V = I × R → I = 10V / 2kΩ = 5 mA.
+
+**13.** b) 0–1023 (Arduino Uno, 10 bits). ESP32 = 0–4095 (12 bits).
+
+**14.** b) LOW → HIGH. FALLING = HIGH → LOW.
+
+**15.** b) Prevenir input flutuante e manter HIGH quando botão aberto.
+
+**16.** b) Não. `+` match um nível. `devices/sensor1/battery/level` tem mais níveis.
+
+**17.** b) Permite clientes anónimos no Mosquitto.
+
+**18.** c) 0–4095 (ESP32, 12 bits). Arduino Uno = 0–1023 (10 bits).
+
+**19.** b) IoT + AI. AIoT = Artificial Intelligence of Things.
+
+**20.** b) Device → Edge → Cloud → Processing → Analytics → Dashboard.
+
+### Parte B — Respostas
+
+**21.** Sistema ciber-físico: integra computação e comunicação com um processo físico, com influência bidirecional. Exemplo: controlador de máquina que ajusta comportamento com base em feedback de sensores — o sensor afeta o software e o software controla o atuador.
+
+**22.** <Highlight>Gazebo</Highlight>: simulador 3D com motor de física, sensores simulados e plugins ROS. Simula o mundo virtual completo. <Highlight>RViz2</Highlight>: visualizador de dados ROS2 (TF, sensores, odometria, markers). NÃO simula — apenas mostra dados. Ambos são usados no desenvolvimento, mas para fins diferentes.
+
+**23.** Fases: (1) DHT11 ligado ao ESP32 via GPIO com pull-up. (2) ESP32 lê temperatura/humidade no loop(). (3) ESP32 liga-se a WiFi e broker MQTT. (4) Publica dados via MQTT para tópico `sensors/dht11/temperature`. (5) Cloud ingere dados via broker. (6) Dashboard subscreve tópico e mostra dados em tempo real.
+
+**24.** Bridging indiscriminado de todos os tópicos causa: sobrecarga de bandwidth (tópicos de alta frequência como câmara), latência adicionada, dados obsoletos, possíveis race conditions e QoS mismatch entre DDS (real-time) e MQTT (IoT lightweight). O bridge deve selecionar tópicos relevantes, controlar taxas e transformar formatos.
+
+</Body>
+
+<Callout icon={Key} title="templates de alto rendimento">
+  **Ciber-físico**: "Integra computação/comunicação com processo físico, influência bidirecional." **ROS2 vs ROS1**: "ROS2 usa DDS, não precisa de roscore, descoberta distribuída." **URDF vs SDF**: "URDF = robot structure. SDF = simulation models + worlds." **Bridge**: "Seletivo, controla taxas, transforma formatos, não substitui DDS."
+</Callout>
+
+<Marginalia label="use estes templates no exame">
+  Adapte ao cenário dado mas mantenha a estrutura. As distinções (RViz2 vs Gazebo, URDF vs SDF, QoS 1 vs 2, ADC vs PWM, + vs #) são armadilhas que o examinador espera testar.
+</Marginalia>

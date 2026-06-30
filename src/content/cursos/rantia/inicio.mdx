@@ -1,0 +1,38 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { BookOpen } from "lucide-react";
+
+<SectionHeader num="00" title="RAINTIA / Ambientes Inteligentes" subtitle="caderno ix — guia de estudo" vol="vol. ix" />
+
+<Body>
+
+Nono grande tema. Este caderno organiza o curso de **Robótica Autónoma e Ambientes Inteligentes (RAINTIA)** num percurso de estudo focado nos padrões de exame mais recorrentes.
+
+O curso cobre dois grandes blocos:
+
+**Bloco Robótica (Módulos 01–07):**
+- — **Mapa do Curso**: robótica inteligente, ambientes inteligentes, Industry 4.0 e RAMI 4.0.
+- — **Fundamentos**: manipuladores, DoF, cobots, resolução, repeatability e RAPID.
+- — **ROS2**: nós, tópicos, DDS, CLI, packages, build, RViz2, TF e launch files.
+- — **Simulação**: Gazebo, Webots, URDF, SDF, sim-to-real gap e plugins.
+- — **Visão Computacional**: cv_bridge, OpenCV, YOLO, HSV e pipeline de perceção.
+- — **Robótica Distribuída**: DDS vs MQTT, bridges, latência e data fusion.
+
+**Bloco IoT (Módulos 08–11):**
+- — **Fundamentos IoT**: AIoT, edge AI, TinyML, federated learning e privacidade.
+- — **Sensores e Eletrónica**: Ohm, ADC, PWM, Arduino, ESP32, interrupts e pull-ups.
+- — **Protocolos IoT**: MQTT QoS, wildcards, Mosquitto, WiFi, BLE, ZigBee e LoRaWAN.
+- — **IoT Cloud**: jornada de dados, edge/cloud, plataformas e digital twins.
+
+</Body>
+
+<Callout icon={BookOpen} title="estratégia de estudo">
+  Comece pelos módulos de alta prioridade (03, 04, 05, 07, 09, 10) — são os mais recorrentes em exame. Use a revisão rápida na véspera. O exame é maioritariamente escolha múltipla, 45 minutos, closed-book. As armadilhas mais frequentes: confundir comandos ROS1 com ROS2, confundir RViz2 com Gazebo, confundir URDF com SDF, confundir QoS 1 com QoS 2, e confundir ADC input com PWM output.
+</Callout>
+
+<Marginalia label="padrões de exame mais frequentes">
+  Reconhecimento de comandos ROS2. Diferenças ROS1 vs ROS2. Função de RViz2 vs Gazebo. URDF vs SDF. MQTT QoS e wildcards. Cálculos Ohm/ADC/PWM. Interrupts e pull-ups. Definição de sistema ciber-físico. Camadas RAMI 4.0.
+</Marginalia>

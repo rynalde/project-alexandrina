@@ -1,0 +1,52 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { Terminal } from "lucide-react";
+
+<SectionHeader num="03" title="ROS2 Arquitetura e CLI" subtitle="nós, tópicos, DDS, QoS e comandos" vol="vol. ix" />
+
+<Body>
+
+ROS2 é uma das **áreas mais fortes de exame**. Organiza software robótico como nós que comunicam através de tópicos, serviços e ações.
+
+### Conceitos fundamentais
+
+- — <Highlight>Nó (Node)</Highlight>: unidade executável que realiza uma tarefa. Exemplo: nó de câmara publica imagens.
+- — <Highlight>Tópico (Topic)</Highlight>: canal nomeado para mensagens publish-subscribe. Exemplo: `/cmd_vel` transporta comandos de velocidade.
+- — <Highlight>Publisher</Highlight>: nó que envia mensagens para um tópico.
+- — <Highlight>Subscriber</Highlight>: nó que recebe mensagens de um tópico.
+- — **Serviço**: comunicação request-reply síncrona.
+- — **Ação**: comunicação goal-feedback-result para tarefas longas.
+
+### DDS e QoS
+
+ROS2 usa <Highlight>DDS (Data Distribution Service)</Highlight> para discovery e comunicação. Não requer roscore/ROS Master (diferença-chave vs ROS1). QoS controla comportamento de comunicação (reliability, latency).
+
+### Comandos ROS2 essenciais
+
+| Tarefa | Comando |
+|---|---|
+| Listar nós | <Kbd>ros2 node list</Kbd> |
+| Listar tópicos | <Kbd>ros2 topic list</Kbd> |
+| Info de tópico | <Kbd>ros2 topic info /topic_name</Kbd> |
+| Echo de tópico | <Kbd>ros2 topic echo /topic_name</Kbd> |
+| Frequência | <Kbd>ros2 topic hz /topic_name</Kbd> |
+| Listar pacotes | <Kbd>ros2 pkg list</Kbd> |
+| Executar nó | <Kbd>ros2 run demo_nodes_cpp talker</Kbd> |
+
+### Armadilhas ROS1 vs ROS2
+
+Em exame, verifique SEMPRE se a pergunta é ROS1 ou ROS2. Comandos ROS1 como `rostopic echo`, `rostopic type` e `rossrv show` NÃO são válidos em ROS2. ROS1 usa `roscore`/ROS Master e TCPROS. ROS2 usa DDS e não precisa de roscore.
+
+</Body>
+
+<Callout icon={Terminal} title="armadilha mais comum">
+  Escolher `rostopic` numa pergunta de ROS2. Antes de responder: (1) verificar se é ROS1 ou ROS2, (2) identificar o objeto (node, topic, package, run), (3) escolher a sintaxe exata.
+</Callout>
+
+<Marginalia label="prioridade alta">
+  ROS2 CLI é a área com maior frequência em exames recentes. Memorize a tabela de comandos. Saiba que ros2 topic hz mede frequência e ros2 topic echo mostra mensagens. Não confunda ros2 run com ros2 execute.
+</Marginalia>

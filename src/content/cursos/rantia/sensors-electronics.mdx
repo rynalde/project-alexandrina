@@ -1,0 +1,66 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { Zap } from "lucide-react";
+
+<SectionHeader num="09" title="Sensores e Eletrónica" subtitle="Arduino, ESP32, ADC, PWM e interrupts" vol="vol. ix" />
+
+<Body>
+
+Área de **alta prioridade** em exames recentes com muitas perguntas de Arduino/ESP32, sensores e MQTT-device.
+
+### Lei de Ohm
+
+<Kbd>V = I × R</Kbd>. Com dois resistores de 1 kΩ em série a 10V: R total = 2 kΩ, I = 10V / 2000Ω = <Highlight>5 mA</Highlight>.
+
+### Resolução de sensor
+
+Menor incremento detetável. Não confundir com repeatability ou accuracy.
+
+### Arduino setup() e loop()
+
+<Highlight>setup()</Highlight> corre após upload do código e após reset de hardware. <Highlight>loop()</Highlight> corre repetidamente.
+
+### ADC — Analog-to-Digital Conversion
+
+- — Arduino Uno <Kbd>analogRead()</Kbd>: <Highlight>0–1023</Highlight> (10 bits).
+- — ESP32 ADC: <Highlight>0–4095</Highlight> (12 bits).
+
+### PWM — Pulse Width Modulation
+
+Arduino Uno <Kbd>analogWrite()</Kbd>: 0–255. 255 = 100% duty cycle. 127 ≈ 50%.
+
+<Highlight>ADC é input (leitura analógica). PWM é output (controlo de duty cycle)</Highlight>.
+
+### Interrupts
+
+<Kbd>attachInterrupt(..., RISING)</Kbd> dispara na transição <Highlight>LOW → HIGH</Highlight>. FALLING = HIGH → LOW.
+
+### Pull-up
+
+Resistor pull-up <Highlight>previne input flutuante e mantém HIGH quando o botão está aberto</Highlight>.
+
+### Voltage levels
+
+GPIO 5V do Arduino NÃO deve ligar diretamente a GPIO 3.3V do ESP32. Usar level shifter ou divisor de tensão.
+
+### DHT11
+
+Sensor de temperatura e humidade. Padrão de exame para leitura de sensor.
+
+### ESP32 REST/JSON
+
+Padrão de exame: `ESPAsyncWebServer.h` e `ArduinoJson.h`.
+
+</Body>
+
+<Callout icon={Zap} title="valores para memorizar">
+  V = I × R. Arduino analogRead() = 0–1023. ESP32 ADC = 0–4095. Arduino analogWrite() = 0–255 (255 = 100%). RISING = LOW→HIGH. Pull-up = previne floating, mantém HIGH. 2× 1kΩ em série a 10V = 5 mA.
+</Callout>
+
+<Marginalia label="armadilhas frequentes">
+  Confundir ADC input com PWM output. Confundir RISING com FALLING. Esquecer pull-up (previne floating). Ligar 5V diretamente a 3.3V sem level shifter. Confundir valores Arduino (0–1023) com ESP32 (0–4095).
+</Marginalia>

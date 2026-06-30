@@ -119,4 +119,28 @@ export const COURSES: Course[] = [
     questionCount: 25,
     accent: "#c7502e",
   },
+  {
+    slug: "rantia",
+    vol: "vol. ix",
+    title: "RAINTIA / Ambientes Inteligentes",
+    subtitle: "Robótica, ROS2, IoT, MQTT e sensores",
+    description:
+      "Guia completo de RAINTIA: robótica inteligente, ROS2 (nós, tópicos, DDS, CLI), simulação (Gazebo, URDF, SDF), visão computacional, robótica distribuída (MQTT bridges), IoT (AIoT, edge AI), sensores/Arduino/ESP32, protocolos MQTT e IoT cloud.",
+    topics: [
+      "ROS2",
+      "DDS/QoS",
+      "URDF/SDF",
+      "Gazebo",
+      "RViz2",
+      "MQTT",
+      "Arduino",
+      "ESP32",
+      "ADC/PWM",
+      "IoT Cloud",
+      "Digital Twins",
+    ],
+    sectionCount: 15,
+    questionCount: 25,
+    accent: "#c7502e",
+  },
 ];

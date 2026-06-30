@@ -1,0 +1,46 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { Eye } from "lucide-react";
+
+<SectionHeader num="06" title="Visão Computacional" subtitle="cv_bridge, OpenCV, YOLO e HSV" vol="vol. ix" />
+
+<Body>
+
+Robots autónomos seguem `Perceber → Decidir → Agir`. Visão computacional pertence à perceção.
+
+### Pipeline de imagem ROS2
+
+<Highlight>Camera driver → ROS2 Image topic → processing node → detection/result topic → decision node</Highlight>
+
+### cv_bridge
+
+Converte entre mensagens ROS2 Image e arrays OpenCV/NumPy. Ponte essencial entre ROS2 e processamento de visão.
+
+### YOLO
+
+Deteta objetos com bounding boxes, class labels e confidence scores. Um robot normalmente precisa de mais do que uma box 2D para agir: distância, geometria, calibração, transforms ou sensor fusion.
+
+### HSV — Hue, Saturation, Value
+
+- — <Highlight>Hue (H)</Highlight> = a cor em si (matiz).
+- — **Saturation (S)** = pureza/intensidade da cor.
+- — **Value (V)** = brilho.
+
+HSV é preferido para segmentação de cor porque separa cor de iluminação, ao contrário de RGB.
+
+### Perceção → Ação
+
+Uma deteção visual não basta para ação. O robot precisa de: distância ao objeto, posição 3D, transforms de coordenadas e possível fusão com outros sensores.
+
+</Body>
+
+<Callout icon={Eye} title="definição direta de exame">
+  HSV: H = cor (matiz), S = saturação/pureza, V = valor/brilho. Se a pergunta pedir "o que representa H em HSV", a resposta é a cor em si. Não confunda com brilho (V) ou saturação (S).
+</Callout>
+
+<Marginalia label="pontos de exame">
+  cv_bridge converte ROS2↔OpenCV. HSV separa cor de iluminação. YOLO dá boxes+labels+confidence. Um robot precisa de mais do que uma deteção 2D para agir no mundo 3D.
+</Marginalia>

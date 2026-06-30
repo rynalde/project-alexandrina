@@ -1,0 +1,45 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { FolderOpen } from "lucide-react";
+
+<SectionHeader num="04" title="ROS2 Projeto e Ferramentas" subtitle="packages, launch, RViz2, rqt_graph e TF" vol="vol. ix" />
+
+<Body>
+
+### Workspace e Packages
+
+Um workspace ROS2 contém packages. Cada package agrupa código, metadados, launch files e dependências. <Highlight>package.xml</Highlight> especifica metadados e dependências. <Kbd>colcon build</Kbd> compila o workspace.
+
+### RViz2
+
+<Highlight>RViz2 é um visualizador, NÃO um simulador</Highlight>. Visualiza estado do robot, dados de sensores, TF frames, odometria, markers e outputs de perceção. Para simulação 3D, use Gazebo ou Webots.
+
+### rqt_graph
+
+Mostra nós e tópicos numa visualização gráfica. Útil para debug da arquitetura de comunicação.
+
+### TF2 — Coordinate Frames
+
+TF2 gere frames de coordenadas como <Kbd>map</Kbd>, <Kbd>odom</Kbd>, <Kbd>base_link</Kbd> e <Kbd>camera_link</Kbd>. Permite transformar dados espaciais entre diferentes frames de referência.
+
+### Launch files
+
+Ficheiros que iniciam múltiplos nós e configurações de uma vez. Em ROS2, tipicamente escritos em Python.
+
+### Odometria
+
+Exame pode pedir como visualizar odometria em RViz2. A resposta envolve adicionar display de Odometry/Path com o tópico correto.
+
+</Body>
+
+<Callout icon={FolderOpen} title="distinção crítica">
+  RViz2 = visualizador de dados ROS2. Gazebo/Webots = simuladores 3D com física. Exames testam esta distinção diretamente. Se a pergunta pede "qual ferramenta visualiza dados ROS2", a resposta é RViz2, não Gazebo.
+</Callout>
+
+<Marginalia label="comandos de exame">
+  colcon build = compilar workspace. rviz2 = abrir visualizador. package.xml = ficheiro de dependências. Não confunda setup.py (Python packages) com package.xml (ROS2 metadata).
+</Marginalia>

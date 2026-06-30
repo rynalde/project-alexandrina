@@ -1,0 +1,46 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { Box } from "lucide-react";
+
+<SectionHeader num="05" title="Simulação" subtitle="Gazebo, Webots, URDF, SDF e LiDAR" vol="vol. ix" />
+
+<Body>
+
+Simulação suporta segurança, redução de custos, repetibilidade, treino de AI e validação. O caminho é: `Simulação → Treino AI → Validação → Robot Real`.
+
+### Sim-to-real gap
+
+A diferença entre física, sensores, latência, fricção, iluminação e hardware simulados vs reais. Simulação nunca é perfeita — mas é essencial para desenvolvimento seguro.
+
+### Gazebo vs Webots vs RViz2
+
+- — <Highlight>Gazebo</Highlight>: simulador 3D com física, sensores e plugins ROS.
+- — <Highlight>Webots</Highlight>: simulador 3D alternativo com integração ROS.
+- — **RViz2**: visualizador de dados ROS2 (NÃO é simulador).
+
+### URDF vs SDF
+
+- — <Highlight>URDF</Highlight>: descreve a estrutura do robot com links e joints.
+- — <Highlight>SDF</Highlight>: descreve modelos de simulação E mundos completos (terreno, luzes, sensores, plugins).
+
+### Joints
+
+Joints ligam links: revolute (rotação), prismatic (translação), fixed (fixo), continuous (rotação contínua).
+
+### LiDAR e plugins
+
+No padrão de exame: <Kbd>laser_retro</Kbd> define refletividade laser para LiDAR. <Kbd>libgazebo_ros_ray_sensor.so</Kbd> liga um sensor ray/LiDAR simulado ao ROS.
+
+</Body>
+
+<Callout icon={Box} title="distinção de exame: URDF vs SDF">
+  URDF = estrutura do robot (links + joints). SDF = modelos de simulação + mundos completos (terreno, luzes, sensores, plugins). Se a pergunta pede "descrever mundos de simulação", a resposta é SDF.
+</Callout>
+
+<Marginalia label="armadilhas">
+  Confundir RViz2 com simulador. Confundir URDF com SDF. Esquecer o sim-to-real gap. Não saber que laser_retro é refletividade LiDAR. Confundir tipos de joints.
+</Marginalia>

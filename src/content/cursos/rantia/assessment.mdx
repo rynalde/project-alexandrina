@@ -1,0 +1,93 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { ClipboardCheck } from "lucide-react";
+
+<SectionHeader num="12" title="Avaliação Final" subtitle="exame simulado — 45 minutos closed-book" vol="vol. ix" />
+
+<Body>
+
+### Parte A — Escolha Múltipla
+
+**1.** Qual afirmação descreve corretamente ROS2 comparado com ROS1?
+a) ROS1 usa DDS  b) ROS2 usa DDS e não requer ROS Master  c) ROS2 só funciona em Ubuntu  d) Pacotes ROS2 são diretamente compatíveis com ROS1
+
+**2.** Qual comando lista nós ROS2?
+a) `ros2 node list`  b) `ros2 topic list`  c) `ros2 service list`  d) `ros2 action list`
+
+**3.** Qual comando corre o nó talker?
+a) `ros2 run talker demo_nodes_cpp`  b) `ros2 demo_nodes_cpp talker`  c) `ros2 run demo_nodes_cpp talker`  d) `ros2 execute demo_nodes_cpp talker`
+
+**4.** Qual comando verifica a frequência de um tópico?
+a) `ros2 topic frequency /name`  b) `rostopic freq /name`  c) `ros2 topic echo --freq /name`  d) `ros2 topic hz /name`
+
+**5.** Função principal do RViz2?
+a) Controlo de motores  b) Simulação de física  c) Visualização de dados ROS2  d) Compilação de código
+
+**6.** Diferença entre URDF e SDF?
+a) São iguais  b) URDF = estrutura do robot; SDF = modelos + mundos  c) SDF é para Arduino  d) URDF inclui terreno
+
+**7.** O que é o sim-to-real gap?
+a) Custo do robot  b) Diferença entre simulação e realidade  c) Velocidade de compilação  d) Tamanho do URDF
+
+**8.** O que representa H em HSV?
+a) Brilho  b) Saturação  c) Cor/matiz  d) Contraste
+
+**9.** Papel do bridge ROS2-MQTT?
+a) Substituir DDS  b) Ligar ROS2/DDS a MQTT/IoT  c) Compilar código  d) Simular sensores
+
+**10.** MQTT QoS 2 garante?
+a) At most once  b) At least once  c) Exactly once  d) Nada
+
+**11.** Wildcard MQTT + faz match de?
+a) Múltiplos níveis  b) Um nível  c) Todos os tópicos  d) Nenhum
+
+**12.** Dois resistores 1kΩ em série a 10V, corrente?
+a) 10 mA  b) 5 mA  c) 2.5 mA  d) 20 mA
+
+**13.** Arduino analogRead() retorna?
+a) 0–255  b) 0–1023  c) 0–4095  d) 0–65535
+
+**14.** RISING trigger significa?
+a) HIGH→LOW  b) LOW→HIGH  c) Sempre HIGH  d) Botão mantido
+
+**15.** Pull-up resistor serve para?
+a) Aumentar tensão  b) Prevenir floating  c) Controlar motor  d) Medir temperatura
+
+**16.** `devices/+/battery` match `devices/sensor1/battery/level`?
+a) Sim  b) Não  c) Depende do broker  d) Sempre
+
+**17.** allow_anonymous true no Mosquitto?
+a) Desativa MQTT  b) Permite clientes anónimos  c) Encripta dados  d) Bloqueia todos
+
+**18.** ESP32 ADC retorna?
+a) 0–255  b) 0–1023  c) 0–4095  d) 0–65535
+
+**19.** Definição de AIoT?
+a) Apenas hardware  b) IoT + AI  c) Apenas SQL  d) Apenas LAN
+
+**20.** Jornada típica de dados IoT?
+a) Cloud→Device  b) Device→Edge→Cloud→Processing→Analytics→Dashboard  c) Dashboard→Sensor  d) User→Cloud
+
+### Parte B — Perguntas Escritas
+
+**21.** Defina sistema ciber-físico com um exemplo.
+
+**22.** Compare Gazebo e RViz2 — papel de cada um no desenvolvimento robótico.
+
+**23.** Descreva as fases de integração de um sensor DHT11 com ESP32, MQTT e dashboard cloud.
+
+**24.** Explique por que o Contract Net ou um bridge ROS2-MQTT deve ser seletivo sobre que tópicos reencaminha.
+
+</Body>
+
+<Callout icon={ClipboardCheck} title="estratégia de tempo">
+  45 minutos. Parte A (20 MCQ): ~1 min cada = 20 min. Parte B (4 escritas): ~5 min cada = 20 min. Reserve 5 min para revisão.
+</Callout>
+
+<Marginalia label="antes de consultar respostas">
+  Verifique se distinguiu ROS1 vs ROS2. Se escolheu RViz2 como visualizador (não simulador). Se distinguiu URDF vs SDF. Se escolheu QoS 2 para exactly once. Se usou + para um nível e # para múltiplos.
+</Marginalia>

@@ -1,0 +1,50 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { Cog } from "lucide-react";
+
+<SectionHeader num="02" title="Fundamentos de Robótica" subtitle="manipuladores, DoF, cobots e especificações" vol="vol. ix" />
+
+<Body>
+
+### Manipulador
+
+Robot arm com links (elos) e joints (juntas). Comum em robótica industrial.
+
+### Graus de liberdade (DoF)
+
+Número de movimentos independentes. Um braço 6-DoF controla seis dimensões de movimento.
+
+### Robot colaborativo (Cobot)
+
+Robot desenhado para trabalhar com humanos sem proteções tradicionais, em condições adequadas. Tema recorrente em exame.
+
+### Especificações de robot
+
+- — <Highlight>Resolução</Highlight>: menor incremento detetável de movimento ou sinal.
+- — <Highlight>Repeatability</Highlight>: capacidade de retornar repetidamente à mesma posição.
+- — **Accuracy**: proximidade da posição real à posição desejada.
+- — **Precision**: consistência entre medições repetidas.
+
+Não confundir resolução com repeatability.
+
+### RAPID e MoveL
+
+<Kbd>MoveL</Kbd> = interpolação linear no espaço operacional (task space). Não é espaço articular. <Kbd>z50</Kbd> = zona de aproximação/corner de 50 mm. Não é velocidade.
+
+### Locomoção
+
+Robots móveis usam rodas, pernas, lagartas ou outros mecanismos. Em exame, saiba dar exemplos de cada.
+
+</Body>
+
+<Callout icon={Cog} title="distinções para exame">
+  Resolução ≠ repeatability ≠ accuracy ≠ precision. MoveL ≠ MoveJ (linear vs articular). z50 = zona de aproximação, não velocidade. Manipulador = braço fixo. Robot móvel = locomoção no ambiente.
+</Callout>
+
+<Marginalia label="pegadinhas">
+  Confundir resolution com repeatability. Dizer que MoveL é movimento articular. Confundir z-zone com velocidade. Ignorar vantagens dos cobots (colaboração segura com humanos).
+</Marginalia>

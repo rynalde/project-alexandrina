@@ -1,0 +1,57 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { Wifi } from "lucide-react";
+
+<SectionHeader num="10" title="Protocolos IoT e MQTT" subtitle="QoS, wildcards, Mosquitto e wireless" vol="vol. ix" />
+
+<Body>
+
+Protocolos IoT são a espinha dorsal da comunicação. Exames testam fortemente MQTT QoS, wildcards e topic matching.
+
+### Escolha de protocolo
+
+Depende de alcance, potência, bandwidth, latência, topologia, segurança e custo. Nenhum protocolo é melhor para tudo.
+
+| Protocolo | Característica |
+|---|---|
+| WiFi | Alta bandwidth, rede local |
+| BLE | Curto alcance, baixo consumo |
+| ZigBee | Baixo consumo, mesh |
+| LoRaWAN | Longo alcance, baixo consumo, baixa taxa |
+
+### MQTT
+
+Protocolo lightweight publish-subscribe usando broker e tópicos hierárquicos.
+
+### MQTT QoS
+
+- — <Highlight>QoS 0</Highlight> = at most once (fire and forget).
+- — <Highlight>QoS 1</Highlight> = at least once (pode duplicar).
+- — <Highlight>QoS 2</Highlight> = exactly once (garantia completa).
+
+### Wildcards MQTT
+
+- — <Kbd>+</Kbd> = match de <Highlight>exatamente um nível</Highlight>.
+- — <Kbd>#</Kbd> = match de <Highlight>múltiplos níveis</Highlight> a partir da sua posição.
+
+Exemplo: `devices/+/battery` match `devices/sensor1/battery` mas NÃO `devices/sensor1/battery/level`.
+
+Exemplo: `home/+/led` match `home/livingroom/led`.
+
+### Mosquitto
+
+<Kbd>allow_anonymous true</Kbd> permite clientes anónimos no Mosquitto.
+
+</Body>
+
+<Callout icon={Wifi} title="valores de exame MQTT">
+  QoS 0 = at most once. QoS 1 = at least once. QoS 2 = exactly once. + = um nível. # = múltiplos níveis. allow_anonymous true = Mosquitto anónimo. Se o exame pergunta "qual QoS garante exatamente uma entrega", a resposta é QoS 2.
+</Callout>
+
+<Marginalia label="armadilhas">
+  Escolher QoS 1 quando a pergunta pede "exactly once" (é QoS 2). Usar + para match multi-nível (+ é um nível, # é multi-nível). Esquecer allow_anonymous true para Mosquitto.
+</Marginalia>

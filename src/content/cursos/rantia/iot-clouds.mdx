@@ -1,0 +1,46 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { Cloud } from "lucide-react";
+
+<SectionHeader num="11" title="IoT Cloud e Digital Twins" subtitle="edge/cloud, plataformas e gémeos digitais" vol="vol. ix" />
+
+<Body>
+
+### Jornada de dados IoT
+
+<Highlight>Device/Sensor → Gateway/Edge → Cloud Ingestion → Stream Processing → Storage/Analytics → Dashboard/API/Action</Highlight>
+
+### Edge vs Cloud
+
+- — **Edge**: decisões rápidas locais, filtragem, baixa latência, privacidade.
+- — **Cloud**: escala, história, gestão de frota, integração, analytics pesados.
+
+### Plataformas IoT Cloud
+
+Uma plataforma gere: conectividade de dispositivos, identidade, ingestão de telemetria, processamento de streams, armazenamento, analytics, dashboards, APIs, regras e integração AI/ML.
+
+Padrões das aulas:
+- — Azure: IoT Hub, IoT Edge, Digital Twins, OPC UA.
+- — AWS: IoT Core, Rules Engine, Greengrass.
+- — Google: Pub/Sub, Dataflow, integração AI/ML.
+
+### Digital Twins
+
+Representação digital de um sistema físico para <Highlight>monitorização, simulação e análise</Highlight>. Liga-se ao conceito de sistema ciber-físico — o digital twin é a interface entre mundo digital e físico.
+
+### Zero-trust security
+
+Modelo de segurança onde nenhum dispositivo ou utilizador é confiável por omissão. Cada acesso é verificado.
+
+</Body>
+
+<Callout icon={Cloud} title="jornada de dados — template">
+  Device/Sensor → Gateway/Edge → Cloud Ingestion → Stream Processing → Storage/Analytics → Dashboard/API/Action. Se o exame pedir para descrever o fluxo de dados IoT, use este template e adapte ao cenário.
+</Callout>
+
+<Marginalia label="prioridade baixa mas completa">
+  Frequência direta em exame é baixa, mas completa o curso. Se aparecer, será sobre a jornada de dados, edge vs cloud, ou digital twins. Não precisa de nomes exatos de produtos cloud — use os padrões das aulas.
+</Marginalia>

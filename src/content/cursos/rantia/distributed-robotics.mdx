@@ -1,0 +1,42 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { Network } from "lucide-react";
+
+<SectionHeader num="07" title="Robótica Distribuída" subtitle="DDS, MQTT, bridges e data fusion" vol="vol. ix" />
+
+<Body>
+
+### DDS vs MQTT
+
+- — **DDS/ROS2**: comunicação interna entre nós, sensores e atuadores do robot.
+- — **MQTT**: protocolo lightweight publish-subscribe para IoT e integração cloud.
+
+São complementares, não substitutos. <Highlight>MQTT não substitui DDS</Highlight> — é a armadilha mais comum.
+
+### Bridge ROS2-MQTT
+
+Liga os dois mundos: <Kbd>ROS2 topic ↔ bridge node ↔ MQTT broker ↔ IoT/cloud clients</Kbd>
+
+O bridge seleciona tópicos, transforma formatos, controla taxas e gere timing. Não deve reencaminhar todos os tópicos de alta frequência indiscriminadamente.
+
+### Riscos de bridging
+
+Latência, dados obsoletos, race conditions, sobrecarga de bandwidth e QoS mismatch. O bridge deve ser seletivo e controlado.
+
+### Data fusion e shared world model
+
+Um modelo partilhado do mundo pode combinar dados de robot, sensores e IoT numa representação comum para decisões. Isto é data fusion ao nível do sistema.
+
+</Body>
+
+<Callout icon={Network} title="armadilha de exame: MQTT substitui DDS?">
+  NÃO. DDS é para comunicação interna ROS2 (baixa latência, real-time). MQTT é para IoT/cloud (lightweight, broker-based). O bridge liga os dois. Se o exame pergunta "qual a vantagem de integrar ROS2 com MQTT", a resposta é estender a comunicação para IoT/cloud, não substituir DDS.
+</Callout>
+
+<Marginalia label="prioridade alta">
+  Exames 2025 perguntam diretamente a vantagem de integrar ROS2 com MQTT e o que o bridge fornece. Riscos de bridging indiscriminado também são testados. Saiba desenhar o fluxo: ROS2 topic → bridge → MQTT broker → cloud.
+</Marginalia>

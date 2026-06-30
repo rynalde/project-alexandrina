@@ -1,0 +1,46 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { Map } from "lucide-react";
+
+<SectionHeader num="01" title="Mapa do Curso" subtitle="robótica inteligente, ambientes e Industry 4.0" vol="vol. ix" />
+
+<Body>
+
+O curso enquadra robots como **agentes físicos de AI** dentro de ambientes conectados. A visão é: `Mundo Físico → Sensores → ROS2/processamento → Decisão → Atuadores`, com IoT/MQTT/cloud interligados.
+
+### Robótica inteligente
+
+Robótica combinada com perceção, computação, comunicação e ação autónoma. Um robot deteta um obstáculo e altera a rota — não é apenas hardware mecânico.
+
+### Ambiente inteligente
+
+Um espaço físico conectado com sensores, atuadores, comunicação e computação. Exemplo: uma sala inteligente partilha dados de ocupação com um robot.
+
+### Sistema ciber-físico
+
+Sistema onde <Highlight>software/comunicação e processo físico se influenciam mutuamente</Highlight>. Aparece diretamente em exames passados. Template de resposta: "Um sistema ciber-físico integra computação e comunicação com um processo físico, de forma que o estado físico afeta o software e as decisões de software afetam o processo físico."
+
+### Industry 4.0
+
+Produção industrial conectada e orientada a dados ao longo do ciclo de vida do produto. Exames pedem monitorização e serviços pós-produção.
+
+### RAMI 4.0
+
+Reference Architectural Model Industry 4.0. Camadas: <Highlight>Asset, Integration, Communication, Information, Functional, Business</Highlight>. Memorize a lista.
+
+### Middleware baseado em broker
+
+Comunicação onde mensagens passam por um broker central que encaminha por tópico/chave. Liga-se diretamente ao MQTT e publish-subscribe.
+
+</Body>
+
+<Callout icon={Map} title="template de resposta: ciber-físico">
+  "Um sistema ciber-físico integra computação e comunicação com um processo físico, de forma que o estado físico afeta o software e as decisões de software afetam o processo físico." Exame pede isto quase literalmente — memorize.
+</Callout>
+
+<Marginalia label="erros comuns">
+  Definir robótica como apenas hardware (mencione sensing, processing, comunicação e ação). Dizer que Industry 4.0 é offline/fechado (é conectado com feedback). Esquecer as camadas RAMI 4.0.
+</Marginalia>
