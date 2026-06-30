@@ -1,0 +1,88 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { Key } from "lucide-react";
+
+<SectionHeader num="09" title="Chave de Respostas" subtitle="respostas consolidadas e templates de exame" vol="vol. viii" />
+
+<Body>
+
+### Pergunta 1 — Propriedades de Agentes
+
+- — "Percebe o estado do seu ambiente" → <Highlight>perceção/sensing/reatividade</Highlight>.
+- — "Raciocina sobre ações possíveis" → <Highlight>raciocínio/tomada de decisão</Highlight>.
+- — "Age sem controlo humano direto" → <Highlight>autonomia</Highlight>.
+- — "Coopera com outros agentes" → <Highlight>capacidade social/cooperação</Highlight>.
+- — "Muda comportamento futuro com base em resultados" → <Highlight>aprendizagem/adaptação</Highlight>.
+- — "Ações possíveis" e "ambiente" → <Highlight>situatedness e capacidade de ação</Highlight>.
+
+### Pergunta 2 — Físicos vs. Software
+
+Agentes físicos sentem o mundo através de sensores como câmaras, lidar, sensores de temperatura, GPS, microfones ou toque. Exemplo: robot de armazém que sente obstáculos e localização de itens. Agentes software sentem ambientes digitais através de APIs, bases de dados, logs, eventos, páginas web ou input do utilizador. Exemplo: agente de e-commerce que sente preço, disponibilidade e opções de entrega.
+
+### Pergunta 3 — Arquiteturas
+
+- — **Deliberativa**: modelo simbólico e planeamento. Vantagem: forte raciocínio/planeamento. Desvantagem: mais lenta e depende de modelo do mundo preciso.
+- — **Reativa**: regras perceção-ação. Vantagem: resposta rápida. Desvantagem: fraco planeamento a longo prazo.
+- — **Híbrida**: combina camadas reativas e deliberativas. Vantagem: equilíbrio prático. Desvantagem: integração e manutenção mais complexas.
+
+### Pergunta 4 — BDI
+
+Exemplo — agente de entrega: Crenças: localização do pacote, destino, rota atual, tráfego/atraso, capacidade do veículo. Desejos: entregar a tempo, minimizar custo, evitar entrega falhada. Intenções: seguir rota selecionada, recolher pacote, entregar no destino, replanear se bloqueado. Planos: calcular rota, reservar recolha, notificar cliente, tratar entrega falhada. Ações: enviar mensagens, mover pacote, atualizar estado, solicitar rota alternativa.
+
+### Pergunta 5 — Coordenação
+
+1. — **Recursos partilhados**: agentes podem precisar do mesmo caminho de robot, sala de operações ou máquina.
+2. — **Dependências de tarefas**: uma tarefa pode precisar que outra termine primeiro.
+
+Outras razões válidas: evitar conflito, evitar trabalho duplicado, combinar conhecimento parcial, sincronizar ações, lidar com mudanças dinâmicas.
+
+### Pergunta 6 — Fases de Negociação
+
+1. — Preparação/pré-negociação: definir objetivos, restrições, preferências e valores de reserva.
+2. — Troca de propostas: enviar ofertas, CFPs, licitações ou contra-ofertas.
+3. — Avaliação/concessão: comparar ofertas usando critérios e ajustar se necessário.
+4. — Acordo/fecho: aceitar, rejeitar, confirmar execução ou terminar negociação.
+
+### Pergunta 7 — ACL e KQML
+
+Ambas são linguagens de comunicação de alto nível baseadas em performativos/atos comunicativos. Expressam não apenas dados mas <Highlight>intenção comunicativa</Highlight>. ACL está associada à FIPA e inclui atos como <Kbd>inform</Kbd>, <Kbd>request</Kbd>, <Kbd>cfp</Kbd>, <Kbd>agree</Kbd>, <Kbd>failure</Kbd>, <Kbd>accept-proposal</Kbd>, <Kbd>reject-proposal</Kbd> e <Kbd>not-understood</Kbd>. Mensagens também precisam de content language, ontology e metadados como sender/receiver.
+
+### Pergunta 8 — Facilitador e Broker
+
+Facilitador: ajuda agentes a encontrar fornecedores/serviços, normalmente através de registo e pesquisa. Broker: medeia pedidos entre consumidores e fornecedores, frequentemente encaminhando ou coordenando a interação. Vantagem: descoberta e desacoplamento. Inconveniente: bottleneck, dependência, possível ponto único de falha, comunicação extra.
+
+### Pergunta 9 — Adequação do Contract Net
+
+Contract Net é maioritariamente adequado se o requerente anuncia a tarefa de entrega e fornecedores submetem propostas. O requerente pode avaliar propostas usando preço, tempo de recolha, tempo de entrega e fiabilidade. Pode precisar de adaptação para pontuação multi-critério, rondas de negociação e contra-propostas.
+
+<Kbd>CFP → propostas → avaliação com função de utilidade → adjudicação → confirmação/execução → relatório</Kbd>
+
+### Pergunta 10 — Mercado de Peixe
+
+Contract Net clássico não é o melhor fit porque o cenário é um leilão de preço descendente com compra parcial de lotes. Protocolo melhor: (1) Vendedor anuncia lote, quantidade e preço inicial. (2) Compradores avaliam e respondem com aceitar/quantidade ou sem proposta. (3) Se não há aceitação, vendedor baixa preço ou retira. (4) Se compra parcial, quantidade restante continua em novas rondas. (5) Quando vendido ou retirado, negociação fecha.
+
+### Pergunta 11 — SMA de Armazém
+
+Agentes possíveis: agente de encomenda, gestor/coordenador de armazém, agentes robot de picking, agente de packing, agentes robot de transporte, agente de inventário, agente de recursos/caminhos, agente de expedição.
+
+Arquiteturas: robots — híbrida (reativa para colisão + deliberativa para planeamento de rota). Gestor — deliberativa/BDI para alocação e otimização. Inventário/recursos — reativa/orientada a serviço.
+
+Sequência exemplo: (1) Agente de encomenda envia nova encomenda ao gestor. (2) Gestor pede localizações ao inventário. (3) Gestor envia CFP/pedido a robots de picking. (4) Robots respondem com propostas. (5) Gestor adjudica tarefa. (6) Robot de picking reserva caminho e recolhe item. (7) Agente de packing recebe e empacota. (8) Robot de transporte move para despacho. (9) Agente de expedição confirma. (10) Gestor atualiza estado.
+
+### Pergunta 12 — Extensão MARL
+
+MARL pode ser incorporado se o armazém tem interações repetidas, estado observável, ações definidas, recompensas mensuráveis e ambiente de treino/simulação. Mudanças: representação de estado (posições, tarefas, bateria, congestionamento), ações (mover, recolher, esperar, carregar), recompensa (encomendas bem-sucedidas, tempo reduzido, evitar colisões), simulador de treino, política aprendida para robots, camada de segurança. Se MARL completo é demasiado complexo, um componente RL pode otimizar seleção de rotas, alocação de tarefas ou evitar congestionamento.
+
+</Body>
+
+<Callout icon={Key} title="templates de alto rendimento">
+  **Template de propriedades**: A definição mostra: Perceção: "...", Autonomia: "...", Proatividade: "...", Capacidade social: "...", Aprendizagem: "...". **Template de cenário SMA**: Objetivo do sistema → agentes → perceções/crenças, objetivos, ações, arquitetura por agente → comunicação → protocolo → sequência → conflitos → justificação. **Template Contract Net**: Adequado se alocação de tarefas com gestor e contratantes. Menos adequado se leilão, barganha repetida ou multi-critério complexo.
+</Callout>
+
+<Marginalia label="use estes templates em exame">
+  Estes templates cobrem os tipos de pergunta mais recorrentes. Adapte o conteúdo ao cenário dado mas mantenha a estrutura. O examinador quer ver que consegue aplicar conceitos de forma concreta e estruturada.
+</Marginalia>

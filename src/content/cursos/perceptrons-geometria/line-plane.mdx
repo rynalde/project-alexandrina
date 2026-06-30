@@ -1,0 +1,59 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import PerceptronLineLab from "@/components/playground/PerceptronLineLab";
+import PerceptronQuizBlock from "@/components/quiz/PerceptronQuizBlock";
+import { MoveHorizontal } from "lucide-react";
+
+<SectionHeader
+  num="02"
+  title="Retas e Planos"
+  subtitle="da figura para w·x + b = 0"
+  vol="vol. vi"
+/>
+
+<Body>
+
+Um perceptron de duas entradas calcula:
+
+<Kbd>{"z = w1*x1 + w2*x2 + b"}</Kbd>
+
+e depois aplica uma função degrau:
+
+<Kbd>y = 1 se z >= 0; y = 0 caso contrário</Kbd>
+
+A fronteira entre as duas respostas é onde <Kbd>z = 0</Kbd>. Por isso, em 2D, a fronteira é uma reta:
+
+<Kbd>{"w1*x1 + w2*x2 + b = 0"}</Kbd>
+
+</Body>
+
+<PerceptronLineLab />
+
+<Body>
+
+No simulador, a área rubricada é o lado em que o perceptron devolve 1. Mude os pesos e o bias:
+
+- — mudar <Kbd>b</Kbd> desloca a reta sem mudar sua orientação;
+- — mudar <Kbd>w1</Kbd> e <Kbd>w2</Kbd> muda a inclinação;
+- — trocar o sinal de todos eles mantém a fronteira e inverte o lado positivo.
+
+</Body>
+
+<Callout icon={MoveHorizontal} title="o vetor de pesos aponta para o lado positivo">
+  O vetor w é perpendicular à reta ou ao plano. Ele aponta na direção em que w·x + b cresce. Isso ajuda a visualizar rapidamente qual lado tende a dar saída 1.
+</Callout>
+
+<Body>
+
+Em 3D, a lógica é a mesma:
+
+<Kbd>{"w1*x1 + w2*x2 + w3*x3 + b = 0"}</Kbd>
+
+Agora a fronteira é um plano. O lado positivo do plano é onde a saída do perceptron é 1. A região entre dois planos será tratada no capítulo 06, mas a regra de sinal já é a mesma.
+
+</Body>
+
+<PerceptronQuizBlock topic="line_plane" title="Checkpoint — Retas e planos" />

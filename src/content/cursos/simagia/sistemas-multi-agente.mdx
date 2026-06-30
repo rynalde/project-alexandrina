@@ -1,0 +1,48 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { Network } from "lucide-react";
+
+<SectionHeader num="03" title="Sistemas Multi-Agente" subtitle="conceito, características e desafios" vol="vol. viii" />
+
+<Body>
+
+Um **Sistema Multi-Agente (SMA/MAS)** é um sistema computacional onde dois ou mais agentes interagem ou trabalham juntos para realizar tarefas ou satisfazer objetivos.
+
+As duas ideias centrais são:
+
+1. — Agentes agem <Highlight>autonomamente</Highlight> para atingir os seus objetivos.
+2. — Agentes interagem usando <Highlight>protocolos de interação social</Highlight>: coordenação, cooperação, competição e negociação.
+
+### Porquê SMA?
+
+SMA são úteis quando um agente central não é suficiente. O problema pode ser demasiado grande, o conhecimento pode estar distribuído, várias entidades podem ter perspetivas diferentes, ou o sistema pode precisar de escalabilidade e robustez.
+
+### Características de um SMA
+
+- — Cada agente tem informação incompleta ou capacidade limitada de resolução de problemas.
+- — Agentes podem ser <Highlight>homogéneos ou heterogéneos</Highlight>.
+- — Não existe um ponto de controlo global único.
+- — Dados são descentralizados.
+- — Computação é assíncrona.
+- — É necessária infraestrutura de comunicação.
+
+### O desafio principal
+
+Não basta criar agentes — é preciso fazer as suas <Highlight>interações coerentes</Highlight>. O designer deve decidir como decompor o problema, atribuir tarefas, comunicar, coordenar decisões, resolver conflitos e gerir dependências.
+
+### O número de agentes importa
+
+Poucos agentes podem criar bottlenecks, fraca distribuição e baixa robustez. Demasiados agentes podem aumentar custo de comunicação, complexidade de coordenação e conflitos. Um bom SMA <Highlight>equilibra especialização e overhead de coordenação</Highlight>.
+
+</Body>
+
+<Callout icon={Network} title="exemplo: logística de exportação">
+  Loja, fábrica, cliente, intermediário e transportadores agem como agentes com informação e critérios diferentes (preço, prazo de entrega). Cada um decide autonomamente, mas precisam coordenar-se para que a encomenda chegue ao destino.
+</Callout>
+
+<Marginalia label="pegadinhas mais frequentes">
+  Tratar SMA como programação paralela (SMA inclui também autonomia, interação social, negociação e decisão descentralizada). Esquecer os papéis dos agentes — num cenário, especifique cada tipo de agente e o que controla/percebe. Não discutir interação — uma lista de agentes não basta, explique como comunicam e negociam. Assumir agentes homogéneos quando o cenário requer heterogéneos.
+</Marginalia>

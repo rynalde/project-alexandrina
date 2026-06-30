@@ -1,0 +1,49 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import Marginalia from "@/components/shared/Marginalia";
+import SelfAttention from "@/components/playground/SelfAttention";
+import TransformerQuizBlock from "@/components/quiz/TransformerQuizBlock";
+import { Network } from "lucide-react";
+
+<SectionHeader num="01" title="Self-Attention" subtitle="intra-attention — uma sequência olha para si mesma" vol="vol. v" />
+
+<Body>
+
+A peça central do Transformer. Em **self-attention** (também chamada de **intra-attention**, "intra" = dentro), cada token de uma sequência calcula uma distribuição de atenção sobre todos os tokens da MESMA sequência — incluindo a si mesmo.
+
+Concretamente, a partir de uma sequência de embeddings de entrada, o modelo deriva três projeções:
+
+- — <Kbd>Q = X · W_Q</Kbd> (queries — "o que estou procurando?")
+- — <Kbd>K = X · W_K</Kbd> (keys — "o que cada posição oferece?")
+- — <Kbd>V = X · W_V</Kbd> (values — "qual conteúdo cada posição traz?")
+
+E calcula <Kbd>Attention(Q, K, V) = softmax(Q · Kᵀ / √d_k) · V</Kbd>. Cada linha da matriz softmax é uma <Highlight>distribuição de probabilidade sobre toda a sequência</Highlight>.
+
+</Body>
+
+<SelfAttention />
+
+<Body>
+
+A coisa mais importante a notar: <Highlight>Q, K e V vêm da mesma fonte</Highlight>. É isso que torna a operação "self" — uma sequência conversando consigo mesma para refinar a representação de cada posição em função de seu contexto.
+
+Por que isso é poderoso? Porque resolve o gargalo das RNNs sem importar a distância:
+
+- — A relação entre o primeiro e o último token tem o mesmo custo computacional que entre dois tokens vizinhos. Não há "memória que decai".
+- — A operação é totalmente paralelizável: tudo pode ser feito em uma única multiplicação matricial gigante.
+- — A representação resultante para cada token já é contextualizada — não precisa do passo seguinte para "carregar" informação.
+
+</Body>
+
+<Callout icon={Network} title="intra ≠ inter">
+  Memorize o prefixo. <strong>Intra-attention</strong> = dentro da mesma sequência (= self-attention). <strong>Inter-attention</strong> = entre duas sequências distintas (= encoder-decoder attention). Trocar essas duas é a pegadinha mais frequente em prova.
+</Callout>
+
+<Marginalia label="por que dividir por √d_k?">
+  Para evitar que produtos escalares cresçam demais com a dimensão e empurrem o softmax para regiões saturadas (com gradientes minúsculos). É escala, não substância.
+</Marginalia>
+
+<TransformerQuizBlock topic="self_attention" title="Checkpoint — Self-Attention" />

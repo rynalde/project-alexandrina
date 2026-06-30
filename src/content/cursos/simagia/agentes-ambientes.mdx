@@ -1,0 +1,47 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { Users } from "lucide-react";
+
+<SectionHeader num="01" title="Agentes e Ambientes" subtitle="fundamentos, noção fraca/forte e tipos de ambiente" vol="vol. viii" />
+
+<Body>
+
+Um **agente** é um sistema computacional situado num ambiente. Recebe informação desse ambiente, decide o que fazer e executa ações para atingir os seus objetivos. O modelo mental mais simples é:
+
+<Kbd>Ambiente → perceções/sensor → Agente → ações/output → Ambiente</Kbd>
+
+Um termostato é um exemplo simples: sente a temperatura e liga/desliga o aquecimento. É agent-like, mas a sua decisão é muito simples.
+
+Em exames, definições de agentes aparecem frequentemente como parágrafos. O trabalho é <Highlight>mapear cada parte do parágrafo para uma propriedade</Highlight>: "ler o estado do mundo" → perceção/sensing, "agir independentemente" → autonomia, "cooperar com outros agentes" → capacidade social, "agir de forma diferente na próxima vez" → aprendizagem/adaptação.
+
+### Noção fraca vs. forte de agência
+
+A **noção fraca** inclui <Highlight>autonomia</Highlight>, <Highlight>capacidade social</Highlight>, <Highlight>reatividade</Highlight> e <Highlight>proatividade</Highlight>. A noção forte pode adicionar conceitos humanos como mobilidade, veracidade, benevolência e racionalidade.
+
+### Tipos de ambiente
+
+Os ambientes são classificados segundo vários eixos:
+- — **Acessível/Inacessível**: o agente consegue ou não obter informação completa.
+- — **Determinístico/Não-determinístico**: o resultado de uma ação é ou não garantido.
+- — **Estático/Dinâmico**: o mundo muda ou não enquanto o agente decide.
+- — **Discreto/Contínuo**: estados e ações são finitos ou infinitos.
+
+Ambientes reais são frequentemente inacessíveis, não-determinísticos e dinâmicos — o agente tem informação parcial, ações podem falhar e o mundo muda enquanto decide.
+
+### Agentes vs. Objetos vs. Sistemas Periciais
+
+Agentes não são o mesmo que objetos: objetos encapsulam estado e métodos, mas normalmente <Highlight>não decidem autonomamente se executam um método</Highlight>. Agentes também diferem de sistemas periciais porque estes normalmente aconselham um utilizador em vez de agir diretamente no ambiente. Finalmente, sistemas de agentes diferem de sistemas distribuídos convencionais porque trocam mensagens de alto nível com significado semântico e raciocinam sobre ações, objetivos e coordenação.
+
+</Body>
+
+<Callout icon={Users} title="sensores: físicos vs. software">
+  Um robot físico sente o mundo com câmaras, lidar, toque ou sensores de temperatura. Um agente software sente um ambiente digital através de APIs, bases de dados, eventos, logs ou input do utilizador. Em exame, saiba dar exemplos concretos de cada um.
+</Callout>
+
+<Marginalia label="pegadinhas mais frequentes">
+  Confundir reatividade com proatividade (reatividade responde a mudanças, proatividade toma iniciativa). Assumir que todos os agentes são igualmente inteligentes (um termostato tem decisões muito simples). Ignorar o ambiente (o comportamento do agente só faz sentido quando se descreve o que percebe e como age). Dizer que "um objeto é basicamente um agente" — não é, falta-lhe a autonomia de decisão.
+</Marginalia>

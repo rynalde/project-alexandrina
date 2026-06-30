@@ -1,0 +1,80 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { ClipboardCheck } from "lucide-react";
+
+<SectionHeader num="08" title="Avaliação Final" subtitle="teste prático estilo exame — 75 minutos sugeridos" vol="vol. viii" />
+
+<Body>
+
+Use esta secção como exame simulado. Responda em parágrafos estruturados. Para perguntas de cenário, inclua sempre agentes, arquitetura, comportamento, comunicação e protocolo.
+
+### Secção A — Perguntas Curtas de Teoria
+
+**Pergunta 1 — Propriedades de Agentes**
+
+Considere esta definição: *"Um agente percebe o estado do seu ambiente, raciocina sobre ações possíveis, age sem controlo humano direto, coopera com outros agentes quando necessário e muda comportamento futuro com base em resultados anteriores."*
+
+Identifique pelo menos cinco propriedades ou características e associe cada uma à parte correspondente da definição.
+
+**Pergunta 2 — Agentes Físicos vs. Software**
+
+Compare agentes físicos e agentes software quanto a capacidades sensoriais. Dê um exemplo de cada e explique o que cada agente sente.
+
+**Pergunta 3 — Arquiteturas**
+
+Descreva arquiteturas deliberativa, reativa e híbrida. Dê uma vantagem e uma desvantagem de cada.
+
+**Pergunta 4 — BDI**
+
+Escolha um agente num contexto de entrega/logística e especifique uma arquitetura BDI com crenças, desejos, intenções, planos e ações.
+
+**Pergunta 5 — Coordenação**
+
+Apresente duas razões pelas quais a coordenação é necessária em sistemas multi-agente. Dê um exemplo concreto para cada razão.
+
+**Pergunta 6 — Negociação**
+
+Descreva as quatro fases principais de um processo de negociação e explique o que acontece em cada fase.
+
+**Pergunta 7 — ACL e KQML**
+
+Caracterize KQML e ACL como linguagens de comunicação entre agentes. Mencione performativos/atos comunicativos e o papel do conteúdo semântico.
+
+**Pergunta 8 — Facilitador e Broker**
+
+Explique a função de um facilitador e de um broker em plataformas de agentes. Apresente uma vantagem e um inconveniente de os usar.
+
+### Secção B — Raciocínio sobre Protocolos
+
+**Pergunta 9 — Adequação do Contract Net**
+
+Uma empresa quer escolher um fornecedor logístico com base em preço, tempo de recolha, tempo de entrega e fiabilidade. Vários fornecedores podem submeter ofertas. O Contract Net é adequado? Justifique claramente. Se necessário, proponha uma adaptação.
+
+**Pergunta 10 — Mercado de Peixe tipo Leilão**
+
+Um vendedor oferece lotes de peixe a um preço inicial. Compradores podem aceitar o preço, comprar o lote inteiro ou parte. Se ninguém aceita, o vendedor baixa o preço numa nova ronda ou retira o lote. O Contract Net clássico é o melhor protocolo? Justifique e descreva um fluxo de protocolo mais adequado.
+
+### Secção C — Cenário Completo de Modelação SMA
+
+**Pergunta 11 — SMA de Armazém**
+
+A empresa BoasEntregas quer um SMA para gestão de armazém. O sistema tem componentes robóticos para picking, packing e transporte de itens. Os objetivos são minimizar tempo de tratamento de encomendas, reduzir custo operacional e melhorar eficiência de expedição.
+
+Responda: (1) Especifique os agentes envolvidos. (2) Especifique a arquitetura e comportamento de cada agente principal. (3) Descreva o protocolo de comunicação e coordenação. (4) Forneça um fluxo estilo sequência para uma encomenda. (5) Explique como o sistema lida com conflitos por recursos partilhados.
+
+**Pergunta 12 — Extensão MARL**
+
+O SMA do armazém poderia evoluir para usar Multi-Agent Reinforcement Learning? Justifique. Se aplicável, descreva as mudanças necessárias em arquitetura, agentes e comportamento. Se não diretamente aplicável, descreva um componente RL que ainda poderia ser incorporado.
+
+</Body>
+
+<Callout icon={ClipboardCheck} title="rubrica de auto-verificação">
+  Antes de consultar a chave de respostas, verifique se as suas respostas incluem: definições claras (não apenas palavras-chave), exemplos concretos ligados ao cenário, tipos de agentes com objetivos/perceções/ações, escolha de arquitetura com justificação, fluxo de protocolo com ordem de mensagens, vantagens e desvantagens quando pedido, e resposta equilibrada para Contract Net (quando serve e quando não serve).
+</Callout>
+
+<Marginalia label="dica de tempo">
+  75 minutos sugeridos. Secção A: ~5 min por pergunta (40 min total). Secção B: ~7 min por pergunta (14 min). Secção C: ~10 min por pergunta (21 min). Reserve os últimos minutos para rever.
+</Marginalia>

@@ -1,0 +1,51 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import PerceptronDrillDeck from "@/components/playground/PerceptronDrillDeck";
+import { Target } from "lucide-react";
+
+<SectionHeader
+  num="00"
+  title="Perceptrons e Geometria"
+  subtitle="o capítulo para revisar todos os dias"
+  vol="vol. vi"
+/>
+
+<Body>
+
+Este módulo é um treino direto para exercícios de prova em que uma figura geométrica precisa virar uma rede de perceptrons. A regra central é simples: <Highlight>um perceptron linear separa o espaço em dois lados</Highlight>.
+
+Em 2D, a fronteira é uma reta. Em 3D, a fronteira é um plano. A saída é decidida pelo sinal de:
+
+<Kbd>{"w1*x1 + w2*x2 + ... + b"}</Kbd>
+
+Se o valor for positivo, a saída é 1. Se for negativo, a saída é 0. O trabalho de prova é transformar a figura numa coleção dessas condições.
+
+</Body>
+
+<Callout icon={Target} title="rotina mental que precisa ficar automática">
+  Identifique cada reta ou plano. Escreva na forma w·x + b = 0. Teste o lado que deve dar 1. Se estiver invertido, troque o sinal dos pesos e do bias. Só depois combine as saídas.
+</Callout>
+
+<Body>
+
+O curso está organizado exatamente nessa ordem:
+
+- — **Método dos 4 passos**: fronteira, equação, lado positivo, combinação.
+- — **Retas e planos**: como sair da figura para <Kbd>w·x + b = 0</Kbd>.
+- — **AND, NOT e OR**: como montar redes pequenas a partir de perceptrons.
+- — **Regiões 2D**: triângulo, faixa, região entre duas retas e elipse aproximada.
+- — **Duas elipses**: a armadilha do AND global que aparece na prova de maio de 2025.
+- — **Planos 3D**: região entre dois planos paralelos.
+
+</Body>
+
+<PerceptronDrillDeck />
+
+<Body>
+
+Use as cartas acima como aquecimento. O objetivo não é decorar exemplos; é repetir a mesma tradução até que qualquer figura caia no mesmo algoritmo.
+
+</Body>

@@ -1,0 +1,56 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import PerceptronRegionPlayground from "@/components/playground/PerceptronRegionPlayground";
+import PerceptronQuizBlock from "@/components/quiz/PerceptronQuizBlock";
+import { Ruler } from "lucide-react";
+
+<SectionHeader
+  num="04"
+  title="Regiões 2D"
+  subtitle="triângulo, faixa, cunha e elipse"
+  vol="vol. vi"
+/>
+
+<Body>
+
+Regiões 2D são combinações de semiplanos. Cada semiplano vem de uma reta orientada. A partir daí, quase tudo vira interseção ou união.
+
+Casos que você precisa dominar:
+
+- — **Triângulo**: três retas, três lados internos, AND final.
+- — **Faixa entre paralelas**: acima da reta inferior AND abaixo da reta superior.
+- — **Acima/abaixo de duas retas**: duas condições simultâneas.
+- — **Elipse aproximada por retas**: várias tangentes, lado interno de cada uma, AND final.
+
+</Body>
+
+<PerceptronRegionPlayground />
+
+<Body>
+
+O triângulo é o caso mais limpo: cada lado elimina uma parte do plano. O interior é exatamente a interseção dos três lados corretos.
+
+A faixa entre retas paralelas é a mesma ideia com duas restrições:
+
+<div className="grid gap-2 my-2">
+  <Kbd>p1 = lado acima da reta inferior</Kbd>
+  <Kbd>p2 = lado abaixo da reta superior</Kbd>
+  <Kbd>saída = p1 AND p2</Kbd>
+</div>
+
+</Body>
+
+<Callout icon={Ruler} title="elipse não é linear, mas pode virar polígono">
+  Um perceptron não desenha curva. Para aproximar uma elipse, use várias retas tangentes. Cada reta aceita o lado interno. O AND de todas cria um polígono que aproxima a elipse.
+</Callout>
+
+<Body>
+
+Quanto mais retas, melhor a aproximação. Na prova, normalmente não é preciso calcular dezenas de tangentes: o essencial é reconhecer que uma curva fechada aproximada por retas pede uma coleção de perceptrons, não um único perceptron.
+
+</Body>
+
+<PerceptronQuizBlock topic="regions" title="Checkpoint — Regiões 2D" />

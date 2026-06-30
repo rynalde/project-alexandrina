@@ -1,0 +1,61 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import Marginalia from "@/components/shared/Marginalia";
+import MaskedAttention from "@/components/playground/MaskedAttention";
+import TransformerQuizBlock from "@/components/quiz/TransformerQuizBlock";
+import { ShieldOff } from "lucide-react";
+
+<SectionHeader num="07" title="Masked Attention" subtitle="o decoder não pode olhar para o futuro" vol="vol. v" />
+
+<Body>
+
+O decoder gera tokens **autoregressivamente**: um por vez, condicionando cada novo token nos anteriores. Em inferência isso é trivial — você só pode conhecer o que já produziu. Mas o treino é feito em paralelo, com toda a sequência alvo presente. Aí surge um problema: <Highlight>se a self-attention puder olhar livremente, o decoder vê o gabarito</Highlight>.
+
+A solução é a máscara causal. Antes do softmax, posições futuras (j > i) recebem <Kbd>-∞</Kbd> nos seus scores. O softmax mapeia isso para 0. O resultado: a posição i só pode atender a si mesma e às posições anteriores.
+
+</Body>
+
+<MaskedAttention />
+
+<Body>
+
+Em código, isso é uma matriz triangular inferior:
+
+</Body>
+
+<div className="my-4 bg-card border border-border rounded-sm p-4">
+  <div className="font-mono text-[11px] text-ink leading-relaxed whitespace-pre">
+    {`mask = [[ 0, -∞, -∞, -∞],
+        [ 0,  0, -∞, -∞],
+        [ 0,  0,  0, -∞],
+        [ 0,  0,  0,  0]]
+
+scores' = scores + mask
+α = softmax(scores')`}
+  </div>
+</div>
+
+<Body>
+
+O efeito prático:
+
+- — A posição 0 (primeiro token) só pode atender à posição 0.
+- — A posição 1 atende às posições 0 e 1.
+- — A posição n atende a todas as posições ≤ n.
+
+Isso garante que, durante o treino, a perda calculada na posição i só dependa das posições anteriores — exatamente como na inferência. O modelo aprende uma distribuição condicional <Kbd>{`P(y_t | y_1, ..., y_{t-1}, x)`}</Kbd> que vale tanto para treino quanto para geração.
+
+</Body>
+
+<Callout icon={ShieldOff} title="o encoder NÃO usa máscara">
+  Só o decoder. No encoder, cada posição pode atender livremente a todas as outras — passado e "futuro" da entrada — porque a entrada inteira está disponível desde o início. A máscara é uma propriedade do <em>processo de geração</em>, não da arquitetura toda.
+</Callout>
+
+<Marginalia label="por que -∞ e não 0?">
+  Se zerássemos os scores antes do softmax, exp(0)=1 ainda contribuiria para a normalização. Com -∞, exp(-∞)=0, e essa posição efetivamente desaparece da soma. É a única forma matematicamente limpa de "remover" uma posição via softmax.
+</Marginalia>
+
+<TransformerQuizBlock topic="masked" title="Checkpoint — Masked Attention" />

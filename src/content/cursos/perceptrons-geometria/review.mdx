@@ -1,0 +1,53 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import PerceptronDrillDeck from "@/components/playground/PerceptronDrillDeck";
+import PerceptronQuizBlock from "@/components/quiz/PerceptronQuizBlock";
+import { RefreshCcw } from "lucide-react";
+
+<SectionHeader
+  num="07"
+  title="Treino Diário"
+  subtitle="o que repetir até a prova"
+  vol="vol. vi"
+/>
+
+<Body>
+
+Faça esta revisão em poucos minutos:
+
+1. Olhe para a figura e marque cada reta ou plano.
+2. Escreva cada fronteira como <Kbd>w·x + b = 0</Kbd>.
+3. Teste um ponto do lado que deve dar 1.
+4. Inverta sinais quando necessário.
+5. Combine: AND para interseção, NOT para inversão, OR para união.
+
+</Body>
+
+<PerceptronDrillDeck />
+
+<Callout icon={RefreshCcw} title="lista de domínio obrigatório">
+  Triângulo, faixa entre retas paralelas, região acima/abaixo de duas retas, elipse aproximada por retas, união de regiões e região entre dois planos 3D.
+</Callout>
+
+<Body>
+
+Antes de terminar um exercício, faça uma auditoria:
+
+- — A saída 1 está no lado pedido pelo enunciado?
+- — Alguma condição deveria ser NOT em vez da forma original?
+- — A figura é uma interseção única ou uma união de sub-regiões?
+- — Se houver duas elipses, você separou cada elipse antes do OR final?
+- — Em 3D, os dois planos foram tratados como duas condições paralelas?
+
+</Body>
+
+<Body>
+
+A frase para decorar é: <Highlight>não existe mágica na rede; existe tradução geométrica correta</Highlight>. A prova testa se você sabe traduzir a figura para condições lineares e depois para lógica.
+
+</Body>
+
+<PerceptronQuizBlock topic="review" title="Checkpoint — Revisão" />

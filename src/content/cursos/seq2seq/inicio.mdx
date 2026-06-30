@@ -1,0 +1,34 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import ExamHeatmap from "@/components/playground/ExamHeatmap";
+import { Lightbulb } from "lucide-react";
+
+<SectionHeader num="00" title="Seq2Seq & atenção" subtitle="caderno iv — quando entrada e saída são ambas sequências" />
+
+<Body>
+
+Quarto grande tema. Aqui a tarefa não é mais classificar texto ou etiquetar tokens, mas <Highlight>gerar uma nova sequência</Highlight> a partir de uma sequência de entrada. Tradução automática é o exemplo paradigmático, mas a arquitetura encoder-decoder se aplica a sumarização, diálogo, geração de código, parsing — qualquer coisa onde o input é uma sequência e o output também é.
+
+Os ingredientes principais:
+
+- — **Encoder** lê a entrada e produz uma representação interna.
+- — **Decoder** consome essa representação e gera a saída, token por token (autoregressivamente).
+- — **Atenção** permite que o decoder consulte partes relevantes da entrada a cada passo, em vez de depender de um único vetor fixo.
+- — **Softmax** transforma os scores em distribuições de probabilidade sobre o vocabulário a cada predição.
+
+O caminho histórico é interessante: Seq2Seq (Sutskever, 2014) → Atenção (Bahdanau, 2014/2015) → Transformer (Vaswani, 2017). Este caderno cobre os dois primeiros — base essencial para entender o terceiro.
+
+</Body>
+
+<ExamHeatmap />
+
+<Callout icon={Lightbulb} title="estratégia de estudo">
+  Seq2Seq (01) e Encoder-Decoder (02) estabelecem o vocabulário. Context vector (03) define o problema. Atenção (04) é a solução — e historicamente o ponto mais cobrado em prova. Word alignment (05) é tradução clássica, conexão com atenção. Softmax (06) é a saída universal. Decoder autoregressivo (07) explica como a geração realmente acontece. Aplicações (08) é o panorama final.
+</Callout>
+
+<Marginalia label="pegadinhas mais frequentes">
+  Achar que com atenção há um único context vector (não — há um por passo de geração). Achar que pesos α são binários (são contínuos, somam 1). Achar que word alignment é sempre 1-para-1 (raramente é). Achar que softmax produz scores quaisquer (produz probabilidades, somam 1).
+</Marginalia>

@@ -1,0 +1,47 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import PerceptronQuizBlock from "@/components/quiz/PerceptronQuizBlock";
+import { ListChecks } from "lucide-react";
+
+<SectionHeader
+  num="01"
+  title="Método dos 4 Passos"
+  subtitle="fronteira, equação, lado, combinação"
+  vol="vol. vi"
+/>
+
+<Body>
+
+Todo exercício deste capítulo deve ser resolvido com o mesmo procedimento. Não comece pela arquitetura da rede. Comece pela figura.
+
+1. **Identificar cada fronteira**: cada reta em 2D ou plano em 3D que delimita a região.
+2. **Escrever a equação**: colocar tudo na forma <Kbd>{"w1*x1 + w2*x2 + ... + b = 0"}</Kbd>.
+3. **Escolher o lado que dá 1**: testar um ponto que esteja na região desejada.
+4. **Combinar as saídas**: AND para interseção, NOT para inverter uma condição, OR para união.
+
+</Body>
+
+<Callout icon={ListChecks} title="teste do ponto">
+  Depois de escrever a equação, escolha um ponto fácil do lado desejado. Se w·x + b for positivo, o sinal está certo. Se for negativo, multiplique todos os pesos e o bias por -1.
+</Callout>
+
+<Body>
+
+Exemplo: a reta <Kbd>{"x2 = 2*x1 - 3"}</Kbd> vira:
+
+<Kbd>{"2*x1 - x2 - 3 = 0"}</Kbd>
+
+Se a região desejada for **abaixo** da reta, teste o ponto <Kbd>(0, -4)</Kbd>:
+
+<Kbd>{"2*0 - (-4) - 3 = 1"}</Kbd>
+
+Deu positivo. Então <Kbd>w=(2,-1)</Kbd> e <Kbd>b=-3</Kbd> já classificam o lado de baixo como 1. Se o enunciado pedisse o lado de cima, bastaria trocar o sinal: <Kbd>w=(-2,1)</Kbd> e <Kbd>b=3</Kbd>.
+
+O ponto mais importante: <Highlight>a mesma reta pode ser usada com dois sentidos diferentes</Highlight>. A equação define a fronteira; o sinal define qual lado é aceito.
+
+</Body>
+
+<PerceptronQuizBlock topic="method" title="Checkpoint — Método" />

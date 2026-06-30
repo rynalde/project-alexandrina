@@ -1,0 +1,48 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import Marginalia from "@/components/shared/Marginalia";
+import PositionalEncoding from "@/components/playground/PositionalEncoding";
+import TransformerQuizBlock from "@/components/quiz/TransformerQuizBlock";
+import { MoveHorizontal } from "lucide-react";
+
+<SectionHeader num="04" title="Positional Encoding" subtitle="reintroduzindo a noção de ordem" vol="vol. v" />
+
+<Body>
+
+Há um problema implícito quando se joga a recorrência fora: <Highlight>self-attention é permutacionalmente invariante</Highlight>. Se você embaralhar a ordem dos tokens de entrada, a operação produz exatamente os mesmos vetores de saída (também embaralhados). Para o Transformer, "o gato comeu" e "comeu gato o" seriam, em essência, o mesmo conjunto.
+
+Isso é inaceitável para qualquer tarefa onde a ordem importa. A solução: <Highlight>injetar informação de posição diretamente nos embeddings de entrada</Highlight>, antes do primeiro bloco.
+
+A formulação clássica (Vaswani 2017) é sinusoidal:
+
+- — <Kbd>PE(pos, 2i) = sin(pos / 10000^(2i/d_model))</Kbd>
+- — <Kbd>PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))</Kbd>
+
+E então, simplesmente: <Kbd>entrada = embedding(token) + PE(posição)</Kbd>.
+
+</Body>
+
+<PositionalEncoding />
+
+<Body>
+
+Por que sinusoidais? Algumas propriedades úteis:
+
+- — Cada dimensão usa uma frequência diferente. Posições próximas têm vetores PE próximos; posições distantes, vetores distantes — em escalas múltiplas.
+- — A função permite ao modelo aprender deslocamentos relativos via combinações lineares (`PE(pos+k)` é função linear de `PE(pos)`).
+- — Generaliza para sequências mais longas que as vistas no treino — o que não acontece com PE aprendido (uma matriz de tamanho fixo).
+
+</Body>
+
+<Callout icon={MoveHorizontal} title="PE não é embedding semântico">
+  Pegadinha clássica em prova: PE NÃO serve para aproximar palavras semanticamente parecidas. Isso é trabalho dos embeddings (Word2Vec, etc). PE só carrega <em>posição</em>. As duas coisas são somadas — cada uma cumpre seu papel.
+</Callout>
+
+<Marginalia label="alternativas modernas">
+  Modelos atuais (como GPT-NeoX, LLaMA, etc.) frequentemente usam <strong>RoPE</strong> (Rotary Position Embedding) ou <strong>ALiBi</strong> (Attention with Linear Biases) em vez do PE sinusoidal — mas a ideia central, "Transformer não tem ordem implícita, precisa de injeção explícita", continua valendo.
+</Marginalia>
+
+<TransformerQuizBlock topic="positional" title="Checkpoint — Positional Encoding" />

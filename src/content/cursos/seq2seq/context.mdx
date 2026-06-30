@@ -1,0 +1,33 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import BottleneckPlayground from "@/components/playground/BottleneckPlayground";
+import QuizBlock from "@/components/quiz/QuizBlock";
+import { AlertCircle } from "lucide-react";
+
+<SectionHeader num="03" title="Context Vector" subtitle="o vetor que carrega tudo — e o problema disso" />
+
+<Body>
+
+Em Seq2Seq tradicional sem atenção, há <Highlight>um único vetor de contexto</Highlight>: o último estado oculto do encoder. Esse vetor é o que o decoder usa para inicializar sua própria sequência. Toda a informação da entrada está comprimida ali.
+
+Funciona razoavelmente bem para entradas curtas. Mas há um problema fundamental:
+
+</Body>
+
+<BottleneckPlayground />
+
+<Body>
+
+O <Highlight>tamanho do context vector é fixo</Highlight> (digamos, 512 dimensões), mas o tamanho da entrada pode ser arbitrário. Comprimir 5 palavras em 512 floats: tranquilo. Comprimir 80 palavras em 512 floats: <Highlight>perda significativa</Highlight>.
+
+Empiricamente, modelos Seq2Seq sem atenção mostram queda dramática de qualidade conforme as frases ficam mais longas. A atenção, que veremos a seguir, foi proposta exatamente para resolver isso.
+
+</Body>
+
+<Callout icon={AlertCircle} title="o gargalo em uma frase">
+  Toda a complexidade da entrada — sintaxe, semântica, ordem, vocabulário — precisa caber num vetor de tamanho fixo. Quanto maior a entrada, mais informação é descartada. Atenção quebra essa restrição permitindo que o decoder consulte qualquer parte da entrada a qualquer momento.
+</Callout>
+
+<QuizBlock topic="context" title="Checkpoint — Context Vector" />

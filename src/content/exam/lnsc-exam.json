@@ -1,0 +1,1556 @@
+{
+  "metadata": {
+    "course": "Língua Natural e Sistemas Conversacionais",
+    "institution": "ISEP / MEIA",
+    "description": "Training set built from the uploaded exam PDFs. Each alternative uses an integer id starting at 0. The answers field is always an array of alternative ids.",
+    "total_questions": 50,
+    "answer_note": "Answers were inferred from the exam statements and course slides because the uploaded exam PDFs do not contain a marked answer key.",
+    "source_exam_files": [
+      "Exam PDF (5).pdf — Exame da Época Normal – 4 de maio de 2021",
+      "Exam PDF (1).pdf — Exame da Época de Recurso – 11 de julho de 2022",
+      "Exam PDF (2).pdf — Exame da época de Recurso – 14 de julho de 2023",
+      "Exam PDF (4).pdf — Exame da Época de Recurso – 9 de julho de 2024",
+      "Exam PDF (3).pdf — Exame da Época de Recurso – 14 de julho de 2025"
+    ],
+    "schema": {
+      "id": "string: year-question",
+      "year": "integer",
+      "exam": "string",
+      "multiple_answers": "boolean",
+      "select": "correct|false",
+      "question": "string",
+      "alternatives": [
+        {
+          "id": "integer",
+          "text": "string"
+        }
+      ],
+      "answers": [
+        "integer ids of correct alternatives"
+      ],
+      "answer_confidence": "high|medium|low",
+      "notes": "optional string"
+    }
+  },
+  "questions": [
+    {
+      "id": "2021-01",
+      "year": 2021,
+      "exam": "Época Normal – 4 de maio de 2021",
+      "multiple_answers": true,
+      "select": "correct",
+      "question": "Nas tarefas de NLP, as stop words são removidas:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Para reduzir o número de features do modelo"
+        },
+        {
+          "id": 1,
+          "text": "Porque não adicionam informação relevante aos textos no contexto de algumas tarefas de NLP"
+        },
+        {
+          "id": 2,
+          "text": "Porque permite reduzir o tempo de treino do modelo devido ao número mais reduzido de tokens envolvido"
+        },
+        {
+          "id": 3,
+          "text": "Porque não têm utilidade em qualquer tipo de tarefa de NLP"
+        }
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2021-02",
+      "year": 2021,
+      "exam": "Época Normal – 4 de maio de 2021",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Num corpus com N documentos, o documento d desse corpus contém um total de T termos e o termo \"hello\" aparece K vezes. Qual é o valor TF-IDF do termo \"hello\" no documento d sabendo que o mesmo termo aparece em 1/3 dos documentos do corpus?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "K/T × log(3)"
+        },
+        {
+          "id": 1,
+          "text": "T × log(3) / K"
+        },
+        {
+          "id": 2,
+          "text": "K × log(3) / T"
+        },
+        {
+          "id": 3,
+          "text": "log(3) / (K T)"
+        }
+      ],
+      "answers": [
+        2
+      ],
+      "answer_confidence": "high",
+      "notes": "A alternativa foi normalizada a partir da fórmula visual do PDF; a forma correta é (K/T) × log(3), equivalente a K × log(3) / T."
+    },
+    {
+      "id": "2021-03",
+      "year": 2021,
+      "exam": "Época Normal – 4 de maio de 2021",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Numa representação BoW aplicada a uma tarefa de classificação, a técnica de hashing tem por objectivo:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Reduzir o número de features do modelo"
+        },
+        {
+          "id": 1,
+          "text": "Garantir um número variável de features"
+        },
+        {
+          "id": 2,
+          "text": "Evitar a ocorrência de colisões"
+        },
+        {
+          "id": 3,
+          "text": "Nenhuma das anteriores"
+        }
+      ],
+      "answers": [
+        0
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2021-04",
+      "year": 2021,
+      "exam": "Época Normal – 4 de maio de 2021",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Num modelo de linguagem probabilístico baseado em n-grams, a assumpção de Markov permite assumir que a probabilidade da próxima palavra numa sequência:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Depende apenas das n − 1 palavras anteriores"
+        },
+        {
+          "id": 1,
+          "text": "É função das próximas n palavras"
+        },
+        {
+          "id": 2,
+          "text": "É função das próximas n − 1 palavras"
+        },
+        {
+          "id": 3,
+          "text": "Depende das n − 1 palavras iniciais da sequência"
+        }
+      ],
+      "answers": [
+        0
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2021-05",
+      "year": 2021,
+      "exam": "Época Normal – 4 de maio de 2021",
+      "multiple_answers": true,
+      "select": "correct",
+      "question": "Relativamente ao método Word2Vec:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Permite obter representações esparsas"
+        },
+        {
+          "id": 1,
+          "text": "Permite obter representações densas"
+        },
+        {
+          "id": 2,
+          "text": "Os word embeddings obtidos são dependentes do contexto no sentido em que o modelo permite gerar diferentes embeddings para a mesma palavra com base no contexto em que a palavra surge"
+        },
+        {
+          "id": 3,
+          "text": "Os word embeddings obtidos capturam múltiplas dimensões dos dados e são representados por vectores"
+        }
+      ],
+      "answers": [
+        1,
+        3
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2021-06",
+      "year": 2021,
+      "exam": "Época Normal – 4 de maio de 2021",
+      "multiple_answers": true,
+      "select": "correct",
+      "question": "Com o intuito de se obter uma representação vectorial de palavras num espaço semântico, o método SVD:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "É usado para reduzir a dimensão da matriz de co-ocorrências de palavras"
+        },
+        {
+          "id": 1,
+          "text": "É usado para se obter uma representação de palavras que dê ênfase a relações fortes entre palavras e reduzir o ruído (informação sem significado)"
+        },
+        {
+          "id": 2,
+          "text": "É usado para permitir reconstruir uma matriz que é uma aproximação da matriz original de co-ocorrências entre palavras com base na menor informação possível"
+        },
+        {
+          "id": 3,
+          "text": "Usa como parâmetro a dimensão dos vetores de embedding (T)"
+        }
+      ],
+      "answers": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2021-07",
+      "year": 2021,
+      "exam": "Época Normal – 4 de maio de 2021",
+      "multiple_answers": true,
+      "select": "correct",
+      "question": "Num sistema conversacional capaz de lidar com diálogos multi-turn a técnica memory networks pode ser usada como mecanismo para manter o contexto associado ao diálogo. Nesta técnica:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "O vector Knowledge Attention Distribution representa informação acerca das frases anteriores que são relevantes para a frase atual"
+        },
+        {
+          "id": 1,
+          "text": "Quanto menor for o valor do peso de atenção pi relativo à frase anterior i, maior será a relevância dessa frase para o contexto atual (definido pela frase atual)"
+        },
+        {
+          "id": 2,
+          "text": "A memória mi armazena as sequências de tokens que constituem as frases anteriores do diálogo"
+        },
+        {
+          "id": 3,
+          "text": "A dimensão do vetor de embedding da frase atual (última frase) é igual ao comprimento da frase mais longa presente na memória mi"
+        }
+      ],
+      "answers": [
+        0,
+        2
+      ],
+      "answer_confidence": "medium"
+    },
+    {
+      "id": "2021-08",
+      "year": 2021,
+      "exam": "Época Normal – 4 de maio de 2021",
+      "multiple_answers": true,
+      "select": "correct",
+      "question": "Num modelo Sequence2Sequence com mecanismo de atenção:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Obtém-se à saída do encoder um único vetor de contexto que representa a sequência de entrada e que é utilizado como entrada do decoder"
+        },
+        {
+          "id": 1,
+          "text": "É usado o mesmo vetor de contexto na entrada do decoder em todos os time-steps"
+        },
+        {
+          "id": 2,
+          "text": "Os pesos de atenção α assumem valores binários de forma a representar quais as entradas que têm relevância para a obtenção da saída em cada time-step"
+        },
+        {
+          "id": 3,
+          "text": "Nenhuma das anteriores"
+        }
+      ],
+      "answers": [
+        3
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2021-09",
+      "year": 2021,
+      "exam": "Época Normal – 4 de maio de 2021",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "O mecanismo de Self-attention presente no modelo Transformer permite ao modelo:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Aprender a inter-dependência entre palavras presentes na mesma sequência de palavras, aplicando-se quer à sequência de entrada, quer à sequência de saída"
+        },
+        {
+          "id": 1,
+          "text": "Aprender a inter-dependência entre palavras presentes apenas na sequência de entrada"
+        },
+        {
+          "id": 2,
+          "text": "Aprender a inter-dependência entre palavras presentes apenas na sequência de saída"
+        },
+        {
+          "id": 3,
+          "text": "Aprender a dependência entre palavras da sequência de entrada e da sequência de saída"
+        }
+      ],
+      "answers": [
+        0
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2021-10",
+      "year": 2021,
+      "exam": "Época Normal – 4 de maio de 2021",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "O mecanismo Positional Encoding no modelo Transformer:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Permite garantir que palavras com significado semelhante ocupem posições próximas no espaço vectorial de representação das palavras do vocabulário"
+        },
+        {
+          "id": 1,
+          "text": "Permite incorporar no embedding das palavras informação relativa à posição que as palavras ocupam numa sequência"
+        },
+        {
+          "id": 2,
+          "text": "Apenas é aplicado às palavras da sequência de entrada"
+        },
+        {
+          "id": 3,
+          "text": "Nenhuma das anteriores"
+        }
+      ],
+      "answers": [
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2022-01",
+      "year": 2022,
+      "exam": "Época de Recurso – 11 de julho de 2022",
+      "multiple_answers": true,
+      "select": "false",
+      "question": "Assinale as afirmações falsas relativas ao modelo bag of words.",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "As representações obtidas não contêm informação acerca da ordem dos tokens"
+        },
+        {
+          "id": 1,
+          "text": "As representações obtidas são esparsas"
+        },
+        {
+          "id": 2,
+          "text": "O modelo bag of words corresponde a um caso particular do modelo n-gram em que n = 1"
+        },
+        {
+          "id": 3,
+          "text": "O modelo bag of words não pode ser aplicado à tarefa de filtragem de correio eletrónico"
+        }
+      ],
+      "answers": [
+        3
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2022-02",
+      "year": 2022,
+      "exam": "Época de Recurso – 11 de julho de 2022",
+      "multiple_answers": true,
+      "select": "correct",
+      "question": "A técnica de hashing aplicada a modelos de representação de documentos:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Permite reduzir o número de features do modelo"
+        },
+        {
+          "id": 1,
+          "text": "Garante a correspondência unívoca entre tokens e features do modelo"
+        },
+        {
+          "id": 2,
+          "text": "Evita a ocorrência de colisões"
+        },
+        {
+          "id": 3,
+          "text": "Permite obter representações densas"
+        }
+      ],
+      "answers": [
+        0
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2022-03",
+      "year": 2022,
+      "exam": "Época de Recurso – 11 de julho de 2022",
+      "multiple_answers": true,
+      "select": "correct",
+      "question": "O termo Vector Space Models of Semantics refere-se a modelos que:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Representam o significado de itens léxicos através de vetores numéricos num espaço semântico"
+        },
+        {
+          "id": 1,
+          "text": "Permitem obter representações vetoriais, em que cada vetor apenas pode representar uma palavra em vez de sequências de palavras"
+        },
+        {
+          "id": 2,
+          "text": "Permitem obter vetores numéricos para a representação de itens léxicos e em que a similaridade entre vetores corresponde a uma proximidade semântica entre itens léxicos"
+        },
+        {
+          "id": 3,
+          "text": "Permitem obter vetores numéricos para a representação de itens léxicos em que o contexto em que as palavras surgem não é relevante para a obtenção desses vetores"
+        }
+      ],
+      "answers": [
+        0,
+        2
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2022-04",
+      "year": 2022,
+      "exam": "Época de Recurso – 11 de julho de 2022",
+      "multiple_answers": true,
+      "select": "correct",
+      "question": "A tarefa de topic modelling:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Tem por objetivo descobrir tópicos que ocorrem numa coleção de documentos"
+        },
+        {
+          "id": 1,
+          "text": "Pode ser descrita como uma tarefa de clustering em que palavras são agrupadas em tópicos e tópicos são agrupados em documentos"
+        },
+        {
+          "id": 2,
+          "text": "Exige que o conjunto de tópicos a considerar seja definido manualmente à partida"
+        },
+        {
+          "id": 3,
+          "text": "Permite associar de forma automática tópicos a documentos após terem sido definidos manualmente os conjuntos de palavras associadas a cada tópico"
+        }
+      ],
+      "answers": [
+        0,
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2022-05",
+      "year": 2022,
+      "exam": "Época de Recurso – 11 de julho de 2022",
+      "multiple_answers": true,
+      "select": "correct",
+      "question": "Relativamente aos modelos Hidden Markov (HMM) e Maximum Entropy Markov (MEMM):",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "O HMM é um modelo generativo porque permite estimar a probabilidade da próxima palavra de uma sequência a partir da tag associada a essa palavra, tag essa presente numa sequência de tags previamente construída"
+        },
+        {
+          "id": 1,
+          "text": "O HMM é um modelo generativo porque permite estimar a probabilidade da próxima tag de uma sequência a partir da palavra associada a essa tag, palavra essa presente numa sequência de palavras previamente construída"
+        },
+        {
+          "id": 2,
+          "text": "O MEMM é um modelo discriminativo porque permite estimar a probabilidade da tag associada a uma palavra de uma sequência de palavras em função dessa palavra observada"
+        },
+        {
+          "id": 3,
+          "text": "O MEMM é um modelo discriminativo porque permite estimar a probabilidade da palavra associada a uma tag de uma sequência de tags em função dessa tag observada"
+        }
+      ],
+      "answers": [
+        0,
+        2
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2022-06",
+      "year": 2022,
+      "exam": "Época de Recurso – 11 de julho de 2022",
+      "multiple_answers": true,
+      "select": "correct",
+      "question": "Na tarefa de tradução automática, o alinhamento de palavras (word alignment):",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Permite definir a correspondência entre uma única palavra da sequência de entrada com uma única palavra da sequência de saída"
+        },
+        {
+          "id": 1,
+          "text": "Permite definir a correspondência entre um subconjunto de uma ou mais palavras da sequência de entrada com um subconjunto de uma ou mais palavras da sequência de saída"
+        },
+        {
+          "id": 2,
+          "text": "Permite definir a correspondência entre uma única palavra da sequência de entrada com um subconjunto de uma ou mais palavras da sequência de saída"
+        },
+        {
+          "id": 3,
+          "text": "Permite definir a correspondência entre um subconjunto de uma ou mais palavras da sequência de entrada com uma única palavra da sequência de saída"
+        }
+      ],
+      "answers": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "answer_confidence": "medium"
+    },
+    {
+      "id": "2022-07",
+      "year": 2022,
+      "exam": "Época de Recurso – 11 de julho de 2022",
+      "multiple_answers": true,
+      "select": "correct",
+      "question": "No contexto do Processamento de Língua Natural, a função softmax é aplicada frequentemente à saída da última camada de uma rede neuronal. Assinale as afirmações corretas.",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "A função softmax é usada para transformar o vetor de saída da rede num vetor que representa a distribuição de probabilidade de uma lista de potenciais palavras a selecionar"
+        },
+        {
+          "id": 1,
+          "text": "A soma de todos os elementos do vetor obtido pela função softmax não tem necessariamente que ser 1"
+        },
+        {
+          "id": 2,
+          "text": "A dimensão do vetor obtido pela função softmax corresponde à dimensão do dicionário utilizado"
+        },
+        {
+          "id": 3,
+          "text": "O vetor obtido pela função softmax é um vetor binário"
+        }
+      ],
+      "answers": [
+        0,
+        2
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2022-08",
+      "year": 2022,
+      "exam": "Época de Recurso – 11 de julho de 2022",
+      "multiple_answers": true,
+      "select": "correct",
+      "question": "Numa arquitetura Sequence2Sequence:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "O vetor de contexto obtido à saída do encoder mantém informação apenas acerca do estado da última unidade do encoder"
+        },
+        {
+          "id": 1,
+          "text": "Em que são utilizadas redes neuronais recorrentes, o desempenho do modelo não é afetado pelo aumento do comprimento das sequências de entrada"
+        },
+        {
+          "id": 2,
+          "text": "A utilização de redes LSTM garante o sucesso do processo de treino independentemente do comprimento das sequências de entrada"
+        },
+        {
+          "id": 3,
+          "text": "Nenhuma das anteriores"
+        }
+      ],
+      "answers": [
+        0
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2022-09",
+      "year": 2022,
+      "exam": "Época de Recurso – 11 de julho de 2022",
+      "multiple_answers": true,
+      "select": "correct",
+      "question": "Na arquitetura Transformer:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "O mecanismo de Atenção usado é igual ao mecanismo de atenção usado na arquitectura Sequence2Sequence"
+        },
+        {
+          "id": 1,
+          "text": "O conceito de Atenção é usado para representar relações existentes entre palavras das sequências de entrada e de saída, assim como para representar relações existentes entre palavras na mesma sequência"
+        },
+        {
+          "id": 2,
+          "text": "A saída do último encoder alimenta todos os decoder"
+        },
+        {
+          "id": 3,
+          "text": "A saída do último encoder alimenta apenas o primeiro decoder"
+        }
+      ],
+      "answers": [
+        1,
+        2
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2022-10",
+      "year": 2022,
+      "exam": "Época de Recurso – 11 de julho de 2022",
+      "multiple_answers": true,
+      "select": "correct",
+      "question": "Na arquitetura Transformer:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "A representação dos vetores de embedding das palavras da sequência de entrada são modificados de forma a incorporar informação acerca da ordem das palavras na sequência de entrada"
+        },
+        {
+          "id": 1,
+          "text": "A informação que representa a posição das palavras na sequência de entrada pode assumir a forma de uma função sinusoidal cuja frequência depende da posição da palavra na sequência de entrada"
+        },
+        {
+          "id": 2,
+          "text": "As entradas do decoder não incorporam informação acerca da posição de cada palavra da sequência de saída"
+        },
+        {
+          "id": 3,
+          "text": "A técnica denominada Positional Embedding permite codificar o alinhamento entre as palavras presentes na sequência de entrada e as palavras presentes na sequência de saída"
+        }
+      ],
+      "answers": [
+        0,
+        1
+      ],
+      "answer_confidence": "medium",
+      "notes": "A alternativa 1 foi mantida como provável intenção do exame por referir funções sinusoidais; tecnicamente, nas fórmulas originais, as frequências variam por dimensão do vetor, enquanto a posição é a variável de entrada."
+    },
+    {
+      "id": "2023-01",
+      "year": 2023,
+      "exam": "Época de Recurso – 14 de julho de 2023",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "A utilização da técnica Bag of Words para a vetorização de textos usando:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "1-grams permite manter informação completa acerca da ordem dos tokens presentes no texto"
+        },
+        {
+          "id": 1,
+          "text": "n-grams permite manter informação parcial acerca da ordem dos tokens presentes no texto"
+        },
+        {
+          "id": 2,
+          "text": "n-grams permite manter informação completa acerca da ordem dos tokens presentes no texto"
+        },
+        {
+          "id": 3,
+          "text": "1-grams permite manter informação parcial acerca da ordem dos tokens presentes no texto"
+        }
+      ],
+      "answers": [
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2023-02",
+      "year": 2023,
+      "exam": "Época de Recurso – 14 de julho de 2023",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Os tokens mais relevantes para a caracterização de um texto são os tokens:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Mais frequentes"
+        },
+        {
+          "id": 1,
+          "text": "Menos frequentes"
+        },
+        {
+          "id": 2,
+          "text": "Com frequência média"
+        },
+        {
+          "id": 3,
+          "text": "Nenhuma das anteriores"
+        }
+      ],
+      "answers": [
+        2
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2023-03",
+      "year": 2023,
+      "exam": "Época de Recurso – 14 de julho de 2023",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Os filtros de convolução aplicados a subsequências de palavras:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "São filtros bi-dimensionais tal como os filtros usados para o processamento de imagem"
+        },
+        {
+          "id": 1,
+          "text": "Permitem obter um valor de ativação que será tanto maior quanto maior for a representatividade desse filtro relativamente à subsequência"
+        },
+        {
+          "id": 2,
+          "text": "Permitem obter um valor de ativação que será tanto menor quanto maior for a representatividade desse filtro relativamente à subsequência"
+        },
+        {
+          "id": 3,
+          "text": "Não estão relacionados com o significado das subsequências de palavras"
+        }
+      ],
+      "answers": [
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2023-04",
+      "year": 2023,
+      "exam": "Época de Recurso – 14 de julho de 2023",
+      "multiple_answers": false,
+      "select": "false",
+      "question": "Selecione a afirmação falsa relativa a modelos de linguagem (ML).",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Os ML podem ser usados para gerar o próximo token a partir de uma sequência anterior de tokens"
+        },
+        {
+          "id": 1,
+          "text": "Os ML podem ser usados para atribuir etiquetas aos tokens de uma sequência"
+        },
+        {
+          "id": 2,
+          "text": "Os ML podem basear-se em modelos probabilísticos e em modelos de deep learning"
+        },
+        {
+          "id": 3,
+          "text": "Os ML não se podem basear em modelos n-gram"
+        }
+      ],
+      "answers": [
+        3
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2023-05",
+      "year": 2023,
+      "exam": "Época de Recurso – 14 de julho de 2023",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Perplexidade (perplexity) é uma medida de qualidade das sequências geradas por um Modelo de Linguagem (ML):",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Cujo valor será tanto maior quanto menor for a probabilidade do ML gerar essas sequências"
+        },
+        {
+          "id": 1,
+          "text": "Cujo valor será tanto menor quanto menor for a probabilidade do ML gerar essas sequências"
+        },
+        {
+          "id": 2,
+          "text": "Cujo valor será tanto maior quanto menor for o comprimento das sequências"
+        },
+        {
+          "id": 3,
+          "text": "Cujo valor será tanto maior quanto maior for o comprimento das sequências"
+        }
+      ],
+      "answers": [
+        0
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2023-06",
+      "year": 2023,
+      "exam": "Época de Recurso – 14 de julho de 2023",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "No contexto da tarefa POS tagging, o objetivo é construir um modelo HMM para modelar P(__ | __) e calcular as probabilidades dos label a partir das observações usando a regra de __.",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Value, Label, Markov"
+        },
+        {
+          "id": 1,
+          "text": "Word, Tag, Bayes"
+        },
+        {
+          "id": 2,
+          "text": "Attribute, Variable, Bayes"
+        },
+        {
+          "id": 3,
+          "text": "Input, Label, Markov"
+        }
+      ],
+      "answers": [
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2023-07",
+      "year": 2023,
+      "exam": "Época de Recurso – 14 de julho de 2023",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "A fatorização de matrizes usada para a vetorização de tokens (word embedding) tem por objetivo:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Aumentar a dimensão dos vetores de embedding de forma a aumentar o rigor das representações"
+        },
+        {
+          "id": 1,
+          "text": "Evitar o uso da camada softmax à saída dos modelos baseados em redes neuronais"
+        },
+        {
+          "id": 2,
+          "text": "Reduzir a dimensão dos vetores de embedding"
+        },
+        {
+          "id": 3,
+          "text": "Não evitar a perda de informação presente nas representações obtidas das palavras"
+        }
+      ],
+      "answers": [
+        2
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2023-08",
+      "year": 2023,
+      "exam": "Época de Recurso – 14 de julho de 2023",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Modelos de embedding como o Word2Vec:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Apresentam o mesmo desempenho no que diz respeito à representação de semelhanças e analogias entre palavras"
+        },
+        {
+          "id": 1,
+          "text": "Apresentam melhor desempenho na representação de semelhanças em relação à representação de analogias entre palavras"
+        },
+        {
+          "id": 2,
+          "text": "Apresentam melhor desempenho na representação de analogias em relação à representação de semelhanças entre palavras"
+        },
+        {
+          "id": 3,
+          "text": "Não permitem que os mesmos embeddings possam ser usados em aplicações e contextos diferentes, ou seja, não permitem que os embeddings sejam reutilizados"
+        }
+      ],
+      "answers": [
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2023-09",
+      "year": 2023,
+      "exam": "Época de Recurso – 14 de julho de 2023",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Num sistema conversacional, indique a ordem correta de execução das seguintes tarefas aplicadas para obtenção de uma resposta:",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Determinação do estado/contexto da conversação, intent classification, slot tagging"
+        },
+        {
+          "id": 1,
+          "text": "Slot tagging, intent classification, determinação do estado/contexto da conversação"
+        },
+        {
+          "id": 2,
+          "text": "Intent classification, slot tagging, determinação do estado/contexto da conversação"
+        },
+        {
+          "id": 3,
+          "text": "A ordem de execução das tarefas não é relevante"
+        }
+      ],
+      "answers": [
+        2
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2023-10",
+      "year": 2023,
+      "exam": "Época de Recurso – 14 de julho de 2023",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Qual dos seguintes tipos de modelos pode ser treinado mais rapidamente e necessita de menor quantidade de dados de treino?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Modelo baseado em LSTM"
+        },
+        {
+          "id": 1,
+          "text": "Modelo Transformer"
+        },
+        {
+          "id": 2,
+          "text": "Modelo Word Sense Disambiguation"
+        },
+        {
+          "id": 3,
+          "text": "Modelo n-gram"
+        }
+      ],
+      "answers": [
+        3
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2024-01",
+      "year": 2024,
+      "exam": "Época de Recurso – 9 de julho de 2024",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Qual das seguintes afirmações acerca de Stemming é correta?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Aumenta o recall e reduz a precision"
+        },
+        {
+          "id": 1,
+          "text": "Aumenta a precision e reduz o recall"
+        },
+        {
+          "id": 2,
+          "text": "Recall e precision são equivalentes no que diz respeito ao uso do stemming"
+        },
+        {
+          "id": 3,
+          "text": "Nenhuma das anteriores"
+        }
+      ],
+      "answers": [
+        0
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2024-02",
+      "year": 2024,
+      "exam": "Época de Recurso – 9 de julho de 2024",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "O peso TF-IDF de um termo t será quando t ocorre muitas vezes num reduzido número de documentos.",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Menor"
+        },
+        {
+          "id": 1,
+          "text": "Maior"
+        },
+        {
+          "id": 2,
+          "text": "Irrelevante"
+        },
+        {
+          "id": 3,
+          "text": "Indeterminado (porque depende da frequência em todos os documentos e não apenas num reduzido número de documentos)"
+        }
+      ],
+      "answers": [
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2024-03",
+      "year": 2024,
+      "exam": "Época de Recurso – 9 de julho de 2024",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "No contexto do NLP, o método SVD (Singular Value Decomposition):",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Pode ser usado para aumentar as dimensões de uma matriz de co-ocorrências de termos"
+        },
+        {
+          "id": 1,
+          "text": "Não pode ser aplicado a matrizes de co-ocorrências de termos"
+        },
+        {
+          "id": 2,
+          "text": "Pode ser usado para remover termos não relevantes"
+        },
+        {
+          "id": 3,
+          "text": "Nenhuma das anteriores"
+        }
+      ],
+      "answers": [
+        3
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2024-04",
+      "year": 2024,
+      "exam": "Época de Recurso – 9 de julho de 2024",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Qual é o principal objetivo do modelo Continuous Bag of Words (CBOW) utilizado em NLP?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Prever o contexto de palavras a partir de uma palavra dada"
+        },
+        {
+          "id": 1,
+          "text": "Prever uma palavra a partir do seu contexto de palavras"
+        },
+        {
+          "id": 2,
+          "text": "Agrupar palavras semelhantes do ponto de vista semântico"
+        },
+        {
+          "id": 3,
+          "text": "Gerar sequências de palavras com base em uma palavra de início da sequência"
+        }
+      ],
+      "answers": [
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2024-05",
+      "year": 2024,
+      "exam": "Época de Recurso – 9 de julho de 2024",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Qual das seguintes afirmações corresponde à principal vantagem da aplicação de redes Long Short-Term Memory (LSTM) em tarefas de NLP?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "As LSTM podem processar imagens de forma mais eficaz quando comparado com outros tipos de redes neuronais tradicionais"
+        },
+        {
+          "id": 1,
+          "text": "As LSTM podem lidar com dependências entre termos existentes em sequências longas e mitigar o problema designado por vanishing gradient problem"
+        },
+        {
+          "id": 2,
+          "text": "As LSTM requerem menos recursos computacionais quando comparado com outros tipos de redes neuronais tradicionais"
+        },
+        {
+          "id": 3,
+          "text": "As LSTM podem gerar automaticamente labelled data destinada a tarefas de treino supervisionado"
+        }
+      ],
+      "answers": [
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2024-06",
+      "year": 2024,
+      "exam": "Época de Recurso – 9 de julho de 2024",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Qual é o principal benefício de incorporar o mecanismo de atenção em arquiteturas sequence-to-sequence?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Redução do tempo total de treino do modelo"
+        },
+        {
+          "id": 1,
+          "text": "Permitir ao modelo focar-se em diferentes partes da sequência de entrada quando se encontra a gerar cada um dos elementos da sequência de saída"
+        },
+        {
+          "id": 2,
+          "text": "Garantir que os requisitos de memória são fixos independentemente do comprimento da sequência de entrada"
+        },
+        {
+          "id": 3,
+          "text": "Aumentar a capacidade do modelo para lidar com diferentes línguas em simultâneo"
+        }
+      ],
+      "answers": [
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2024-07",
+      "year": 2024,
+      "exam": "Época de Recurso – 9 de julho de 2024",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Qual das seguintes afirmações melhor distingue os mecanismos de intra-attention e de inter-attention?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "O mecanismo intra-attention é utilizado para modelar as relações entre diferentes sequências, enquanto que o mecanismo de inter-attention foca-se nas relações existentes no interior da mesma sequência"
+        },
+        {
+          "id": 1,
+          "text": "O mecanismo de intra-attention é aplicado no interior de uma sequência para capturar dependências entre os seus elementos, enquanto que o mecanismo de inter-attention é aplicado entre duas sequências para capturar dependências entre elas"
+        },
+        {
+          "id": 2,
+          "text": "O mecanismo de intra-attention é usado principalmente em tradução automática, enquando que o mecanismo de inter-attention é usado principalmente em sumarização de texto"
+        },
+        {
+          "id": 3,
+          "text": "Os mecanismos de intra-attention e de inter-attention focam-se ambos nas relações existentes no interior de uma única sequência mas diferem em termos de eficiência computacional"
+        }
+      ],
+      "answers": [
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2024-08",
+      "year": 2024,
+      "exam": "Época de Recurso – 9 de julho de 2024",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Porque razão é usado o mecanismo positional encoding na arquitetura Transformer?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Para aumentar a velocidade computacional do modelo"
+        },
+        {
+          "id": 1,
+          "text": "Para fornecer informação acerca das posições relativas dos tokens presentes na sequência de entrada, uma vez que o Transformer perde a informação relativa à posição dos tokens na sequência processada"
+        },
+        {
+          "id": 2,
+          "text": "Para permitir o procesamento de sequências de comprimentos diferentes"
+        },
+        {
+          "id": 3,
+          "text": "Para permitir que o Transformer processe múltiplas sequências de entrada em simultâneo"
+        }
+      ],
+      "answers": [
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2024-09",
+      "year": 2024,
+      "exam": "Época de Recurso – 9 de julho de 2024",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Qual é o principal benefício do treino em simultâneo do intent classifier e do slot tagger?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Redução da complexidade computacional do modelo"
+        },
+        {
+          "id": 1,
+          "text": "Permitir que o modelo lide com várias línguas sem necessidade de treino adicional"
+        },
+        {
+          "id": 2,
+          "text": "Permitir que o modelo aproveite recursos e dependências compartilhadas, melhorando a precisão das tarefas de intent classification e de slot tagging"
+        },
+        {
+          "id": 3,
+          "text": "Reduzir o tempo para geração das respostas do sistema conversacional em modo de inferência"
+        }
+      ],
+      "answers": [
+        2
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2024-10",
+      "year": 2024,
+      "exam": "Época de Recurso – 9 de julho de 2024",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Qual é a principal vantagem do uso de filtros de convolução em tarefas de NLP?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Permitir o processamento de sequências de comprimento elevado sem degradação de desempenho do modelo"
+        },
+        {
+          "id": 1,
+          "text": "Permitir a captura de features e padrões, tais como n-grams, nas sequências de texto"
+        },
+        {
+          "id": 2,
+          "text": "Reduzir a necessidade de dados de treino anotados (labelled), recorrendo ao uso de técnicas de aprendizagem não-supervisionada"
+        },
+        {
+          "id": 3,
+          "text": "Garantir que o modelo possa gerar respostas de texto semelhantes às humanas"
+        }
+      ],
+      "answers": [
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2025-01",
+      "year": 2025,
+      "exam": "Época de Recurso – 14 de julho de 2025",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Qual das seguintes é uma vantagem da utilização de modelos de regressão logística em tarefas de classificação no Processamento de Linguagem Natural (NLP)?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "A regressão logística é capaz de modelar diretamente relações complexas e não lineares entre palavras"
+        },
+        {
+          "id": 1,
+          "text": "A regressão logística é interpretável e eficiente para tarefas de classificação binária com vetores de características simples, como TF-IDF"
+        },
+        {
+          "id": 2,
+          "text": "A regressão logística não necessita de vetorização de texto, podendo trabalhar diretamente com dados em bruto"
+        },
+        {
+          "id": 3,
+          "text": "A regressão logística supera consistentemente redes neuronais profundas em tarefas de geração de linguagem"
+        }
+      ],
+      "answers": [
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2025-02",
+      "year": 2025,
+      "exam": "Época de Recurso – 14 de julho de 2025",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Qual das seguintes opções descreve corretamente uma característica das representações vetoriais densas em comparação com representações esparsas tradicionais (como one-hot encoding)?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Representações densas utilizam um vetor de dimensão muito maior, com a maioria dos valores sendo zero"
+        },
+        {
+          "id": 1,
+          "text": "Representações densas são específicas de cada idioma e não podem ser treinadas em corpora multilingues"
+        },
+        {
+          "id": 2,
+          "text": "Representações densas capturam relações semânticas entre palavras, enquanto representações esparsas não o fazem"
+        },
+        {
+          "id": 3,
+          "text": "Representações densas são mais fáceis de interpretar diretamente do que representações esparsas"
+        }
+      ],
+      "answers": [
+        2
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2025-03",
+      "year": 2025,
+      "exam": "Época de Recurso – 14 de julho de 2025",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Qual é o principal objetivo da métrica tf-idf (term frequency-inverse document frequency) na representação de textos?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Eliminar palavras que aparecem apenas uma vez em todos os documentos"
+        },
+        {
+          "id": 1,
+          "text": "Atribuir maior peso a palavras que ocorrem frequentemente em todos os documentos do corpus"
+        },
+        {
+          "id": 2,
+          "text": "Atribuir maior peso a palavras que são frequentes num documento, mas raras no corpus"
+        },
+        {
+          "id": 3,
+          "text": "Converter todas as palavras do texto para seus radicais linguísticos, reduzindo a dimensionalidade"
+        }
+      ],
+      "answers": [
+        2
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2025-04",
+      "year": 2025,
+      "exam": "Época de Recurso – 14 de julho de 2025",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "No modelo Word2Vec, qual das seguintes afirmações descreve corretamente uma diferença entre os modos de treino Skip-gram e CBOW (Continuous Bag of Words)?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "O modo Skip-gram prevê a palavra central com base nas palavras de contexto, enquanto o CBOW prevê todas as palavras da janela de contexto simultaneamente"
+        },
+        {
+          "id": 1,
+          "text": "O modo Skip-gram é mais eficiente computacionalmente do que o CBOW, especialmente em grandes corpora"
+        },
+        {
+          "id": 2,
+          "text": "O modo CBOW tende a ser mais adequado para conjuntos de dados pequenos, enquanto o Skip-gram tende a gerar melhores representações semânticas em grandes corpora"
+        },
+        {
+          "id": 3,
+          "text": "Ambos os modos utilizam fatorização matricial explícita para gerar os vetores de palavras a partir de uma matriz de coocorrência"
+        }
+      ],
+      "answers": [
+        2
+      ],
+      "answer_confidence": "low",
+      "notes": "Esta é a alternativa mais plausível dentro das opções do exame, mas há uma possível inconsistência com os slides do curso, que indicam Skip-gram como bom com poucos dados e CBOW como mais rápido."
+    },
+    {
+      "id": "2025-05",
+      "year": 2025,
+      "exam": "Época de Recurso – 14 de julho de 2025",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Qual das seguintes afirmações expressa corretamente uma diferença fundamental entre os modelos GloVe e Word2Vec?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "GloVe baseia-se em predições locais de contexto, enquanto o Word2Vec utiliza coocorrências globais de palavras"
+        },
+        {
+          "id": 1,
+          "text": "GloVe constrói vetores de palavras a partir de uma matriz de coocorrência global, enquanto o Word2Vec aprende vetores através de tarefas preditivas baseadas em janelas de contexto"
+        },
+        {
+          "id": 2,
+          "text": "Ambos os modelos utilizam fatorização explícita de matrizes de coocorrência, mas o GloVe requer redes neuronais profundas"
+        },
+        {
+          "id": 3,
+          "text": "Word2Vec e GloVe são modelos baseados exclusivamente em transformers, mas diferem no uso de embeddings posicionais"
+        }
+      ],
+      "answers": [
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2025-06",
+      "year": 2025,
+      "exam": "Época de Recurso – 14 de julho de 2025",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Qual das seguintes afirmações descreve corretamente uma diferença entre softmax e softmax hierárquico?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "O softmax hierárquico calcula a probabilidade de cada palavra individualmente, enquanto o softmax clássico utiliza uma árvore binária para acelerar os cálculos"
+        },
+        {
+          "id": 1,
+          "text": "O softmax clássico é mais eficiente em vocabulários muito grandes, enquanto o softmax hierárquico tende a ser mais preciso, embora mais lento"
+        },
+        {
+          "id": 2,
+          "text": "O softmax hierárquico substitui o cálculo direto da distribuição de probabilidade por uma árvore binária, reduzindo o custo computacional em vocabulários grandes"
+        },
+        {
+          "id": 3,
+          "text": "Ambos os métodos têm o mesmo custo computacional, mas o softmax hierárquico permite treinar redes neuronais sem supervisionamento"
+        }
+      ],
+      "answers": [
+        2
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2025-07",
+      "year": 2025,
+      "exam": "Época de Recurso – 14 de julho de 2025",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Qual é a principal utilidade das múltiplas cabeças de atenção na arquitetura Transformer?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Permitir que o modelo processe múltiplas sequências de entrada em paralelo, aumentando a largura de banda de dados"
+        },
+        {
+          "id": 1,
+          "text": "Aumentar o número de parâmetros do modelo de forma a melhorar a regularização durante o treino"
+        },
+        {
+          "id": 2,
+          "text": "Capturar diferentes tipos de relações contextuais entre palavras ao focar a atenção em diferentes partes da sequência"
+        },
+        {
+          "id": 3,
+          "text": "Substituir completamente a necessidade de camadas recorrentes, preservando a ordem temporal da sequência"
+        }
+      ],
+      "answers": [
+        2
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2025-08",
+      "year": 2025,
+      "exam": "Época de Recurso – 14 de julho de 2025",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Por que razão o mecanismo de positional encoding é necessário na arquitetura Transformer?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Porque o Transformer utiliza redes recorrentes que não mantêm a ordem das palavras"
+        },
+        {
+          "id": 1,
+          "text": "Porque o Transformer processa todas as palavras em paralelo e precisa incorporar informação sobre a posição relativa das palavras na sequência"
+        },
+        {
+          "id": 2,
+          "text": "Porque o positional encoding reduz o número de parâmetros do modelo, tornando-o mais eficiente"
+        },
+        {
+          "id": 3,
+          "text": "Porque o positional encoding é usado para normalizar as entradas antes de aplicar o mecanismo de self-attention"
+        }
+      ],
+      "answers": [
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2025-09",
+      "year": 2025,
+      "exam": "Época de Recurso – 14 de julho de 2025",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Qual é a principal utilidade das camadas de normalização (Layer Normalization) nos encoders da arquitetura Transformer?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Aumentar a dimensionalidade dos vetores de entrada para melhorar a capacidade do modelo"
+        },
+        {
+          "id": 1,
+          "text": "Estabilizar e acelerar o treino ao normalizar as entradas dentro de cada camada, ajudando a evitar gradientes explosivos ou nulos"
+        },
+        {
+          "id": 2,
+          "text": "Reduzir o número total de parâmetros do modelo, tornando-o mais leve"
+        },
+        {
+          "id": 3,
+          "text": "Realizar a agregação das atenções das múltiplas cabeças numa única representação"
+        }
+      ],
+      "answers": [
+        1
+      ],
+      "answer_confidence": "high"
+    },
+    {
+      "id": "2025-10",
+      "year": 2025,
+      "exam": "Época de Recurso – 14 de julho de 2025",
+      "multiple_answers": false,
+      "select": "correct",
+      "question": "Qual das seguintes técnicas é comumente utilizada para reduzir a alucinação em modelos generativos?",
+      "alternatives": [
+        {
+          "id": 0,
+          "text": "Aumento da temperatura durante a geração para promover respostas mais criativas"
+        },
+        {
+          "id": 1,
+          "text": "Utilização de embeddings densos em vez de esparsos para melhorar a coerência semântica"
+        },
+        {
+          "id": 2,
+          "text": "Integração de fontes externas confiáveis através de recuperação aumentada por informação (RAG)"
+        },
+        {
+          "id": 3,
+          "text": "Aplicação exclusiva de camadas convolucionais no lugar de mecanismos de atenção"
+        }
+      ],
+      "answers": [
+        2
+      ],
+      "answer_confidence": "high"
+    }
+  ]
+}

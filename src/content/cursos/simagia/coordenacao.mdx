@@ -1,0 +1,38 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { GitBranch } from "lucide-react";
+
+<SectionHeader num="04" title="Coordenação" subtitle="dependências, cooperação e conflito" vol="vol. viii" />
+
+<Body>
+
+Agentes são autónomos e podem ter os seus próprios objetivos. Por isso, precisam de se coordenar dinamicamente, especialmente quando as suas ações dependem de recursos partilhados, timing ou outros agentes.
+
+Uma definição útil: <Highlight>coordenação é o processo pelo qual os agentes raciocinam sobre as suas ações locais e antecipam os efeitos das ações de outros agentes para que a comunidade aja de forma coerente</Highlight>.
+
+Sem coordenação, os benefícios da resolução distribuída de problemas desaparecem. Um SMA pode tornar-se uma coleção caótica de agentes individuais.
+
+### Tipos de dependência
+
+- — **Independência**: agentes não dependem uns dos outros.
+- — **Dependência unilateral**: um agente depende de outro, mas não o contrário.
+- — **Dependência mútua**: agentes dependem uns dos outros.
+- — **Dependência de recurso partilhado**: agentes precisam do mesmo recurso limitado.
+- — **Dependência de tarefa/ordem**: uma ação deve acontecer antes de outra.
+
+### Coordenação cooperativa vs. competitiva
+
+Para agentes cooperativos com objetivos partilhados, a coordenação foca-se em alocação de tarefas, sincronização e trabalho em equipa. Para agentes competitivos com objetivos conflituantes, a <Highlight>negociação torna-se central</Highlight>.
+
+</Body>
+
+<Callout icon={GitBranch} title="exemplo: hospital — sala de operações">
+  Cirurgia de emergência pode forçar reagendamento. Agentes de paciente, equipa cirúrgica, sala e coordenador gerem prioridade, tempo e recursos. A coordenação envolve reserva de recursos, regras de prioridade e replaneamento dinâmico.
+</Callout>
+
+<Marginalia label="pontos de exame">
+  O exame de 2024 pergunta diretamente razões para coordenação. Perguntas de cenário também requerem fluxos de coordenação com mensagens. Pratique escrever respostas estilo sequência: ordem→gestor→robot→confirmação→despacho. Não escreva "os agentes comunicam" sem descrever o protocolo.
+</Marginalia>

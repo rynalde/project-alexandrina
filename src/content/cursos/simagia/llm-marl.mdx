@@ -1,0 +1,50 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { Bot } from "lucide-react";
+
+<SectionHeader num="07" title="Agentes LLM e MARL" subtitle="LLMs, tool calling, RAG e aprendizagem multi-agente" vol="vol. viii" />
+
+<Body>
+
+Agentes clássicos frequentemente requeriam modelos simbólicos, regras fixas e representações cuidadosamente desenhadas. Os LLMs mudaram isto porque a <Highlight>linguagem pode atuar como interface universal</Highlight>: um LLM pode interpretar instruções, raciocinar sobre texto, planear passos, chamar ferramentas e sumarizar resultados.
+
+### Componentes de um agente LLM moderno
+
+- — **Motor cognitivo LLM**: interpreta objetivos, raciocina e gera decisões.
+- — **Prompt/contexto**: instruções, exemplos e estado da tarefa.
+- — **Memória/RAG**: recupera conhecimento externo ou informação anterior.
+- — **Ferramentas**: APIs, browser, execução de código, bases de dados ou outros sistemas.
+- — **Orquestração de workflow**: controla passos, retries, routing e uso de ferramentas.
+- — **Avaliação/feedback loop**: verifica outputs e melhora comportamento.
+
+### Conceitos-chave
+
+<Highlight>Tool calling</Highlight> permite ao agente agir para além da geração de texto. <Highlight>RAG</Highlight> permite ao agente recuperar documentos externos relevantes antes de responder. **Orquestração de workflow** organiza múltiplos passos. **MCP** pode ser entendido como um protocolo/interface para ligar modelos/agentes a ferramentas e fornecedores de contexto.
+
+### LLMs como agentes em SMA
+
+Para SMA, LLMs podem tornar-se agentes que comunicam, especializam-se e coordenam. Contudo, agentes baseados em LLM ainda precisam de <Highlight>protocolos, restrições, validação e uso seguro de ferramentas</Highlight>.
+
+### MARL — Multi-Agent Reinforcement Learning
+
+MARL é relevante quando agentes aprendem políticas através de interação e recompensas. Em exame, explique se MARL se adequa ao cenário verificando:
+- — Interações repetidas
+- — Recompensas mensuráveis
+- — Ambiente de simulação ou dados
+- — Ações e observações de estado dos agentes
+- — Necessidade de aprendizagem/adaptação
+
+Se não se adequa diretamente, proponha adicionar um componente RL para otimização, como seleção de rotas, alocação de tarefas ou afinação de políticas.
+
+</Body>
+
+<Callout icon={Bot} title="evolução para MARL: template de exame">
+  "O SMA pode evoluir para MARL se existir ambiente com interações repetidas, estados observáveis, ações e recompensas mensuráveis. Mudanças necessárias: representação de estado, função de recompensa, ambiente de treino/simulação, agentes com políticas aprendidas e camada de segurança antes do deployment."
+</Callout>
+
+<Marginalia label="erros a evitar">
+  Usar buzzwords de LLM sem ligação a SMA (ligue sempre conceitos LLM a perceção, ação, objetivos e comunicação de agentes). Assumir que MARL se aplica sempre (precisa de interação repetida, recompensa mensurável e ambiente de treino). Ignorar segurança/validação no uso de ferramentas. Confundir RAG (recuperação externa) com memória (contexto prévio armazenado).
+</Marginalia>

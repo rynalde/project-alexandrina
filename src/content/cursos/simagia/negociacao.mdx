@@ -1,0 +1,50 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { Handshake } from "lucide-react";
+
+<SectionHeader num="05" title="Negociação e Contract Net" subtitle="fases, protocolos e adequação" vol="vol. viii" />
+
+<Body>
+
+**Negociação** é um mecanismo de coordenação usado para chegar a acordos, especialmente entre agentes competitivos ou auto-interessados que não partilham necessariamente objetivos.
+
+### Causas de conflito
+
+Conflitos podem surgir de atividades incompatíveis, tempo limitado, recursos limitados, interesses opostos, problemas de comunicação, tentativas de influência, valores incompatíveis ou dano intencional.
+
+### Estilos de resolução
+
+Competição, colaboração, compromisso, evitação e acomodação.
+
+### As quatro fases da negociação
+
+1. — <Highlight>Preparação/pré-negociação</Highlight>: agentes definem objetivos, preferências, restrições e valores de reserva.
+2. — <Highlight>Troca de propostas</Highlight>: agentes enviam ofertas, contra-ofertas ou CFPs.
+3. — <Highlight>Avaliação e concessão</Highlight>: agentes comparam ofertas usando critérios (preço, tempo, qualidade, performance) e podem ajustar propostas.
+4. — <Highlight>Acordo/fecho</Highlight>: agentes aceitam, rejeitam, confirmam execução ou terminam a negociação.
+
+### Contract Net
+
+Protocolo bem conhecido para alocação de tarefas:
+
+<Kbd>CFP → Propostas → Avaliação/Adjudicação → Execução → Relatório</Kbd>
+
+Um gestor anuncia uma tarefa via **CFP (call for proposals)**. Participantes avaliam e enviam propostas. O gestor adjudica o contrato. O agente escolhido executa e reporta o resultado.
+
+### Quando Contract Net é ou não adequado
+
+Contract Net é bom quando um dono de tarefa quer propostas de agentes capazes. É <Highlight>menos adequado</Highlight> quando o cenário é um leilão de preço descendente, rondas repetidas com compra parcial de lotes, ou negociação multi-critério que requer barganha mais rica — a menos que seja adaptado.
+
+</Body>
+
+<Callout icon={Handshake} title="exemplo: mercado de peixe">
+  O vendedor anuncia preço para lotes de peixe. Compradores confirmam intenção de compra. Se ninguém aceita, o vendedor baixa o preço ou retira. Isto é mais próximo de rondas repetidas de leilão do que do Contract Net clássico. Em exame, justifique por que Contract Net puro não é ideal e descreva o fluxo alternativo.
+</Callout>
+
+<Marginalia label="armadilhas de exame">
+  Escolher cegamente Contract Net sem avaliar adequação. Esquecer compra parcial ou rondas repetidas. Não desenhar sequência de mensagens. Tratar todos os agentes como cooperativos quando a negociação assume agentes auto-interessados.
+</Marginalia>

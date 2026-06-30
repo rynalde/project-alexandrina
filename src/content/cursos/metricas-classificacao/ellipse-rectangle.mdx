@@ -1,0 +1,41 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import MetricsEllipseRectangleLab from "@/components/playground/MetricsEllipseRectangleLab";
+import MetricsQuizBlock from "@/components/quiz/MetricsQuizBlock";
+import { ScanLine } from "lucide-react";
+
+<SectionHeader
+  num="03"
+  title="Elipse vs Retângulo"
+  subtitle="quando retas aproximam a região curva"
+  vol="vol. vii"
+/>
+
+<Body>
+
+A rede queria classificar uma elipse. Mas se a região prevista é um retângulo, ela está usando limites lineares: esquerda, direita, cima e baixo. Isso é fácil para perceptrons, mas não coincide perfeitamente com a curva.
+
+O resultado visual:
+
+- — as zonas comuns entre elipse e retângulo são **PV/TP**;
+- — as sobras do retângulo fora da elipse são **PF/FP**;
+- — o exterior rejeitado corretamente é **NV/TN**;
+- — partes da elipse fora do retângulo são **NF/FN**.
+
+</Body>
+
+<MetricsEllipseRectangleLab />
+
+<Callout icon={ScanLine} title="a prova não pede desenho bonito; pede leitura correta">
+  Mesmo que as regiões venham nomeadas como ra, rb, rc, rd, re, rf, a pergunta é sempre a mesma: real positivo ou negativo? previsão positiva ou negativa?
+</Callout>
+
+<Body>
+
+Se o retângulo cobre áreas fora da elipse, aparecem falsos positivos. Se o retângulo deixa partes da elipse de fora, aparecem falsos negativos.
+
+</Body>
+
+<MetricsQuizBlock topic="ellipse_rectangle" title="Checkpoint — Elipse vs retângulo" />

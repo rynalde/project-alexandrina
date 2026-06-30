@@ -1,0 +1,30 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Marginalia from "@/components/shared/Marginalia";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import ApplicationsShowcase from "@/components/playground/ApplicationsShowcase";
+import QuizBlock from "@/components/quiz/QuizBlock";
+
+<SectionHeader num="08" title="Aplicações" subtitle="além da tradução" />
+
+<Body>
+
+Embora Seq2Seq tenha nascido para tradução, qualquer tarefa que pode ser formulada como "sequência → sequência" se beneficia da mesma arquitetura. Isso abre um leque enorme de aplicações em NLP:
+
+</Body>
+
+<ApplicationsShowcase />
+
+<Body>
+
+A flexibilidade da arquitetura é o que a torna tão poderosa. Os componentes — encoder, atenção, decoder, softmax — não mudam. O que muda é apenas o <Highlight>par de sequências</Highlight> que você usa para treinar. Com pares (frase EN, frase PT), você obtém um tradutor; com pares (artigo, resumo), um sumarizador; com pares (pergunta, resposta), um sistema de QA.
+
+Modelos modernos como T5 ("Text-to-Text Transfer Transformer") levam isso ao extremo: *todas* as tarefas de NLP são reformuladas como Seq2Seq. Classificação? "classify: [texto]" → "classe". NER? "extract entities: [texto]" → "lista de entidades". Tudo vira tradução.
+
+</Body>
+
+<Marginalia label="conexão com geração">
+  LLMs como GPT são, fundamentalmente, decoders autoregressivos puros — sem encoder explícito. A "entrada" é apenas o prompt, processado pelo próprio decoder via self-attention. A intuição básica continua: cada token é gerado condicionado em tudo o que veio antes.
+</Marginalia>
+
+<QuizBlock topic="apps" title="Checkpoint — Aplicações" />

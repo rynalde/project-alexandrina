@@ -1,0 +1,50 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import MetricsEllipseRectangleLab from "@/components/playground/MetricsEllipseRectangleLab";
+import MetricsQuizBlock from "@/components/quiz/MetricsQuizBlock";
+import { Sigma } from "lucide-react";
+
+<SectionHeader
+  num="02"
+  title="Accuracy, Precision, Recall"
+  subtitle="as três fórmulas que caem"
+  vol="vol. vii"
+/>
+
+<Body>
+
+Depois de contar PV, PF, NV e NF, as fórmulas são diretas:
+
+<div className="grid gap-2 my-2">
+  <Kbd>{"accuracy = (PV + NV) / total"}</Kbd>
+  <Kbd>{"precision = PV / (PV + PF)"}</Kbd>
+  <Kbd>{"recall = PV / (PV + NF)"}</Kbd>
+</div>
+
+</Body>
+
+<Callout icon={Sigma} title="interpretação em português">
+  Accuracy pergunta: de todos os pontos, quantos acertei? Precision pergunta: dos pontos que chamei de dentro, quantos eram realmente da elipse? Recall pergunta: dos pontos que eram da elipse, quantos recuperei?
+</Callout>
+
+<MetricsEllipseRectangleLab />
+
+<Body>
+
+Exemplo com números:
+
+<div className="grid gap-2 my-2">
+  <Kbd>PV = 30, PF = 10, NV = 50, NF = 10</Kbd>
+  <Kbd>{"accuracy = (30 + 50) / 100 = 0.80"}</Kbd>
+  <Kbd>{"precision = 30 / (30 + 10) = 0.75"}</Kbd>
+  <Kbd>{"recall = 30 / (30 + 10) = 0.75"}</Kbd>
+</div>
+
+Não troque precision com recall. Ambas usam PV no numerador, mas o denominador muda.
+
+</Body>
+
+<MetricsQuizBlock topic="formulas" title="Checkpoint — Fórmulas" />

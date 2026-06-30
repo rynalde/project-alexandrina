@@ -1,0 +1,51 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import AttentionComputation from "@/components/playground/AttentionComputation";
+import AttentionHeatmap from "@/components/playground/AttentionHeatmap";
+import QuizBlock from "@/components/quiz/QuizBlock";
+import { Sparkles } from "lucide-react";
+
+<SectionHeader num="04" title="Atenção" subtitle="a virada que mudou tudo" />
+
+<Body>
+
+A grande ideia da **atenção** (Bahdanau et al., 2014/2015): em vez de o decoder depender de um único vetor de contexto fixo, ele pode <Highlight>calcular um novo context vector a cada passo de geração</Highlight>, focando dinamicamente em diferentes partes da entrada.
+
+Concretamente, o encoder agora produz não um único vetor final, mas *todos os seus estados ocultos*: <Kbd>h₁, h₂, ..., hₙ</Kbd>. A cada passo do decoder:
+
+1. **Calcula scores** entre a query atual do decoder e cada h_j do encoder.
+2. **Aplica softmax** nos scores para obter pesos α_j que somam 1.
+3. **Soma ponderada**: c_t = Σ α_j · h_j. Esse é o context vector daquele passo.
+
+</Body>
+
+<AttentionComputation />
+
+<Body>
+
+Os pesos α_j são interpretáveis: medem o <Highlight>quanto o decoder está prestando atenção</Highlight> em cada token de entrada para gerar essa saída específica. Se você visualiza α como matriz (linhas = passos do decoder, colunas = posições do encoder), vê onde o modelo está "olhando" a cada momento.
+
+</Body>
+
+<AttentionHeatmap />
+
+<Body>
+
+Esse mapa de calor é praticamente um *alinhamento aprendido*: o modelo descobriu sozinho que "preto" deve focar em "black", que "tapete" deve focar em "mat", etc. Sem nenhuma supervisão de alinhamento explícita.
+
+Os ganhos práticos da atenção são enormes:
+
+- — **Sequências longas**: o gargalo desaparece. O decoder pode "olhar" para qualquer ponto da entrada quando precisar.
+- — **Reordenação**: línguas com ordens diferentes são tratadas naturalmente — a atenção pula posições.
+- — **Interpretabilidade**: o mapa de calor permite inspecionar o modelo.
+
+</Body>
+
+<Callout icon={Sparkles} title="atenção como precursora dos Transformers">
+  A atenção do Bahdanau foi a centelha. Em 2017, Vaswani et al. levaram a ideia ao limite com "Attention Is All You Need": jogar fora as RNNs e construir o modelo inteiro a partir de mecanismos de atenção. Nasceu o Transformer.
+</Callout>
+
+<QuizBlock topic="attention" title="Checkpoint — Atenção" />

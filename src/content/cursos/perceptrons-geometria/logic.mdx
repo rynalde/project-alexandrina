@@ -1,0 +1,60 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import PerceptronLogicGates from "@/components/playground/PerceptronLogicGates";
+import PerceptronQuizBlock from "@/components/quiz/PerceptronQuizBlock";
+import { Workflow } from "lucide-react";
+
+<SectionHeader
+  num="03"
+  title="AND, NOT e OR"
+  subtitle="como combinar perceptrons"
+  vol="vol. vi"
+/>
+
+<Body>
+
+Depois que cada fronteira virou um perceptron, a pergunta passa a ser lógica: o ponto precisa satisfazer todas as condições, negar alguma condição, ou pertencer a uma entre várias regiões?
+
+As combinações que mais aparecem:
+
+- — **AND / conjunção**: só dá 1 se todos os perceptrons derem 1.
+- — **NOT / negação**: troca o lado de uma condição, usando pesos e bias com sinal invertido.
+- — **OR / disjunção**: dá 1 se uma ou mais sub-regiões forem aceitas.
+
+</Body>
+
+<PerceptronLogicGates />
+
+<Body>
+
+Para entradas binárias, duas portas clássicas são:
+
+<div className="grid gap-2 my-2">
+  <Kbd>AND(x1,x2) = step(x1 + x2 - 1.5)</Kbd>
+  <Kbd>OR(x1,x2) = step(x1 + x2 - 0.5)</Kbd>
+</div>
+
+E uma negação simples:
+
+<div className="grid gap-2 my-2">
+  <Kbd>NOT(x1) = step(-x1 + 0.5)</Kbd>
+</div>
+
+Essas portas podem ser usadas como camada final de uma rede de perceptrons. Primeiro, cada perceptron testa uma condição geométrica. Depois, uma camada lógica decide se a região final foi atingida.
+
+</Body>
+
+<Callout icon={Workflow} title="traduza a frase do enunciado">
+  "Dentro de A e acima de r" pede AND. "Fora de A" pede NOT. "Dentro de A ou dentro de B" pede OR. Quase sempre a arquitetura correta está escondida nas palavras e/ou/fora.
+</Callout>
+
+<Body>
+
+O erro comum é usar AND em tudo. AND é poderoso para interseções, mas destrói uniões: se a região é "A ou B", exigir A e B ao mesmo tempo muda o problema.
+
+</Body>
+
+<PerceptronQuizBlock topic="logic" title="Checkpoint — AND, NOT e OR" />

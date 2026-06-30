@@ -1,0 +1,39 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import EncDecAttention from "@/components/playground/EncDecAttention";
+import TransformerQuizBlock from "@/components/quiz/TransformerQuizBlock";
+import { ArrowLeftRight } from "lucide-react";
+
+<SectionHeader num="02" title="Encoder-Decoder Attention" subtitle="inter-attention — duas sequências em diálogo" vol="vol. v" />
+
+<Body>
+
+A **encoder-decoder attention** (também chamada de **inter-attention**, "inter" = entre) é o que conecta as duas metades do Transformer. É o herdeiro direto da atenção de Bahdanau (2014) — a mesma ideia, agora dentro de uma arquitetura inteiramente atencional.
+
+A diferença fundamental para a self-attention está na origem dos vetores Q, K, V:
+
+- — <Kbd>Q</Kbd> vem do **decoder** (a posição que está sendo gerada).
+- — <Kbd>K, V</Kbd> vêm da **saída do encoder** (a representação da sequência de entrada).
+
+Em outras palavras: o decoder formula uma pergunta a partir do seu estado atual; o encoder oferece a resposta a partir da entrada original.
+
+</Body>
+
+<EncDecAttention />
+
+<Body>
+
+Essa é a única camada do Transformer onde Q vem de uma fonte e K/V vêm de outra. Em todas as outras (self-attention no encoder, masked self-attention no decoder), os três vêm da mesma sequência.
+
+Outro ponto importante: <Highlight>a saída do último encoder é usada por todos os blocos do decoder</Highlight>. Não é uma única camada de atenção — é uma camada de enc-dec attention dentro de cada um dos N blocos do decoder, cada uma consultando a mesma representação final do encoder.
+
+</Body>
+
+<Callout icon={ArrowLeftRight} title="o que muda em relação à atenção de Bahdanau">
+  A mecânica é a mesma: pesos α via softmax, context vector como soma ponderada. O que muda é o "redor" — não há mais RNN, não há mais estado oculto sequencial. A atenção se tornou a operação primária, e não um complemento das RNNs.
+</Callout>
+
+<TransformerQuizBlock topic="enc_dec_attention" title="Checkpoint — Encoder-Decoder Attention" />

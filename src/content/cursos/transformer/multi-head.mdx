@@ -1,0 +1,45 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import Marginalia from "@/components/shared/Marginalia";
+import MultiHeadAttention from "@/components/playground/MultiHeadAttention";
+import TransformerQuizBlock from "@/components/quiz/TransformerQuizBlock";
+import { Layers } from "lucide-react";
+
+<SectionHeader num="03" title="Multi-Head Attention" subtitle="várias cabeças, múltiplos focos" vol="vol. v" />
+
+<Body>
+
+Um único mecanismo de atenção produz uma única distribuição. Mas relações linguísticas vêm em vários sabores: dependências sintáticas, co-referência, distâncias relativas, alinhamento de tradução, etc. Forçar tudo isso em um único conjunto de pesos é limitante.
+
+A solução é simples e elegante: <Highlight>projetar Q, K e V em h subespaços diferentes</Highlight>, calcular atenção em cada um, e combinar os resultados. Cada subespaço é uma "cabeça".
+
+Concretamente:
+
+- — Para cada cabeça i, projete <Kbd>Q_i = Q · W_Q^i</Kbd>, <Kbd>K_i = K · W_K^i</Kbd>, <Kbd>V_i = V · W_V^i</Kbd>.
+- — Calcule <Kbd>head_i = Attention(Q_i, K_i, V_i)</Kbd>.
+- — Concatene todas as h cabeças e aplique uma projeção final: <Kbd>MultiHead = Concat(head_1, ..., head_h) · W_O</Kbd>.
+
+</Body>
+
+<MultiHeadAttention />
+
+<Body>
+
+O resultado prático: cada cabeça pode aprender a focar em padrões diferentes. Estudos pós-hoc em modelos treinados (como BERT) revelam cabeças "sintáticas" que rastreiam dependências verbais, cabeças "co-referenciais" que ligam pronomes a antecedentes, cabeças posicionais, e assim por diante.
+
+E o passo final — concatenar e projetar — não é decoração: é o que faz a saída ter a mesma dimensão da entrada (`d_model`), permitindo empilhar blocos.
+
+</Body>
+
+<Callout icon={Layers} title="quantas cabeças?">
+  No paper original (`d_model=512`), `h=8` cabeças, cada uma operando em `d_k=d_v=64`. A relação clássica é `d_k = d_model / h`, de forma que o custo total da multi-head fica próximo do custo de uma única atenção full-dimension.
+</Callout>
+
+<Marginalia label="cabeças não aprendem todas a mesma coisa">
+  Se aprendessem, a multi-head seria redundante. A iniciaização aleatória + a arquitetura paralela é o que induz especialização — sem nenhuma supervisão explícita.
+</Marginalia>
+
+<TransformerQuizBlock topic="multi_head" title="Checkpoint — Multi-Head Attention" />

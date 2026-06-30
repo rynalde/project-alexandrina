@@ -1,0 +1,63 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import PerceptronRegionPlayground from "@/components/playground/PerceptronRegionPlayground";
+import PerceptronQuizBlock from "@/components/quiz/PerceptronQuizBlock";
+import { AlertTriangle } from "lucide-react";
+
+<SectionHeader
+  num="05"
+  title="Duas Elipses"
+  subtitle="a armadilha do AND global"
+  vol="vol. vi"
+/>
+
+<Body>
+
+Este é o ponto que merece revisão diária. Quando a figura tem duas elipses sobrepostas e a região desejada é a união delas, um único AND global costuma falhar.
+
+Por quê? Porque AND global significa:
+
+<div className="grid gap-2 my-2">
+  <Kbd>aceitar apenas pontos que satisfazem todas as restrições ao mesmo tempo</Kbd>
+</div>
+
+Se você junta as tangentes da elipse A e da elipse B no mesmo AND, a rede tende a aceitar apenas pontos que estão dentro de A **e** dentro de B. Isso é interseção, não união.
+
+</Body>
+
+<Callout icon={AlertTriangle} title="a prova de maio de 2025 explora esta diferença">
+  A solução segura é separar as sub-regiões. Primeiro construa a elipse A. Depois construa a elipse B. Só no final faça OR entre as saídas dessas duas sub-redes.
+</Callout>
+
+<PerceptronRegionPlayground initialMode="union" />
+
+<Body>
+
+A arquitetura correta fica assim:
+
+<div className="grid gap-2 my-2">
+  <Kbd>A = AND(a1, a2, ..., ak)</Kbd>
+  <Kbd>B = AND(b1, b2, ..., bm)</Kbd>
+  <Kbd>saída = OR(A, B)</Kbd>
+</div>
+
+Se houver três sub-regiões, a ideia é igual:
+
+<div className="grid gap-2 my-2">
+  <Kbd>saída = OR(R1, R2, R3)</Kbd>
+</div>
+
+Cada sub-região pode ter seu próprio AND interno. A camada final decide a união.
+
+</Body>
+
+<Body>
+
+Regra prática: <Highlight>AND intersecta; OR une</Highlight>. Quando a figura tem "ilhas", "lóbulos", "duas manchas" ou "duas elipses", desconfie imediatamente de AND global.
+
+</Body>
+
+<PerceptronQuizBlock topic="ellipses" title="Checkpoint — Duas elipses" />

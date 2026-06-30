@@ -1,0 +1,43 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import WordAlignmentDemo from "@/components/playground/WordAlignmentDemo";
+import QuizBlock from "@/components/quiz/QuizBlock";
+import { GitBranch } from "lucide-react";
+
+<SectionHeader num="05" title="Word Alignment" subtitle="quem traduz quem" />
+
+<Body>
+
+**Word alignment** é um conceito que vem do MT estatístico clássico, mas continua relevante para entender como tradução funciona. A pergunta: dadas uma frase fonte e sua tradução, qual palavra de uma corresponde a qual da outra?
+
+A intuição inicial é que o alinhamento é 1-para-1 ("eu" ↔ "I", "amo" ↔ "love"). Mas a realidade linguística é muito mais bagunçada:
+
+</Body>
+
+<WordAlignmentDemo />
+
+<Body>
+
+Os casos típicos:
+
+- — **1-para-1**: o caso simples, raro fora de pares de palavras isoladas.
+- — **muitos-para-1**: "I am" → "Estou". Várias palavras da fonte se condensam em uma única palavra da saída.
+- — **1-para-muitos**: "casa" → "the house". Uma palavra se expande.
+- — **reordenação**: "red car" → "carro vermelho". Mesmas palavras, ordem diferente.
+- — **sem alinhamento**: artigos, preposições, partículas que existem em uma língua mas não na outra.
+
+</Body>
+
+<Callout icon={GitBranch} title="da tradução estatística para a neural">
+  No MT clássico (décadas de 90/2000), modelos de alinhamento (IBM Models 1-5) eram um componente *explícito* do pipeline. Hoje, modelos neurais com atenção <Highlight>aprendem alinhamento implicitamente</Highlight> — é exatamente o que o mapa de calor mostra. Você não precisa anotar alinhamento; o modelo descobre.
+</Callout>
+
+<Body>
+
+A dificuldade central do alinhamento (e portanto da tradução) é a <Highlight>reordenação</Highlight>. Línguas têm ordens canônicas diferentes (SVO, SOV, VSO), e padrões de modificação variam (adjetivos antes ou depois do substantivo). Modelos sem mecanismo de atenção lutam para lidar com isso porque dependem do estado em uma posição específica. Atenção resolve.
+
+</Body>
+
+<QuizBlock topic="align" title="Checkpoint — Word Alignment" />

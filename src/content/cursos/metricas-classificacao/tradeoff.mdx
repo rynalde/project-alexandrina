@@ -1,0 +1,38 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import MetricsEllipseRectangleLab from "@/components/playground/MetricsEllipseRectangleLab";
+import MetricsQuizBlock from "@/components/quiz/MetricsQuizBlock";
+import { SlidersHorizontal } from "lucide-react";
+
+<SectionHeader
+  num="04"
+  title="Trade-off"
+  subtitle="retângulo grande, pequeno ou deslocado"
+  vol="vol. vii"
+/>
+
+<Body>
+
+Métricas mudam quando a região prevista muda. No exemplo geométrico:
+
+- — **retângulo grande**: recupera mais pontos da elipse, mas aceita mais pontos de fora;
+- — **retângulo pequeno**: erra menos por falso positivo, mas perde partes da elipse;
+- — **retângulo deslocado**: pode ter falsos positivos de um lado e falsos negativos do outro.
+
+</Body>
+
+<MetricsEllipseRectangleLab />
+
+<Callout icon={SlidersHorizontal} title="precision e recall puxam em direções diferentes">
+  Aumentar a região prevista tende a subir recall e baixar precision. Diminuir a região prevista tende a subir precision e baixar recall.
+</Callout>
+
+<Body>
+
+Accuracy pode parecer boa quando existem muitos negativos verdadeiros. Por isso, em perguntas de prova, não decida pela intuição visual: conte as regiões e aplique a fórmula pedida.
+
+</Body>
+
+<MetricsQuizBlock topic="tradeoff" title="Checkpoint — Trade-off" />

@@ -1,0 +1,32 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { BookOpen } from "lucide-react";
+
+<SectionHeader num="00" title="Sistemas Multi-Agente" subtitle="caderno viii — guia de estudo SIMAGIA" vol="vol. viii" />
+
+<Body>
+
+Oitavo grande tema. Este caderno organiza o curso de **Sistemas Multi-Agente (SIMAGIA)** num percurso rápido de estudo, baseado na estrutura T1–T7 e reforçado com os padrões recorrentes dos exames passados.
+
+Os ingredientes que entram no jogo aqui:
+
+- — **Agentes e Ambientes**: fundamentos de agência, noção fraca/forte, tipos de ambiente e diferenças para objetos e sistemas periciais.
+- — **Arquiteturas de Agentes**: deliberativa, reativa, híbrida, camadas e BDI.
+- — **Sistemas Multi-Agente**: conceito de SMA, características, motivação e desafios.
+- — **Coordenação**: dependências, cooperação, conflito e protocolos de interação.
+- — **Negociação e Contract Net**: fases de negociação, protocolos e adequação do Contract Net.
+- — **Standards e Plataformas**: FIPA, ACL, KQML, JADE, JADEX, SPADE, facilitador e broker.
+- — **Agentes LLM e MARL**: LLMs como motores cognitivos, tool calling, RAG, MCP e aprendizagem multi-agente.
+
+</Body>
+
+<Callout icon={BookOpen} title="estratégia de estudo">
+  Os capítulos seguem a estrutura dos slides T1–T7. Comece pelos fundamentos (01 agentes, 02 arquiteturas), passe para sistemas e coordenação (03–04), depois negociação e standards (05–06) e termine com agentes modernos (07). A pegadinha mais comum em prova é não instanciar o BDI com dados concretos do cenário — guarde isso como mantra desde já. Depois de estudar, faça a avaliação final (08) e confira na chave de respostas (09).
+</Callout>
+
+<Marginalia label="padrões de exame mais frequentes">
+  Identificar propriedades de agentes numa definição. Comparar agentes físicos e software. Descrever arquiteturas (especialmente BDI instanciado). Modelar um cenário como SMA. Decidir se o Contract Net é adequado e justificar. Explicar fases de negociação. Explicar facilitador/broker. Discutir evolução para MARL.
+</Marginalia>

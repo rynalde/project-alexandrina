@@ -1,0 +1,43 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Marginalia from "@/components/shared/Marginalia";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import SoftmaxPlayground from "@/components/playground/SoftmaxPlayground";
+import QuizBlock from "@/components/quiz/QuizBlock";
+
+<SectionHeader num="06" title="Softmax" subtitle="logits viram probabilidades" />
+
+<Body>
+
+No final da rede do decoder, em cada passo, temos um vetor de **logits**: scores brutos, um para cada palavra do vocabulário. Por exemplo, para um vocabulário de 5 palavras, podemos ter logits = [2.5, 1.8, 0.5, -0.3, 1.2]. Mas logits não são probabilidades — são positivos ou negativos, não somam 1.
+
+Para gerar a próxima palavra, queremos uma **distribuição de probabilidade** P(yₜ | contexto). É aí que entra a função **softmax**:
+
+```
+softmax(z)ᵢ = exp(zᵢ) / Σⱼ exp(zⱼ)
+```
+
+Propriedades garantidas por construção:
+
+- — Todos os valores são <Highlight>positivos</Highlight> (exp é sempre positiva).
+- — A soma é <Highlight>exatamente 1</Highlight> (numerador e denominador se anulam quando você soma).
+- — Logits maiores → probabilidades maiores (a função preserva ordem).
+- — Diferenças exponenciais → distribuições "afiadas": logits ligeiramente maiores ganham probabilidade desproporcional.
+
+</Body>
+
+<SoftmaxPlayground />
+
+<Body>
+
+A dimensão da saída do softmax é igual ao <Highlight>tamanho do vocabulário</Highlight>. Para línguas naturais, isso é tipicamente 30k–100k palavras (ou subwords). Calcular softmax sobre 100k entradas a cada passo de geração é caro — daí surgirem técnicas como softmax hierárquico, sampled softmax, e BPE (que reduz o vocabulário substituindo palavras por subwords mais frequentes).
+
+A **temperatura** é um truque comum: dividir os logits por T antes do softmax. T &lt; 1 torna a distribuição mais picuda (mais determinística), T &gt; 1 torna mais uniforme (mais aleatória). É como controlar a "criatividade" do modelo durante a geração.
+
+</Body>
+
+<Marginalia label="argmax vs sampling">
+  Greedy decoding: pegar argmax (palavra de maior probabilidade) a cada passo. Rápido, mas pode produzir saídas repetitivas. Sampling: amostrar conforme as probabilidades. Beam search: manter k melhores candidatos parciais e expandir todos. É o padrão em MT.
+</Marginalia>
+
+<QuizBlock topic="softmax" title="Checkpoint — Softmax" />

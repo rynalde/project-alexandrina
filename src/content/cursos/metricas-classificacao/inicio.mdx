@@ -1,0 +1,44 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import MetricsEllipseRectangleLab from "@/components/playground/MetricsEllipseRectangleLab";
+import MetricsQuizBlock from "@/components/quiz/MetricsQuizBlock";
+import { Target } from "lucide-react";
+
+<SectionHeader
+  num="00"
+  title="Métricas de Classificação"
+  subtitle="accuracy, precision e recall"
+  vol="vol. vii"
+/>
+
+<Body>
+
+O cenário da prova é geométrico: a classe real é uma <Highlight>elipse</Highlight>, mas a rede que tenta classificá-la na prática aceita uma região <Highlight>retangular definida por retas</Highlight>.
+
+Isso cria quatro tipos de ponto:
+
+- — pontos dentro da elipse e aceitos pelo retângulo;
+- — pontos fora da elipse, mas aceitos pelo retângulo;
+- — pontos fora da elipse e rejeitados pelo retângulo;
+- — pontos dentro da elipse, mas rejeitados pelo retângulo.
+
+Esses quatro grupos viram PV/PF/NV/NF, ou em inglês TP/FP/TN/FN.
+
+</Body>
+
+<Callout icon={Target} title="o método seguro">
+  Primeiro classifique cada região como real dentro/fora da elipse e previsão dentro/fora do retângulo. Só depois aplique as fórmulas.
+</Callout>
+
+<MetricsEllipseRectangleLab />
+
+<Body>
+
+No simulador, a elipse é a verdade. O retângulo é a previsão do modelo. Mude largura, altura e deslocamento do retângulo para ver como as métricas mudam.
+
+</Body>
+
+<MetricsQuizBlock topic="overview" title="Checkpoint — Visão geral" />

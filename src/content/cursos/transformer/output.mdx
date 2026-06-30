@@ -1,0 +1,44 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import Marginalia from "@/components/shared/Marginalia";
+import SoftmaxPlayground from "@/components/playground/SoftmaxPlayground";
+import TransformerQuizBlock from "@/components/quiz/TransformerQuizBlock";
+import { Sigma } from "lucide-react";
+
+<SectionHeader num="08" title="Saída & Softmax" subtitle="logits viram probabilidades sobre o vocabulário" vol="vol. v" />
+
+<Body>
+
+A última coisa que o decoder faz, depois de N blocos de atenção e FFN, é traduzir seu vetor interno em uma <Highlight>distribuição de probabilidade sobre o vocabulário</Highlight> — para que se possa escolher (ou amostrar) o próximo token.
+
+Dois passos:
+
+1. — **Linear**: <Kbd>logits = decoder_output · W_vocab</Kbd>, onde `W_vocab ∈ R^(d_model × |V|)`. Projeta o vetor `d_model`-dimensional para o tamanho do vocabulário.
+2. — **Softmax**: <Kbd>p_i = exp(logits_i) / Σ_j exp(logits_j)</Kbd>. Normaliza para uma distribuição válida.
+
+</Body>
+
+<SoftmaxPlayground />
+
+<Body>
+
+A saída é um vetor de tamanho `|V|`, com todas as entradas positivas e somando 1. Cada componente é a probabilidade do token correspondente ser o próximo. Daí o decoder pode:
+
+- — Pegar o argmax (geração gulosa).
+- — Amostrar de acordo com as probabilidades (geração estocástica).
+- — Manter top-k caminhos (beam search).
+
+</Body>
+
+<Callout icon={Sigma} title="weight tying">
+  Em muitas implementações, a matriz de saída `W_vocab` é amarrada à matriz de embedding de entrada (`W_vocab = W_embedding^T`). Isso reduz parâmetros e tende a melhorar resultados — a intuição é que "projetar embedding → token" e "projetar vetor interno → token" deveriam morar no mesmo espaço.
+</Callout>
+
+<Marginalia label="quando o vocabulário é gigante">
+  Para `|V|` na casa dos 100k–500k, o softmax fica caro. Soluções clássicas: softmax hierárquico, sampled softmax, BPE/WordPiece (que mantêm `|V|` em torno de 30–50k). Hoje dominam os tokenizadores subword.
+</Marginalia>
+
+<TransformerQuizBlock topic="output" title="Checkpoint — Saída & Softmax" />

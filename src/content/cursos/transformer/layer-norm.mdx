@@ -1,0 +1,67 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import Marginalia from "@/components/shared/Marginalia";
+import TransformerQuizBlock from "@/components/quiz/TransformerQuizBlock";
+import { Activity } from "lucide-react";
+
+<SectionHeader num="05" title="Layer Norm & Residual" subtitle="a infraestrutura silenciosa que viabiliza o treino" vol="vol. v" />
+
+<Body>
+
+Atenção e FFN são as estrelas. Mas o que efetivamente <Highlight>permite empilhar 6, 12, 96 ou 175 camadas</Highlight> sem que o gradiente exploda ou desapareça são duas peças aparentemente menores: as **conexões residuais** e a **layer normalization**.
+
+</Body>
+
+<div className="my-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+  <div className="bg-card border border-border rounded-sm p-4">
+    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric mb-2">
+      conexão residual
+    </div>
+    <div className="font-mono text-[12px] bg-background border border-border rounded-sm p-2 mb-2">
+      output = sublayer(input) + input
+    </div>
+    <p className="font-serif italic text-[12px] text-muted-foreground">A entrada é somada à saída de cada sublayer. Isso cria um "atalho" pelo qual o gradiente flui mesmo se o sublayer pouco aprender — herdado dos ResNets (He et al., 2015).</p>
+  </div>
+  <div className="bg-card border border-border rounded-sm p-4">
+    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric mb-2">
+      layer normalization
+    </div>
+    <div className="font-mono text-[12px] bg-background border border-border rounded-sm p-2 mb-2">
+      LayerNorm(x) = γ · (x - μ)/σ + β
+    </div>
+    <p className="font-serif italic text-[12px] text-muted-foreground">Centra e escala as ativações <em>por amostra</em> (não por batch, como BatchNorm). Estabiliza distribuições internas, acelera a convergência, é insensível a tamanho de batch.</p>
+  </div>
+</div>
+
+<Body>
+
+Combinadas, formam o padrão **Add & Norm** que aparece após cada sublayer no Transformer (seja self-attention, enc-dec attention ou FFN):
+
+</Body>
+
+<div className="my-4 bg-card border border-border rounded-sm p-4">
+  <div className="font-mono text-[12px] text-center text-ink space-y-1">
+    <div>x</div>
+    <div className="text-ink-fade">↓</div>
+    <div className="bg-background border border-border rounded-sm py-1 inline-block px-3">sublayer(x)</div>
+    <div className="text-ink-fade">↓</div>
+    <div>+ x &nbsp; <span className="text-rubric">(residual)</span></div>
+    <div className="text-ink-fade">↓</div>
+    <div className="bg-background border border-border rounded-sm py-1 inline-block px-3">LayerNorm</div>
+    <div className="text-ink-fade">↓</div>
+    <div>output</div>
+  </div>
+</div>
+
+<Callout icon={Activity} title="por que LayerNorm e não BatchNorm?">
+  BatchNorm depende do tamanho do batch e tem comportamento estranho com sequências de tamanhos variáveis. LayerNorm normaliza dentro de cada amostra individualmente — funciona com batch=1, com sequências de qualquer tamanho, e em inferência igual ao treino.
+</Callout>
+
+<Marginalia label="pre-norm vs post-norm">
+  O paper original usa "post-norm" (LayerNorm depois do residual). Modelos modernos quase todos migraram para "pre-norm" (LayerNorm antes do sublayer): treino mais estável em redes muito profundas. Para a prova, basta saber que LayerNorm e residual existem juntos em cada bloco.
+</Marginalia>
+
+<TransformerQuizBlock topic="layer_norm" title="Checkpoint — Layer Norm & Residual" />

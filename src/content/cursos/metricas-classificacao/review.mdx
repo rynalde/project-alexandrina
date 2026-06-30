@@ -1,0 +1,49 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import MetricsEllipseRectangleLab from "@/components/playground/MetricsEllipseRectangleLab";
+import MetricsQuizBlock from "@/components/quiz/MetricsQuizBlock";
+import { ListChecks } from "lucide-react";
+
+<SectionHeader
+  num="06"
+  title="Treino Rápido"
+  subtitle="classificar regiões antes de calcular"
+  vol="vol. vii"
+/>
+
+<Body>
+
+Checklist para resolver a pergunta:
+
+1. Marque qual região é a verdade real: elipse.
+2. Marque qual região é a previsão: retângulo.
+3. Para cada pedaço do desenho, decida PV, PF, NV ou NF.
+4. Some os valores de cada categoria.
+5. Aplique a fórmula pedida.
+
+</Body>
+
+<MetricsEllipseRectangleLab />
+
+<Callout icon={ListChecks} title="fórmulas mínimas">
+  Accuracy = acertos totais. Precision = qualidade dos positivos previstos. Recall = cobertura dos positivos reais.
+</Callout>
+
+<Body>
+
+Guarde as três perguntas:
+
+<div className="grid gap-2 my-2">
+  <Kbd>{"accuracy: acertei quantos do total?"}</Kbd>
+  <Kbd>{"precision: dos que eu aceitei, quantos eram certos?"}</Kbd>
+  <Kbd>{"recall: dos que eram certos, quantos aceitei?"}</Kbd>
+</div>
+
+Se você souber responder essas perguntas no desenho, a conta fica mecânica.
+
+</Body>
+
+<MetricsQuizBlock topic="review" title="Checkpoint — Revisão" />

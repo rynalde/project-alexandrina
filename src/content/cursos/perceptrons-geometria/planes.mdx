@@ -1,0 +1,63 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import PerceptronPlane3D from "@/components/playground/PerceptronPlane3D";
+import PerceptronQuizBlock from "@/components/quiz/PerceptronQuizBlock";
+import { Layers3 } from "lucide-react";
+
+<SectionHeader
+  num="06"
+  title="Planos 3D"
+  subtitle="região entre dois planos"
+  vol="vol. vi"
+/>
+
+<Body>
+
+Em 3D, a fronteira de um perceptron é um plano:
+
+<Kbd>{"w1*x1 + w2*x2 + w3*x3 + b = 0"}</Kbd>
+
+O vetor <Kbd>w=(w1,w2,w3)</Kbd> é normal ao plano. Assim como em 2D, o sinal de <Kbd>w·x + b</Kbd> escolhe um dos dois lados.
+
+</Body>
+
+<PerceptronPlane3D />
+
+<Body>
+
+A região entre dois planos paralelos é a versão 3D da faixa entre duas retas paralelas. Se os planos são descritos por uma normal <Kbd>n</Kbd>, por exemplo:
+
+<div className="grid gap-2 my-2">
+  <Kbd>n·x = L</Kbd>
+  <Kbd>n·x = U</Kbd>
+</div>
+
+então os pontos entre eles satisfazem:
+
+<div className="grid gap-2 my-2">
+  <Kbd>n·x - L >= 0</Kbd>
+  <Kbd>-n·x + U >= 0</Kbd>
+</div>
+
+e a saída final é:
+
+<div className="grid gap-2 my-2">
+  <Kbd>p1 AND p2</Kbd>
+</div>
+
+</Body>
+
+<Callout icon={Layers3} title="mesmo raciocínio, uma dimensão a mais">
+  Em 2D: reta divide o plano. Em 3D: plano divide o espaço. Faixa entre retas e faixa entre planos são o mesmo padrão lógico: duas condições e um AND.
+</Callout>
+
+<Body>
+
+Se o enunciado pedir o lado oposto de um plano, não redesenhe tudo. Multiplique a equação por <Kbd>-1</Kbd> e siga.
+
+</Body>
+
+<PerceptronQuizBlock topic="planes" title="Checkpoint — Planos 3D" />

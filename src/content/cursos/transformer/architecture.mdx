@@ -1,0 +1,50 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import Marginalia from "@/components/shared/Marginalia";
+import TransformerArchitecture from "@/components/playground/TransformerArchitecture";
+import TransformerQuizBlock from "@/components/quiz/TransformerQuizBlock";
+import { Boxes } from "lucide-react";
+
+<SectionHeader num="06" title="Arquitetura" subtitle="encoder e decoder, bloco por bloco" vol="vol. v" />
+
+<Body>
+
+Agora que cada peça foi vista isoladamente, é hora de juntá-las. O Transformer é uma stack de **N blocos no encoder** e **N blocos no decoder** (no paper original, N=6). Os dois lados têm composições diferentes, mas a anatomia interna de cada bloco é regular.
+
+</Body>
+
+<TransformerArchitecture />
+
+<Body>
+
+### Bloco do encoder
+
+Cada bloco do encoder tem **dois sublayers**, ambos seguidos de Add & Norm:
+
+1. — <Highlight>Multi-head self-attention</Highlight>: a sequência de entrada olha para si mesma.
+2. — <Highlight>Feed-forward network</Highlight> (FFN): aplicada a cada posição independentemente. Tipicamente <Kbd>FFN(x) = max(0, x·W_1 + b_1) · W_2 + b_2</Kbd> com dimensão interna 4× maior que `d_model`.
+
+A entrada passa por N desses blocos sequencialmente. A saída do último encoder é o que será consumido pelos decoders.
+
+### Bloco do decoder
+
+Cada bloco do decoder tem **três sublayers**, todos com Add & Norm:
+
+1. — <Highlight>Masked multi-head self-attention</Highlight>: como no encoder, mas com máscara causal (só posições ≤ i).
+2. — <Highlight>Encoder-decoder attention</Highlight>: Q vem do decoder, K/V vêm da saída do encoder.
+3. — <Highlight>Feed-forward network</Highlight>: idêntica à do encoder.
+
+</Body>
+
+<Callout icon={Boxes} title="o que é uma posição no FFN">
+  O FFN não tem nada de sequencial. Ele aplica a mesma transformação a cada posição da sequência, em paralelo. É como uma 1x1 convolution. O que dá poder ao modelo é a alternância: atenção mistura informação <em>entre posições</em>, FFN refina cada posição <em>independentemente</em>.
+</Callout>
+
+<Marginalia label="resumo das três caixas de atenção">
+  No encoder: 1 self-attention por bloco. No decoder: 1 masked self-attention + 1 enc-dec attention por bloco. Total em um Transformer 6+6: 6 self-attentions no encoder, 6 masked self-attentions no decoder, 6 enc-dec attentions. Sempre as três espécies, sempre nesses papéis.
+</Marginalia>
+
+<TransformerQuizBlock topic="architecture" title="Checkpoint — Arquitetura" />

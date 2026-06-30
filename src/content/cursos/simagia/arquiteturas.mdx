@@ -1,0 +1,47 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { Layers } from "lucide-react";
+
+<SectionHeader num="02" title="Arquiteturas de Agentes" subtitle="deliberativa, reativa, híbrida e BDI" vol="vol. viii" />
+
+<Body>
+
+Uma **arquitetura** é a configuração dos componentes de um sistema e as conexões que coordenam as suas atividades. Neste curso, pode referir-se à estrutura interna de um agente ou à organização de agentes dentro de um SMA.
+
+Uma boa arquitetura deve ser simples, funcional, escalável, portável/isolada e fácil de manter.
+
+### Arquitetura deliberativa
+
+Representa o mundo simbolicamente e <Highlight>raciocina/planeia antes de agir</Highlight>. Útil quando objetivos, conhecimento e planeamento importam. Pode ser mais lenta e depende de um bom modelo do mundo.
+
+### Arquitetura reativa
+
+Liga <Highlight>perceção diretamente à ação</Highlight>. Rápida e robusta em ambientes dinâmicos, mas pode ter dificuldade com planeamento a longo prazo e objetivos complexos.
+
+### Arquitetura híbrida/em camadas
+
+Combina ambas. Camadas inferiores reagem rapidamente; camadas superiores podem planear, raciocinar ou coordenar. Em exame, o ponto-chave é <Highlight>explicar como as camadas interagem e o que cada uma é responsável</Highlight>.
+
+### BDI — Beliefs, Desires, Intentions
+
+Uma das arquiteturas mais importantes para exames:
+
+- — <Highlight>Crenças (Beliefs)</Highlight>: o que o agente sabe ou assume sobre o mundo.
+- — <Highlight>Desejos (Desires)</Highlight>: estados/objetivos que o agente gostaria de alcançar.
+- — <Highlight>Intenções (Intentions)</Highlight>: objetivos/planos a que o agente se comprometeu a executar.
+
+Em perguntas de exame, <Highlight>não basta nomear BDI</Highlight>. Deve instanciar: escolher um agente concreto e escrever as suas crenças, desejos, intenções, planos, eventos e ações.
+
+</Body>
+
+<Callout icon={Layers} title="exemplo BDI: agente de entregas">
+  Crenças: localização do pacote, destino, estado do tráfego/rota. Desejos: entregar a tempo, minimizar custo. Intenções: seguir a rota selecionada, replanear se bloqueado, notificar cliente se atrasado. Em exame, use este template e adapte ao cenário dado.
+</Callout>
+
+<Marginalia label="erros comuns em exame">
+  Nomear uma arquitetura sem justificar. BDI demasiado abstrato — instancie sempre. Ignorar desvantagens — exames pedem frequentemente vantagens E desvantagens. Confundir arquitetura do sistema com arquitetura do agente — declare se se refere a um agente internamente ou à organização do SMA.
+</Marginalia>

@@ -1,0 +1,33 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Marginalia from "@/components/shared/Marginalia";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import EncoderDecoderFlow from "@/components/playground/EncoderDecoderFlow";
+import QuizBlock from "@/components/quiz/QuizBlock";
+
+<SectionHeader num="02" title="Encoder-Decoder" subtitle="duas redes em sequência, uma só tarefa" />
+
+<Body>
+
+A arquitetura **encoder-decoder** divide o problema Seq2Seq em duas etapas separadas:
+
+- — **Encoder**: lê toda a sequência de entrada e produz uma <Highlight>representação interna</Highlight> — tipicamente um vetor (ou conjunto de vetores) que sintetiza o que foi visto.
+- — **Decoder**: consome essa representação e gera a sequência de saída token por token, normalmente até produzir um marcador de fim &lt;/s&gt;.
+
+Em sua forma mais clássica (Sutskever et al., 2014), tanto encoder quanto decoder são RNNs (LSTMs, especificamente). O último estado oculto do encoder vira o estado inicial do decoder.
+
+</Body>
+
+<EncoderDecoderFlow />
+
+<Body>
+
+Note como o encoder e o decoder são *simétricos em estrutura* mas *diferentes em função*: ambos são RNNs, mas o encoder é treinado para "comprimir" e o decoder para "expandir" (ou re-expressar). Os parâmetros das duas redes são <Highlight>aprendidos juntos</Highlight>, end-to-end, otimizando a função de log-verossimilhança da saída correta dada a entrada.
+
+</Body>
+
+<Marginalia label="treino vs inferência">
+  Durante o *treino*, o decoder recebe os tokens corretos como entrada (técnica chamada *teacher forcing*). Durante a *inferência*, o decoder usa suas próprias predições anteriores. Essa diferença pode causar problemas (exposure bias) que motivam técnicas como scheduled sampling.
+</Marginalia>
+
+<QuizBlock topic="enc_dec" title="Checkpoint — Encoder-Decoder" />

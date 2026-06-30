@@ -1,0 +1,52 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import MetricsEllipseRectangleLab from "@/components/playground/MetricsEllipseRectangleLab";
+import MetricsQuizBlock from "@/components/quiz/MetricsQuizBlock";
+import { Grid2X2 } from "lucide-react";
+
+<SectionHeader
+  num="01"
+  title="PV, PF, NV, NF"
+  subtitle="a matriz de confusão no desenho"
+  vol="vol. vii"
+/>
+
+<Body>
+
+Use duas perguntas para cada ponto:
+
+1. **Verdade real**: o ponto está dentro da elipse?
+2. **Previsão do modelo**: o ponto foi classificado como dentro pelo retângulo?
+
+A combinação das respostas define a categoria:
+
+<div className="grid gap-2 my-2">
+  <Kbd>PV / TP: dentro da elipse e classificado como dentro</Kbd>
+  <Kbd>PF / FP: fora da elipse, mas classificado como dentro</Kbd>
+  <Kbd>NV / TN: fora da elipse e classificado como fora</Kbd>
+  <Kbd>NF / FN: dentro da elipse, mas classificado como fora</Kbd>
+</div>
+
+</Body>
+
+<Callout icon={Grid2X2} title="positivo significa dentro da elipse">
+  Neste exercício, positivo não quer dizer "bom". Quer dizer "pertence à classe alvo". Como a classe alvo é a elipse, positivo = dentro da elipse.
+</Callout>
+
+<MetricsEllipseRectangleLab />
+
+<Body>
+
+Uma forma rápida de memorizar:
+
+- — **PV/TP**: o modelo acertou um ponto da elipse.
+- — **PF/FP**: o modelo exagerou e pegou ponto de fora.
+- — **NV/TN**: o modelo rejeitou corretamente ponto de fora.
+- — **NF/FN**: o modelo falhou ao recuperar ponto da elipse.
+
+</Body>
+
+<MetricsQuizBlock topic="counts" title="Checkpoint — Contagens" />

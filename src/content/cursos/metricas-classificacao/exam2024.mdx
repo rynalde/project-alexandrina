@@ -1,0 +1,49 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import MetricsQuizBlock from "@/components/quiz/MetricsQuizBlock";
+import { Map } from "lucide-react";
+
+<SectionHeader
+  num="05"
+  title="Regiões ra-rf"
+  subtitle="como ler a questão de 2024"
+  vol="vol. vii"
+/>
+
+<Body>
+
+Em 2024, a pergunta apareceu com regiões nomeadas como <Kbd>ra</Kbd>, <Kbd>rb</Kbd>, <Kbd>rc</Kbd>, <Kbd>rd</Kbd>, <Kbd>re</Kbd>, <Kbd>rf</Kbd>.
+
+As letras não têm significado próprio. Elas só dividem o desenho em pedaços. Para cada pedaço, faça a tabela:
+
+<div className="grid gap-2 my-2">
+  <Kbd>está dentro da elipse real?</Kbd>
+  <Kbd>foi classificado como dentro pelo retângulo?</Kbd>
+  <Kbd>qual é a área ou quantidade de pontos desse pedaço?</Kbd>
+</div>
+
+</Body>
+
+<Callout icon={Map} title="como montar a soma">
+  Depois de classificar cada região, some todas as regiões PV, todas as PF, todas as NV e todas as NF. Só então calcule accuracy, precision ou recall.
+</Callout>
+
+<Body>
+
+Modelo de leitura:
+
+<div className="grid gap-2 my-2">
+  <Kbd>ra + rc são PV se estiverem dentro da elipse e dentro do retângulo</Kbd>
+  <Kbd>rb é PF se estiver fora da elipse mas dentro do retângulo</Kbd>
+  <Kbd>rd é NF se estiver dentro da elipse mas fora do retângulo</Kbd>
+  <Kbd>re + rf são NV se estiverem fora da elipse e fora do retângulo</Kbd>
+</div>
+
+Não memorize essa distribuição como regra fixa. Use-a como exemplo. A prova pode trocar as letras, mas não troca a lógica.
+
+</Body>
+
+<MetricsQuizBlock topic="exam2024" title="Checkpoint — Regiões ra-rf" />

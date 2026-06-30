@@ -1,0 +1,50 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { Building2 } from "lucide-react";
+
+<SectionHeader num="06" title="Standards e Plataformas" subtitle="FIPA, ACL, KQML, JADE e SPADE" vol="vol. viii" />
+
+<Body>
+
+Standards existem porque agentes e plataformas precisam de interoperabilidade. As especificações FIPA definem interfaces que ajudam agentes a comunicar, serem geridos e integrarem-se com software/humanos.
+
+### As quatro áreas de interface FIPA
+
+1. — <Highlight>Agent Communication</Highlight>: comunicação entre agentes, incluindo FIPA ACL e protocolos de interação.
+2. — <Highlight>Agent Management</Highlight>: localização, criação, suporte à comunicação, mobilidade e segurança.
+3. — <Highlight>Agent/Software Integration</Highlight>: ligação de agentes a software, backends, sistemas legados ou hardware.
+4. — <Highlight>Human/Agent Interaction</Highlight>: interação entre agentes e humanos ou agentes relacionados com utilizadores.
+
+### FIPA ACL
+
+Mensagens ACL incluem performativos/atos comunicativos como <Kbd>request</Kbd>, <Kbd>inform</Kbd>, <Kbd>cfp</Kbd>, <Kbd>accept-proposal</Kbd>, <Kbd>reject-proposal</Kbd>, <Kbd>agree</Kbd>, <Kbd>failure</Kbd> e <Kbd>not-understood</Kbd>. Uma mensagem ACL contém normalmente sender, receiver, content, language, ontology e metadados de protocolo.
+
+### KQML
+
+Também é uma linguagem de comunicação entre agentes construída sobre performativos. Em exame, caracterize ambas como <Highlight>linguagens de comunicação de alto nível com performativos, parâmetros de mensagem e intenção semântica</Highlight>. ACL é a linguagem standard FIPA enfatizada para interoperabilidade.
+
+### Plataformas
+
+- — **JADE**: plataforma Java seguindo FIPA, com containers, agentes, AMS e DF.
+- — **JADEX**: estende JADE com estados mentais estilo BDI.
+- — **SPADE**: ambiente Python para desenvolvimento multi-agente usando XMPP e comunicação estilo FIPA.
+- — **FIPA-OS**: plataforma SMA open-source compatível com FIPA.
+- — **OAA/JATLite**: plataformas não-FIPA com os seus próprios conceitos de comunicação/router.
+
+### Facilitador e Broker
+
+**Facilitador**: ajuda a descobrir quem pode fornecer um serviço. **Broker**: pode mediar a interação, receber pedidos e encaminhar/coordenar com fornecedores. Vantagens: descoberta mais fácil e desacoplamento. Desvantagens: bottleneck, dependência de um agente intermediário e possível ponto único de falha.
+
+</Body>
+
+<Callout icon={Building2} title="exemplo: Directory Facilitator em JADE">
+  Um agente de entrega regista "transport-service" no DF. Um agente que precisa de transporte pesquisa no DF para encontrar fornecedores disponíveis. Isto desacopla quem precisa de quem oferece — mas cria dependência do DF como ponto central.
+</Callout>
+
+<Marginalia label="pontos de exame diretos">
+  Exames passados pedem diretamente para caracterizar KQML e ACL e para explicar funções de facilitador/broker com vantagens e inconvenientes. Esta é uma secção de teoria direta: memorize termos e prepare exemplos curtos. Não confunda DF/facilitador (descoberta) com broker (mediação de interação).
+</Marginalia>

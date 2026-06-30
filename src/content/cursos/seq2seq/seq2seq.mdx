@@ -1,0 +1,40 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import Kbd from "@/components/shared/Kbd";
+import QuizBlock from "@/components/quiz/QuizBlock";
+import { Languages } from "lucide-react";
+
+<SectionHeader num="01" title="Sequence-to-Sequence" subtitle="entrada é sequência, saída também" />
+
+<Body>
+
+Em **Seq2Seq** o objetivo é claro: dada uma sequência de tokens de entrada <Kbd>x = (x₁, x₂, ..., xₙ)</Kbd>, produzir uma sequência de tokens de saída <Kbd>y = (y₁, y₂, ..., yₘ)</Kbd>. Crucialmente, <Highlight>n e m podem ser diferentes</Highlight>: a saída pode ser mais curta, mais longa ou do mesmo tamanho que a entrada.
+
+Isso distingue Seq2Seq de:
+
+- — **Classificação de texto** (sequência → uma única classe).
+- — **Sequence tagging** (sequência → sequência *de mesmo comprimento*, uma tag por token).
+
+A tarefa canônica é **tradução automática**: "the cat sat on the mat" → "o gato sentou no tapete". Note que os comprimentos são diferentes (7 vs 6), a ordem das palavras pode mudar, palavras podem ser fundidas ou expandidas.
+
+</Body>
+
+<Callout icon={Languages} title="por que Seq2Seq foi tão importante">
+  Antes de 2014, MT era dominado por *statistical machine translation* (SMT) — sistemas modulares com tabelas de tradução, modelos de alinhamento e modelos de linguagem separados. Seq2Seq mostrou que uma única rede neural treinada end-to-end podia rivalizar e depois superar tudo isso. Foi o início da era neural em NLP.
+</Callout>
+
+<Body>
+
+O modelo formal: queremos aprender P(y | x) e, durante a inferência, encontrar a y que maximize essa probabilidade. Pela regra da cadeia:
+
+```
+P(y | x) = ∏ₜ P(yₜ | y₁, ..., yₜ₋₁, x)
+```
+
+Cada token de saída é predito condicionando-se em (a) tokens anteriores já gerados e (b) toda a entrada. Como representamos "toda a entrada"? Aí entra o encoder.
+
+</Body>
+
+<QuizBlock topic="seq2seq" title="Checkpoint — Seq2Seq" />

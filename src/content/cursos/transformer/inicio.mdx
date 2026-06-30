@@ -1,0 +1,34 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import TransformerArchitecture from "@/components/playground/TransformerArchitecture";
+import { Lightbulb } from "lucide-react";
+
+<SectionHeader num="00" title="Transformer" subtitle="caderno v — attention is all you need" vol="vol. v" />
+
+<Body>
+
+Quinto grande tema. O Transformer (Vaswani et al., 2017) <Highlight>aposenta a recorrência</Highlight> e constrói toda a arquitetura sobre mecanismos de atenção. Nada de LSTMs, nada de processamento sequencial: tokens são processados em paralelo, e a noção de "ordem" é reintroduzida via positional encoding.
+
+Os ingredientes que entram no jogo aqui:
+
+- — **Self-attention (intra-attention)**: cada token olha para todos os outros da mesma sequência.
+- — **Encoder-decoder attention (inter-attention)**: o decoder consulta a representação do encoder. É a atenção de Bahdanau, agora dentro de uma arquitetura completamente atencional.
+- — **Multi-head attention**: várias cabeças em paralelo, cada uma capturando um tipo diferente de relação.
+- — **Positional encoding**: como não há recorrência, a ordem precisa ser injetada explicitamente.
+- — **Layer normalization + conexões residuais**: estabilizam o treino de redes profundas.
+- — **Decoder masking**: garante que o decoder não enxergue o futuro durante treino e inferência.
+
+</Body>
+
+<TransformerArchitecture />
+
+<Callout icon={Lightbulb} title="estratégia de estudo">
+  Os capítulos seguem a anatomia: começa pelas três caixas de atenção (01 self-attention, 02 enc-dec attention, 03 multi-head), depois os ingredientes que viabilizam o treino (04 positional encoding, 05 layer norm + residual), depois a arquitetura completa (06), o detalhe do decoder (07 masked attention) e a saída (08 softmax). A pegadinha mais comum em prova é confundir intra-attention com inter-attention — guarde isso como mantra desde já.
+</Callout>
+
+<Marginalia label="pegadinhas mais frequentes">
+  Achar que self-attention e encoder-decoder attention são a mesma coisa (não — a primeira é intra, a segunda é inter). Achar que positional encoding aproxima palavras semanticamente (não — só carrega ordem). Achar que o Transformer é recorrente (não — daí precisar de PE). Achar que decoder masking é opcional (não — sem ela, o modelo "vê" o futuro no treino).
+</Marginalia>

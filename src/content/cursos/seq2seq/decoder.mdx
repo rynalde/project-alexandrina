@@ -1,0 +1,37 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import Highlight from "@/components/shared/Highlight";
+import AutoregressiveDemo from "@/components/playground/AutoregressiveDemo";
+import QuizBlock from "@/components/quiz/QuizBlock";
+import { Activity } from "lucide-react";
+
+<SectionHeader num="07" title="Decoder Autoregressivo" subtitle="um token por vez, condicionado em tudo o que veio antes" />
+
+<Body>
+
+O decoder é **autoregressivo**: a cada passo, produz um token, e esse token vira parte da entrada do passo seguinte. A geração continua até produzir um marcador de fim &lt;/s&gt; ou atingir um limite de tamanho.
+
+Formalmente, P(yₜ) condiciona em três coisas:
+
+- — A **entrada original x** (via context vector ou atenção).
+- — Os **tokens já gerados** y₁, ..., yₜ₋₁.
+- — O **estado interno** sₜ do decoder no tempo t.
+
+</Body>
+
+<AutoregressiveDemo />
+
+<Body>
+
+Esse padrão tem uma propriedade fundamental: <Highlight>o modelo nunca vê o futuro</Highlight>. No tempo t, ele só sabe sobre y₁, ..., yₜ₋₁ — nada além. Isso é coerente com a inferência (onde realmente não há futuro), mas exige cuidado no treino para que o modelo aprenda nessa mesma condição.
+
+A solução clássica é o **teacher forcing**: durante o treino, em cada passo o decoder recebe como entrada o token *correto* do tempo t-1 (do dataset), não a sua própria predição. Isso acelera o treino e estabiliza o gradiente. Mas cria um descompasso entre treino e inferência (exposure bias) — o modelo nunca foi treinado a partir de seus próprios erros.
+
+</Body>
+
+<Callout icon={Activity} title="decoders modernos">
+  Em arquiteturas Transformer modernas (GPT, T5), o decoder autoregressivo continua sendo o padrão para tarefas de geração. A diferença é que o "estado interno" não é mais um RNN — é uma stack de camadas com self-attention mascarada (causal), onde o mascaramento garante que cada posição só pode atender a posições anteriores.
+</Callout>
+
+<QuizBlock topic="decoder" title="Checkpoint — Decoder Autoregressivo" />
