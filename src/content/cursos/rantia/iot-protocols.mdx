@@ -8,6 +8,17 @@ import { Wifi } from "lucide-react";
 
 <SectionHeader num="10" title="Protocolos IoT e MQTT" subtitle="QoS, wildcards, Mosquitto e wireless" vol="vol. ix" />
 
+<LearningObjectives
+  sectionId="iot_protocols"
+  items={[
+    "Distinguir MQTT QoS 0, 1 e 2.",
+    "Aplicar wildcards + e #.",
+    "Reconhecer configuração básica Mosquitto.",
+  ]}
+/>
+
+<LessonStage step="1" title="Conteúdo" subtitle="Aprende QoS, wildcards, Mosquitto e escolhas de protocolo." />
+
 <Body>
 
 Protocolos IoT são a espinha dorsal da comunicação. Exames testam fortemente MQTT QoS, wildcards e topic matching.
@@ -55,3 +66,11 @@ Exemplo: `home/+/led` match `home/livingroom/led`.
 <Marginalia label="armadilhas">
   Escolher QoS 1 quando a pergunta pede "exactly once" (é QoS 2). Usar + para match multi-nível (+ é um nível, # é multi-nível). Esquecer allow_anonymous true para Mosquitto.
 </Marginalia>
+
+<LessonStage step="2" title="Interação" subtitle="Responde a mini-casos MQTT antes do checkpoint." />
+
+<MqttProtocolDrill />
+
+<LessonStage step="3" title="Quiz" subtitle="Treina QoS, wildcards e configuração Mosquitto." />
+
+<SectionQuiz sectionId="iot_protocols" topic="iot_protocols" title="Checkpoint — protocolos IoT e MQTT" />

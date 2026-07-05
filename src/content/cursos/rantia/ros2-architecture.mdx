@@ -8,6 +8,17 @@ import { Terminal } from "lucide-react";
 
 <SectionHeader num="03" title="ROS2 Arquitetura e CLI" subtitle="nós, tópicos, DDS, QoS e comandos" vol="vol. ix" />
 
+<LearningObjectives
+  sectionId="ros2_architecture"
+  items={[
+    "Modelar nós, tópicos, publishers e subscribers.",
+    "Explicar DDS e a ausência de roscore em ROS2.",
+    "Escolher comandos CLI ROS2 corretos.",
+  ]}
+/>
+
+<LessonStage step="1" title="Conteúdo" subtitle="Aprende a linguagem base: nós, tópicos, DDS, QoS e CLI." />
+
 <Body>
 
 ROS2 é uma das **áreas mais fortes de exame**. Organiza software robótico como nós que comunicam através de tópicos, serviços e ações.
@@ -50,3 +61,11 @@ Em exame, verifique SEMPRE se a pergunta é ROS1 ou ROS2. Comandos ROS1 como `ro
 <Marginalia label="prioridade alta">
   ROS2 CLI é a área com maior frequência em exames recentes. Memorize a tabela de comandos. Saiba que ros2 topic hz mede frequência e ros2 topic echo mostra mensagens. Não confunda ros2 run com ros2 execute.
 </Marginalia>
+
+<LessonStage step="2" title="Interação" subtitle="Toca nos nós do grafo para ver quem publica e consome." />
+
+<Ros2GraphSimulation />
+
+<LessonStage step="3" title="Quiz" subtitle="Pratica a escolha de comandos ROS2 com feedback imediato." />
+
+<SectionQuiz sectionId="ros2_architecture" topic="ros2_architecture" title="Checkpoint — ROS2 arquitetura e CLI" />

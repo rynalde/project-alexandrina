@@ -3,17 +3,26 @@
 import { useState, useRef, type ComponentType } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Section } from "@/lib/data";
+import type { LearningCourseConfig } from "@/lib/course-learning";
 import Sidebar from "@/components/layout/Sidebar";
 import MobileHeader from "@/components/layout/MobileHeader";
+import { LearningProgressProvider } from "@/components/learning/LearningProgressProvider";
 
 interface Props {
   sections: Section[];
   sectionComponents: Record<string, ComponentType>;
   vol?: string;
   courseTitle?: string;
+  learningConfig?: LearningCourseConfig;
 }
 
-export default function CoursePage({ sections, sectionComponents, vol, courseTitle }: Props) {
+export default function CoursePage({
+  sections,
+  sectionComponents,
+  vol,
+  courseTitle,
+  learningConfig,
+}: Props) {
   const [active, setActive] = useState(sections[0]?.id ?? "");
   const [visited, setVisited] = useState(new Set([sections[0]?.id ?? ""]));
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -32,6 +41,11 @@ export default function CoursePage({ sections, sectionComponents, vol, courseTit
   const next = sections[currentIdx + 1];
 
   const ActiveSection = sectionComponents[active];
+  const sectionContent = (
+    <div key={active} className="animate-fade-in">
+      {ActiveSection ? <ActiveSection /> : null}
+    </div>
+  );
 
   return (
     <div className="paper-texture min-h-screen font-sans text-ink">
@@ -68,9 +82,13 @@ export default function CoursePage({ sections, sectionComponents, vol, courseTit
           className="flex-1 min-w-0 md:h-screen md:overflow-y-auto custom-scrollbar"
         >
           <div className="max-w-3xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16 py-8 sm:py-12 md:py-16">
-            <div key={active} className="animate-fade-in">
-              {ActiveSection ? <ActiveSection /> : null}
-            </div>
+            {learningConfig ? (
+              <LearningProgressProvider config={learningConfig}>
+                {sectionContent}
+              </LearningProgressProvider>
+            ) : (
+              sectionContent
+            )}
 
             {/* Prev / Next navigation */}
             <div className="mt-16 sm:mt-20 pt-6 sm:pt-8 border-t border-border flex items-start justify-between gap-3">

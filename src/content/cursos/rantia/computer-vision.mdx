@@ -7,6 +7,17 @@ import { Eye } from "lucide-react";
 
 <SectionHeader num="06" title="Visão Computacional" subtitle="cv_bridge, OpenCV, YOLO e HSV" vol="vol. ix" />
 
+<LearningObjectives
+  sectionId="computer_vision"
+  items={[
+    "Mapear o pipeline de imagem em ROS2.",
+    "Explicar cv_bridge.",
+    "Distinguir H, S e V no modelo HSV.",
+  ]}
+/>
+
+<LessonStage step="1" title="Conteúdo" subtitle="Fixa o pipeline imagem → processamento → decisão." />
+
 <Body>
 
 Robots autónomos seguem `Perceber → Decidir → Agir`. Visão computacional pertence à perceção.
@@ -44,3 +55,11 @@ Uma deteção visual não basta para ação. O robot precisa de: distância ao o
 <Marginalia label="pontos de exame">
   cv_bridge converte ROS2↔OpenCV. HSV separa cor de iluminação. YOLO dá boxes+labels+confidence. Um robot precisa de mais do que uma deteção 2D para agir no mundo 3D.
 </Marginalia>
+
+<LessonStage step="2" title="Interação" subtitle="Percorre o pipeline de visão até à ação do robot." />
+
+<VisionPipelineExplorer />
+
+<LessonStage step="3" title="Quiz" subtitle="Confirma cv_bridge, HSV, YOLO e perceção para ação." />
+
+<SectionQuiz sectionId="computer_vision" topic="computer_vision" title="Checkpoint — visão computacional" />

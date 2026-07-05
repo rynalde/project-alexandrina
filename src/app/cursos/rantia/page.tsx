@@ -2,6 +2,7 @@
 
 import { type ComponentType } from "react";
 import { RANTIA_SECTIONS } from "@/lib/rantia-data";
+import { RANTIA_LEARNING_CONFIG } from "@/lib/rantia-learning";
 import CoursePage from "@/components/course/CoursePage";
 import RantiaSimuladoSection from "@/components/quiz/RantiaSimuladoSection";
 
@@ -45,6 +46,7 @@ export default function RantiaPage() {
       sectionComponents={SECTION_MAP}
       vol="vol. ix"
       courseTitle="RAINTIA / Ambientes Inteligentes"
+      learningConfig={RANTIA_LEARNING_CONFIG}
     />
   );
 }

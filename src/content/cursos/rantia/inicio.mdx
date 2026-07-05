@@ -7,6 +7,24 @@ import { BookOpen } from "lucide-react";
 
 <SectionHeader num="00" title="RAINTIA / Ambientes Inteligentes" subtitle="caderno ix — guia de estudo" vol="vol. ix" />
 
+<ProgressSummary />
+
+<LearningObjectives
+  sectionId="inicio"
+  items={[
+    "Perceber o mapa mental do curso: robótica, ROS2, simulação e IoT.",
+    "Separar conceitos de exame de detalhe instrumental.",
+    "Usar checkpoints para descobrir tópicos fracos antes do simulado.",
+  ]}
+/>
+
+<LessonStage step="1" title="Conteúdo" subtitle="Vê primeiro o percurso completo para saber onde cada capítulo encaixa." />
+
+<ConceptFlow
+  title="percurso de estudo"
+  steps={["robótica", "ROS2", "simulação", "visão", "robótica distribuída", "IoT", "cloud"]}
+/>
+
 <Body>
 
 Nono grande tema. Este caderno organiza o curso de **Robótica Autónoma e Ambientes Inteligentes (RAINTIA)** num percurso de estudo focado nos padrões de exame mais recorrentes.
@@ -36,3 +54,15 @@ O curso cobre dois grandes blocos:
 <Marginalia label="padrões de exame mais frequentes">
   Reconhecimento de comandos ROS2. Diferenças ROS1 vs ROS2. Função de RViz2 vs Gazebo. URDF vs SDF. MQTT QoS e wildcards. Cálculos Ohm/ADC/PWM. Interrupts e pull-ups. Definição de sistema ciber-físico. Camadas RAMI 4.0.
 </Marginalia>
+
+<LessonStage step="2" title="Interação" subtitle="Usa flashcards para arrancar antes de entrar nos capítulos." />
+
+<FlashcardDrill
+  sectionId="inicio"
+  title="arranque rápido"
+  cards={[
+    { front: "Qual é o bloco mais recorrente?", back: "ROS2: nós, tópicos, CLI, DDS, packages e RViz2." },
+    { front: "Qual é o erro visual clássico?", back: "Confundir RViz2 com Gazebo/Webots. RViz2 visualiza; não simula." },
+    { front: "Qual é o bloco IoT mais calculável?", back: "Sensores e eletrónica: Ohm, ADC, PWM, interrupts e pull-ups." },
+  ]}
+/>

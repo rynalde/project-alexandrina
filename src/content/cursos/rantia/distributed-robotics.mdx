@@ -8,6 +8,17 @@ import { Network } from "lucide-react";
 
 <SectionHeader num="07" title="Robótica Distribuída" subtitle="DDS, MQTT, bridges e data fusion" vol="vol. ix" />
 
+<LearningObjectives
+  sectionId="distributed_robotics"
+  items={[
+    "Explicar DDS vs MQTT sem os tratar como substitutos.",
+    "Modelar uma bridge ROS2-MQTT.",
+    "Identificar riscos de bridging indiscriminado.",
+  ]}
+/>
+
+<LessonStage step="1" title="Conteúdo" subtitle="Aprende a diferença entre DDS interno e MQTT para IoT/cloud." />
+
 <Body>
 
 ### DDS vs MQTT
@@ -40,3 +51,11 @@ Um modelo partilhado do mundo pode combinar dados de robot, sensores e IoT numa 
 <Marginalia label="prioridade alta">
   Exames 2025 perguntam diretamente a vantagem de integrar ROS2 com MQTT e o que o bridge fornece. Riscos de bridging indiscriminado também são testados. Saiba desenhar o fluxo: ROS2 topic → bridge → MQTT broker → cloud.
 </Marginalia>
+
+<LessonStage step="2" title="Interação" subtitle="Ajusta a bridge e observa os riscos de publicar tudo." />
+
+<MqttBridgeLab />
+
+<LessonStage step="3" title="Quiz" subtitle="Fecha com as perguntas sobre DDS, MQTT e bridging." />
+
+<SectionQuiz sectionId="distributed_robotics" topic="distributed_robotics" title="Checkpoint — robótica distribuída" />

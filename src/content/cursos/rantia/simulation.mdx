@@ -8,6 +8,17 @@ import { Box } from "lucide-react";
 
 <SectionHeader num="05" title="Simulação" subtitle="Gazebo, Webots, URDF, SDF e LiDAR" vol="vol. ix" />
 
+<LearningObjectives
+  sectionId="simulation"
+  items={[
+    "Distinguir Gazebo, Webots e RViz2.",
+    "Distinguir URDF de SDF.",
+    "Reconhecer sim-to-real gap e sensores simulados.",
+  ]}
+/>
+
+<LessonStage step="1" title="Conteúdo" subtitle="Distingue simuladores, visualizadores e ficheiros de descrição." />
+
 <Body>
 
 Simulação suporta segurança, redução de custos, repetibilidade, treino de AI e validação. O caminho é: `Simulação → Treino AI → Validação → Robot Real`.
@@ -44,3 +55,11 @@ No padrão de exame: <Kbd>laser_retro</Kbd> define refletividade laser para LiDA
 <Marginalia label="armadilhas">
   Confundir RViz2 com simulador. Confundir URDF com SDF. Esquecer o sim-to-real gap. Não saber que laser_retro é refletividade LiDAR. Confundir tipos de joints.
 </Marginalia>
+
+<LessonStage step="2" title="Interação" subtitle="Escolhe a ferramenta certa para cada cenário de simulação." />
+
+<SimulationDecisionLab />
+
+<LessonStage step="3" title="Quiz" subtitle="Treina as distinções URDF, SDF, RViz2, Gazebo e sensores." />
+
+<SectionQuiz sectionId="simulation" topic="simulation" title="Checkpoint — simulação" />

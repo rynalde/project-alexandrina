@@ -7,6 +7,17 @@ import { Cpu } from "lucide-react";
 
 <SectionHeader num="08" title="Fundamentos IoT" subtitle="AIoT, edge AI, TinyML e federated learning" vol="vol. ix" />
 
+<LearningObjectives
+  sectionId="iot_foundations"
+  items={[
+    "Definir IoT, AIoT, Edge AI e TinyML.",
+    "Escolher entre edge, cloud e tiny para cenários.",
+    "Relacionar digital twins com sistemas ciber-físicos.",
+  ]}
+/>
+
+<LessonStage step="1" title="Conteúdo" subtitle="Separa IoT, AIoT, Edge AI, TinyML e digital twins." />
+
 <Body>
 
 ### IoT
@@ -42,3 +53,11 @@ Representações digitais de sistemas físicos para monitorização e análise. 
 <Marginalia label="pontos de exame">
   AIoT combina IoT + AI. Edge AI processa localmente. TinyML corre em microcontroladores. Federated learning preserva privacidade. Digital twins são representações digitais de sistemas físicos.
 </Marginalia>
+
+<LessonStage step="2" title="Interação" subtitle="Escolhe edge, cloud ou tiny conforme o cenário." />
+
+<EdgeCloudDecisionLab />
+
+<LessonStage step="3" title="Quiz" subtitle="Consolida definições e escolhas de arquitetura IoT." />
+
+<SectionQuiz sectionId="iot_foundations" topic="iot_foundations" title="Checkpoint — fundamentos IoT" />

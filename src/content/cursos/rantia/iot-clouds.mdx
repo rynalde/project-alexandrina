@@ -7,6 +7,17 @@ import { Cloud } from "lucide-react";
 
 <SectionHeader num="11" title="IoT Cloud e Digital Twins" subtitle="edge/cloud, plataformas e gémeos digitais" vol="vol. ix" />
 
+<LearningObjectives
+  sectionId="iot_clouds"
+  items={[
+    "Ordenar a jornada de dados IoT.",
+    "Comparar edge e cloud.",
+    "Explicar digital twin como representação operacional.",
+  ]}
+/>
+
+<LessonStage step="1" title="Conteúdo" subtitle="Ordena a jornada de dados e a função do digital twin." />
+
 <Body>
 
 ### Jornada de dados IoT
@@ -44,3 +55,11 @@ Modelo de segurança onde nenhum dispositivo ou utilizador é confiável por omi
 <Marginalia label="prioridade baixa mas completa">
   Frequência direta em exame é baixa, mas completa o curso. Se aparecer, será sobre a jornada de dados, edge vs cloud, ou digital twins. Não precisa de nomes exatos de produtos cloud — use os padrões das aulas.
 </Marginalia>
+
+<LessonStage step="2" title="Interação" subtitle="Percorre o fluxo device, edge, cloud, analytics e twin." />
+
+<IotTwinFlow />
+
+<LessonStage step="3" title="Quiz" subtitle="Fecha o bloco cloud com perguntas de síntese." />
+
+<SectionQuiz sectionId="iot_clouds" topic="iot_clouds" title="Checkpoint — IoT cloud e digital twins" />

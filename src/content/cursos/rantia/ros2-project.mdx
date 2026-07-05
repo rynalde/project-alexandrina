@@ -8,6 +8,17 @@ import { FolderOpen } from "lucide-react";
 
 <SectionHeader num="04" title="ROS2 Projeto e Ferramentas" subtitle="packages, launch, RViz2, rqt_graph e TF" vol="vol. ix" />
 
+<LearningObjectives
+  sectionId="ros2_project"
+  items={[
+    "Ligar workspace, package.xml, launch files e colcon.",
+    "Separar RViz2 de simuladores como Gazebo.",
+    "Explicar rqt_graph e TF2.",
+  ]}
+/>
+
+<LessonStage step="1" title="Conteúdo" subtitle="Organiza workspace, package, launch, RViz2, rqt_graph e TF2." />
+
 <Body>
 
 ### Workspace e Packages
@@ -43,3 +54,11 @@ Exame pode pedir como visualizar odometria em RViz2. A resposta envolve adiciona
 <Marginalia label="comandos de exame">
   colcon build = compilar workspace. rviz2 = abrir visualizador. package.xml = ficheiro de dependências. Não confunda setup.py (Python packages) com package.xml (ROS2 metadata).
 </Marginalia>
+
+<LessonStage step="2" title="Interação" subtitle="Percorre o fluxo de ferramentas pela ordem em que aparecem no projeto." />
+
+<Ros2ToolingFlow />
+
+<LessonStage step="3" title="Quiz" subtitle="Valida se sabes distinguir visualização, simulação e metadados." />
+
+<SectionQuiz sectionId="ros2_project" topic="ros2_project" title="Checkpoint — projeto ROS2" />

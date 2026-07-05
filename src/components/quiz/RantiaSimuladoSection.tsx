@@ -1,5 +1,6 @@
 import SectionHeader from "@/components/shared/SectionHeader";
 import Simulado from "@/components/quiz/Simulado";
+import { ProgressSummary } from "@/components/learning/LearningBlocks";
 import {
   RANTIA_QUESTIONS,
   RANTIA_TOPIC_LABELS,
@@ -19,6 +20,7 @@ export default function RantiaSimuladoSection() {
         clique em <em>Submeter</em> para ver o resultado, os tópicos fracos e a
         explicação de cada item.
       </p>
+      <ProgressSummary />
       <Simulado
         questions={RANTIA_QUESTIONS}
         topicLabels={RANTIA_TOPIC_LABELS}

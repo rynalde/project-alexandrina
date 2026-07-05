@@ -7,6 +7,22 @@ import { Map } from "lucide-react";
 
 <SectionHeader num="01" title="Mapa do Curso" subtitle="robótica inteligente, ambientes e Industry 4.0" vol="vol. ix" />
 
+<LearningObjectives
+  sectionId="course_map"
+  items={[
+    "Definir robótica inteligente e ambiente inteligente.",
+    "Explicar sistema ciber-físico como ligação bidirecional.",
+    "Memorizar as camadas RAMI 4.0.",
+  ]}
+/>
+
+<LessonStage step="1" title="Conteúdo" subtitle="Primeiro fixa o mapa mental do curso e a sequência ciber-física." />
+
+<ConceptFlow
+  title="sistema ciber-físico"
+  steps={["mundo físico", "sensores", "software/comunicação", "decisão", "atuadores", "mundo físico"]}
+/>
+
 <Body>
 
 O curso enquadra robots como **agentes físicos de AI** dentro de ambientes conectados. A visão é: `Mundo Físico → Sensores → ROS2/processamento → Decisão → Atuadores`, com IoT/MQTT/cloud interligados.
@@ -44,3 +60,22 @@ Comunicação onde mensagens passam por um broker central que encaminha por tóp
 <Marginalia label="erros comuns">
   Definir robótica como apenas hardware (mencione sensing, processing, comunicação e ação). Dizer que Industry 4.0 é offline/fechado (é conectado com feedback). Esquecer as camadas RAMI 4.0.
 </Marginalia>
+
+<LessonStage step="2" title="Interação" subtitle="Treina as camadas RAMI 4.0 uma a uma, sem dropdowns confusos." />
+
+<MatchingDrill
+  sectionId="course_map"
+  title="camadas RAMI 4.0"
+  pairs={[
+    { prompt: "Ativo físico ou lógico representado", answer: "Asset" },
+    { prompt: "Ligação entre ativo e mundo digital", answer: "Integration" },
+    { prompt: "Transporte e troca de dados", answer: "Communication" },
+    { prompt: "Dados estruturados e contexto", answer: "Information" },
+    { prompt: "Funções e serviços do sistema", answer: "Functional" },
+    { prompt: "Objetivos, regras e processos", answer: "Business" },
+  ]}
+/>
+
+<LessonStage step="3" title="Quiz" subtitle="Confirma se consegues responder como num exame curto." />
+
+<SectionQuiz sectionId="course_map" topic="course_map" title="Checkpoint — mapa do curso" />
