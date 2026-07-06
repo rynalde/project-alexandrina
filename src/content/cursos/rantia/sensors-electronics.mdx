@@ -17,6 +17,9 @@ import { Zap } from "lucide-react";
   ]}
 />
 
+<MobileStepScreens>
+<MobileStepScreen label="conteúdo" title="Conteúdo">
+
 <LessonStage step="1" title="Conteúdo" subtitle="Memoriza os valores e separa leitura analógica de controlo PWM." />
 
 <Body>
@@ -76,10 +79,19 @@ Padrão de exame: `ESPAsyncWebServer.h` e `ArduinoJson.h`.
   Confundir ADC input com PWM output. Confundir RISING com FALLING. Esquecer pull-up (previne floating). Ligar 5V diretamente a 3.3V sem level shifter. Confundir valores Arduino (0–1023) com ESP32 (0–4095).
 </Marginalia>
 
+</MobileStepScreen>
+<MobileStepScreen label="interação" title="Interação">
+
 <LessonStage step="2" title="Interação" subtitle="Altera tensão e resistência para ver corrente e escala ADC." />
 
 <ElectronicsLab />
 
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
 <LessonStage step="3" title="Quiz" subtitle="Treina Ohm, ADC, PWM, interrupts e pull-up." />
 
 <SectionQuiz sectionId="sensors_electronics" topic="sensors_electronics" title="Checkpoint — sensores e eletrónica" />
+
+</MobileStepScreen>
+</MobileStepScreens>

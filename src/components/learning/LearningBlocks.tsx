@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { Children, isValidElement, useEffect, useMemo, useRef, useState, type ReactElement, type ReactNode } from "react";
 import {
   AlertTriangle,
   BookOpen,
   Check,
+  ChevronLeft,
   ChevronRight,
   CircleCheck,
   ClipboardList,
@@ -57,6 +58,132 @@ export function LearningObjectives({
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+type MobileStepScreenProps = {
+  label: string;
+  title?: string;
+  children: ReactNode;
+};
+
+export function MobileStepScreen({ children }: MobileStepScreenProps) {
+  return <>{children}</>;
+}
+
+export function MobileStepScreens({ children }: { children: ReactNode }) {
+  const steps = Children.toArray(children).filter(
+    (child): child is ReactElement<MobileStepScreenProps> =>
+      isValidElement<MobileStepScreenProps>(child)
+  );
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+  const current = steps[active];
+
+  if (!steps.length || !current) return null;
+
+  const goToStep = (index: number) => {
+    setActive(index);
+    window.requestAnimationFrame(() => {
+      const top = containerRef.current?.getBoundingClientRect().top;
+      if (typeof top !== "number") return;
+      window.scrollTo({
+        top: window.scrollY + top - 57,
+        behavior: "smooth",
+      });
+    });
+  };
+
+  return (
+    <div ref={containerRef} className="contents md:block">
+      <div className="sticky top-[57px] md:top-0 z-20 -mx-4 mb-5 border-y border-border bg-background/95 px-4 py-3 shadow-[0_10px_24px_rgba(26,21,18,0.06)] backdrop-blur">
+        <div className="flex items-end justify-between gap-4">
+          <div className="min-w-0">
+            <div className="font-mono text-xs uppercase tracking-widest text-rubric">
+              ecrã {active + 1} de {steps.length}
+            </div>
+            <div className="mt-0.5 truncate font-serif text-lg italic leading-tight text-ink">
+              {current.props.title ?? current.props.label}
+            </div>
+          </div>
+          <div className="flex shrink-0 gap-1.5" aria-hidden="true">
+            {steps.map((step, index) => (
+              <span
+                key={`${step.props.label}-dot-${index}`}
+                className={`size-2 rounded-full ${
+                  index === active ? "bg-rubric" : "bg-border"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+          {steps.map((step, index) => (
+            <button
+              key={`${step.props.label}-${index}`}
+              type="button"
+              onClick={() => goToStep(index)}
+              aria-current={index === active ? "step" : undefined}
+              className={`flex min-h-10 shrink-0 items-center gap-2 rounded-full border py-2 pl-2 pr-3 text-left transition ${
+                index === active
+                  ? "border-transparent bg-ink text-paper shadow-[0_8px_18px_rgba(26,21,18,0.14)]"
+                  : "border-border bg-card text-muted-foreground"
+              }`}
+            >
+              <span
+                className={`flex size-6 items-center justify-center rounded-full font-mono text-xs ${
+                  index === active
+                    ? "bg-paper/15 text-paper"
+                    : "bg-background text-ink-fade"
+                }`}
+              >
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <span className="font-mono text-xs uppercase tracking-widest">
+                {step.props.label}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="contents md:block">
+        {steps.map((step, index) => (
+          <section
+            key={`${step.props.label}-${index}`}
+            className={`${
+              index === active ? "block" : "hidden"
+            } min-h-[calc(100svh-190px)] pb-6`}
+          >
+            {step.props.children}
+          </section>
+        ))}
+      </div>
+
+      <div className="mt-6 flex items-center justify-between gap-3 rounded-lg border border-border bg-card p-2 shadow-[0_10px_24px_rgba(26,21,18,0.05)]">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={active === 0}
+          onClick={() => goToStep(Math.max(0, active - 1))}
+          className="h-11 flex-1"
+        >
+          <ChevronLeft size={15} />
+          anterior
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          disabled={active === steps.length - 1}
+          onClick={() => goToStep(Math.min(steps.length - 1, active + 1))}
+          className="h-11 flex-1"
+        >
+          seguinte
+          <ChevronRight size={15} />
+        </Button>
+      </div>
     </div>
   );
 }

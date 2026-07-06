@@ -17,6 +17,9 @@ import { Box } from "lucide-react";
   ]}
 />
 
+<MobileStepScreens>
+<MobileStepScreen label="conteúdo" title="Conteúdo">
+
 <LessonStage step="1" title="Conteúdo" subtitle="Distingue simuladores, visualizadores e ficheiros de descrição." />
 
 <Body>
@@ -56,10 +59,19 @@ No padrão de exame: <Kbd>laser_retro</Kbd> define refletividade laser para LiDA
   Confundir RViz2 com simulador. Confundir URDF com SDF. Esquecer o sim-to-real gap. Não saber que laser_retro é refletividade LiDAR. Confundir tipos de joints.
 </Marginalia>
 
+</MobileStepScreen>
+<MobileStepScreen label="interação" title="Interação">
+
 <LessonStage step="2" title="Interação" subtitle="Escolhe a ferramenta certa para cada cenário de simulação." />
 
 <SimulationDecisionLab />
 
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
 <LessonStage step="3" title="Quiz" subtitle="Treina as distinções URDF, SDF, RViz2, Gazebo e sensores." />
 
 <SectionQuiz sectionId="simulation" topic="simulation" title="Checkpoint — simulação" />
+
+</MobileStepScreen>
+</MobileStepScreens>

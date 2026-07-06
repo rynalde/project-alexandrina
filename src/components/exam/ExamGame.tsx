@@ -48,7 +48,17 @@ const subscribeMounted = () => () => {};
 const getMountedSnapshot = () => true;
 const getServerMountedSnapshot = () => false;
 
-export default function ExamGame() {
+export interface ExamGameProps {
+  customQuestions?: ExamQuestion[];
+  customMetadata?: { course: string; institution: string };
+  questionsPerRound?: number;
+}
+
+export default function ExamGame({ customQuestions, customMetadata, questionsPerRound }: ExamGameProps = {}) {
+  const activeQuestions = customQuestions ?? EXAM_QUESTIONS;
+  const activeMetadata = customMetadata ?? EXAM_METADATA;
+  const activeQuestionsPerRound = questionsPerRound ?? QUESTIONS_PER_ROUND;
+
   const [seenIds, setSeenIds] = useState<Set<string>>(new Set());
   const [batch, setBatch] = useState<ExamQuestion[]>([]);
   const [round, setRound] = useState(1);
@@ -87,7 +97,7 @@ export default function ExamGame() {
   }, [currentQ, phase]);
 
   const startGame = () => {
-    setBatch(pickRandomQuestions(EXAM_QUESTIONS, new Set(), QUESTIONS_PER_ROUND));
+    setBatch(pickRandomQuestions(activeQuestions, new Set(), activeQuestionsPerRound));
     const t = Date.now();
     setRoundStartTs(t);
     setQuestionStartTs(t);
@@ -105,7 +115,7 @@ export default function ExamGame() {
   if (!mounted) return null;
 
   if (phase === "intro") {
-    return <IntroScreen onStart={startGame} />;
+    return <IntroScreen activeMetadata={activeMetadata} activeQuestions={activeQuestions} onStart={startGame} />;
   }
 
   const elapsedRound = Math.floor((now - roundStartTs) / 1000);
@@ -181,16 +191,16 @@ export default function ExamGame() {
   const startNextRound = () => {
     const newSeen = new Set(seenIds);
     for (const q of batch) newSeen.add(q.id);
-    const next = pickRandomQuestions(
-      EXAM_QUESTIONS,
+    const nextBatch = pickRandomQuestions(
+      activeQuestions,
       newSeen,
-      QUESTIONS_PER_ROUND
+      activeQuestionsPerRound
     );
-    if (next.length === 0) {
+    if (nextBatch.length === 0) {
       setPhase("exhausted");
       return;
     }
-    setBatch(next);
+    setBatch(nextBatch);
     setRound((r) => r + 1);
     setQuestionIdx(0);
     setSelectedByQ({});
@@ -216,7 +226,7 @@ export default function ExamGame() {
 
   if (phase === "round-summary") {
     const last = history[history.length - 1];
-    const remaining = EXAM_QUESTIONS.length - seenIds.size;
+    const remaining = activeQuestions.length - seenIds.size;
     return (
       <RoundSummary
         result={last}
@@ -246,7 +256,7 @@ export default function ExamGame() {
       remainingRound={remainingRound}
       totalScore={totalScore}
       seenCount={seenCount}
-      poolSize={EXAM_QUESTIONS.length}
+      poolSize={activeQuestions.length}
       phase={phase}
       overTime={overTime}
       selectedForCurrent={selectedForCurrent}
@@ -259,7 +269,7 @@ export default function ExamGame() {
   );
 }
 
-function IntroScreen({ onStart }: { onStart: () => void }) {
+function IntroScreen({ activeMetadata, activeQuestions, onStart }: { activeMetadata: any, activeQuestions: any, onStart: () => void }) {
   return (
     <div className="paper-texture min-h-[100svh] font-sans text-ink flex flex-col">
       <header className="px-4 sm:px-8 pt-[max(env(safe-area-inset-top),1rem)] pb-2">
@@ -276,10 +286,10 @@ function IntroScreen({ onStart }: { onStart: () => void }) {
           <GraduationCap size={12} /> simulado · modo prova
         </div>
         <h1 className="font-serif text-3xl sm:text-4xl italic text-ink leading-tight text-balance">
-          {EXAM_METADATA.course}
+          {activeMetadata.course}
         </h1>
         <p className="font-sans text-sm text-ink-fade mt-2">
-          {EXAM_METADATA.institution} · banco com {EXAM_QUESTIONS.length}{" "}
+          {activeMetadata.institution} · banco com {activeQuestions.length}{" "}
           questões reais.
         </p>
 

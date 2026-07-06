@@ -16,6 +16,9 @@ import { Eye } from "lucide-react";
   ]}
 />
 
+<MobileStepScreens>
+<MobileStepScreen label="conteúdo" title="Conteúdo">
+
 <LessonStage step="1" title="Conteúdo" subtitle="Fixa o pipeline imagem → processamento → decisão." />
 
 <Body>
@@ -56,10 +59,19 @@ Uma deteção visual não basta para ação. O robot precisa de: distância ao o
   cv_bridge converte ROS2↔OpenCV. HSV separa cor de iluminação. YOLO dá boxes+labels+confidence. Um robot precisa de mais do que uma deteção 2D para agir no mundo 3D.
 </Marginalia>
 
+</MobileStepScreen>
+<MobileStepScreen label="interação" title="Interação">
+
 <LessonStage step="2" title="Interação" subtitle="Percorre o pipeline de visão até à ação do robot." />
 
 <VisionPipelineExplorer />
 
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
 <LessonStage step="3" title="Quiz" subtitle="Confirma cv_bridge, HSV, YOLO e perceção para ação." />
 
 <SectionQuiz sectionId="computer_vision" topic="computer_vision" title="Checkpoint — visão computacional" />
+
+</MobileStepScreen>
+</MobileStepScreens>

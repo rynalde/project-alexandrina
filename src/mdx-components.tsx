@@ -13,6 +13,8 @@ import {
   LessonStage,
   LearningObjectives,
   MatchingDrill,
+  MobileStepScreen,
+  MobileStepScreens,
   ProgressSummary,
   SectionQuiz,
 } from "@/components/learning/LearningBlocks";
@@ -44,6 +46,8 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     LessonStage,
     LearningObjectives,
     MatchingDrill,
+    MobileStepScreen,
+    MobileStepScreens,
     ProgressSummary,
     SectionQuiz,
     EdgeCloudDecisionLab,

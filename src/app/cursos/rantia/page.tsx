@@ -5,6 +5,7 @@ import { RANTIA_SECTIONS } from "@/lib/rantia-data";
 import { RANTIA_LEARNING_CONFIG } from "@/lib/rantia-learning";
 import CoursePage from "@/components/course/CoursePage";
 import RantiaSimuladoSection from "@/components/quiz/RantiaSimuladoSection";
+import RantiaAssessment from "@/components/quiz/RantiaAssessment";
 
 import InicioSection from "@/content/cursos/rantia/inicio.mdx";
 import CourseMapSection from "@/content/cursos/rantia/course-map.mdx";
@@ -18,8 +19,6 @@ import IotFoundationsSection from "@/content/cursos/rantia/iot-foundations.mdx";
 import SensorsElectronicsSection from "@/content/cursos/rantia/sensors-electronics.mdx";
 import IotProtocolsSection from "@/content/cursos/rantia/iot-protocols.mdx";
 import IotCloudsSection from "@/content/cursos/rantia/iot-clouds.mdx";
-import AssessmentSection from "@/content/cursos/rantia/assessment.mdx";
-import AnswerKeySection from "@/content/cursos/rantia/answer-key-content.mdx";
 
 const SECTION_MAP: Record<string, ComponentType> = {
   inicio: InicioSection,
@@ -34,9 +33,7 @@ const SECTION_MAP: Record<string, ComponentType> = {
   sensors_electronics: SensorsElectronicsSection,
   iot_protocols: IotProtocolsSection,
   iot_clouds: IotCloudsSection,
-  assessment: AssessmentSection,
-  answer_key: AnswerKeySection,
-  simulado: RantiaSimuladoSection,
+  assessment: RantiaAssessment,
 };
 
 export default function RantiaPage() {

@@ -421,16 +421,4 @@ export const RANTIA_SECTIONS: Section[] = [
     title: "Avaliação Final",
     subtitle: "Exame simulado 45 minutos",
   },
-  {
-    id: "answer_key",
-    num: "13",
-    title: "Chave de Respostas",
-    subtitle: "Respostas e explicações",
-  },
-  {
-    id: "simulado",
-    num: "∞",
-    title: "Simulado Final",
-    subtitle: "25 questões estilo prova",
-  },
 ];

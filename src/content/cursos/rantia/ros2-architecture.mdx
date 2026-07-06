@@ -17,6 +17,9 @@ import { Terminal } from "lucide-react";
   ]}
 />
 
+<MobileStepScreens>
+<MobileStepScreen label="conteúdo" title="Conteúdo">
+
 <LessonStage step="1" title="Conteúdo" subtitle="Aprende a linguagem base: nós, tópicos, DDS, QoS e CLI." />
 
 <Body>
@@ -38,15 +41,36 @@ ROS2 usa <Highlight>DDS (Data Distribution Service)</Highlight> para discovery e
 
 ### Comandos ROS2 essenciais
 
-| Tarefa | Comando |
-|---|---|
-| Listar nós | <Kbd>ros2 node list</Kbd> |
-| Listar tópicos | <Kbd>ros2 topic list</Kbd> |
-| Info de tópico | <Kbd>ros2 topic info /topic_name</Kbd> |
-| Echo de tópico | <Kbd>ros2 topic echo /topic_name</Kbd> |
-| Frequência | <Kbd>ros2 topic hz /topic_name</Kbd> |
-| Listar pacotes | <Kbd>ros2 pkg list</Kbd> |
-| Executar nó | <Kbd>ros2 run demo_nodes_cpp talker</Kbd> |
+<div className="grid gap-2">
+  <div className="rounded-lg border border-border bg-card p-3">
+    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">Listar nós</div>
+    <div className="mt-2"><Kbd>ros2 node list</Kbd></div>
+  </div>
+  <div className="rounded-lg border border-border bg-card p-3">
+    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">Listar tópicos</div>
+    <div className="mt-2"><Kbd>ros2 topic list</Kbd></div>
+  </div>
+  <div className="rounded-lg border border-border bg-card p-3">
+    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">Info de tópico</div>
+    <div className="mt-2"><Kbd>ros2 topic info /topic_name</Kbd></div>
+  </div>
+  <div className="rounded-lg border border-border bg-card p-3">
+    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">Echo de tópico</div>
+    <div className="mt-2"><Kbd>ros2 topic echo /topic_name</Kbd></div>
+  </div>
+  <div className="rounded-lg border border-border bg-card p-3">
+    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">Frequência</div>
+    <div className="mt-2"><Kbd>ros2 topic hz /topic_name</Kbd></div>
+  </div>
+  <div className="rounded-lg border border-border bg-card p-3">
+    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">Listar pacotes</div>
+    <div className="mt-2"><Kbd>ros2 pkg list</Kbd></div>
+  </div>
+  <div className="rounded-lg border border-border bg-card p-3">
+    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">Executar nó</div>
+    <div className="mt-2"><Kbd>ros2 run demo_nodes_cpp talker</Kbd></div>
+  </div>
+</div>
 
 ### Armadilhas ROS1 vs ROS2
 
@@ -59,13 +83,22 @@ Em exame, verifique SEMPRE se a pergunta é ROS1 ou ROS2. Comandos ROS1 como `ro
 </Callout>
 
 <Marginalia label="prioridade alta">
-  ROS2 CLI é a área com maior frequência em exames recentes. Memorize a tabela de comandos. Saiba que ros2 topic hz mede frequência e ros2 topic echo mostra mensagens. Não confunda ros2 run com ros2 execute.
+  ROS2 CLI é a área com maior frequência em exames recentes. Memorize esta lista de comandos. Saiba que ros2 topic hz mede frequência e ros2 topic echo mostra mensagens. Não confunda ros2 run com ros2 execute.
 </Marginalia>
+
+</MobileStepScreen>
+<MobileStepScreen label="interação" title="Interação">
 
 <LessonStage step="2" title="Interação" subtitle="Toca nos nós do grafo para ver quem publica e consome." />
 
 <Ros2GraphSimulation />
 
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
 <LessonStage step="3" title="Quiz" subtitle="Pratica a escolha de comandos ROS2 com feedback imediato." />
 
 <SectionQuiz sectionId="ros2_architecture" topic="ros2_architecture" title="Checkpoint — ROS2 arquitetura e CLI" />
+
+</MobileStepScreen>
+</MobileStepScreens>

@@ -28,19 +28,19 @@ export function RoboticsComparison() {
     <ChoiceLab
       interactionId="robotics-compare"
       icon={<Bot size={15} />}
-      title="comparador de especificacoes"
+      title="comparador de especificações"
       scenarios={[
         {
-          prompt: "O robot volta muitas vezes ao mesmo ponto com pouca variacao.",
-          options: ["repeatability", "resolucao", "DoF"],
+          prompt: "O robot volta muitas vezes ao mesmo ponto com pouca variação.",
+          options: ["repeatability", "resolução", "DoF"],
           correct: "repeatability",
-          note: "Repeatability mede consistencia ao regressar a uma posicao.",
+          note: "Repeatability mede consistência ao regressar a uma posição.",
         },
         {
-          prompt: "O comando ABB pede uma trajetoria reta no espaco operacional.",
+          prompt: "O comando ABB pede uma trajetória reta no espaço operacional.",
           options: ["MoveJ", "MoveL", "z50"],
           correct: "MoveL",
-          note: "MoveL e movimento linear em task space.",
+          note: "MoveL é movimento linear em task space.",
         },
       ]}
     />
@@ -85,8 +85,8 @@ export function Ros2GraphSimulation() {
           {current.label}
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
-          Publica ou consome o topico <span className="font-mono text-ink">{current.topic}</span>.
-          Discovery e transporte sao feitos por DDS, sem ROS Master.
+          Publica ou consome o tópico <span className="font-mono text-ink">{current.topic}</span>.
+          Discovery e transporte são feitos por DDS, sem ROS Master.
         </p>
       </div>
       <CompleteButton interactionId="ros2-graph" />
@@ -101,10 +101,10 @@ export function Ros2ToolingFlow() {
       icon={<GitBranch size={15} />}
       title="fluxo de ferramentas ROS2"
       stages={[
-        ["workspace", "Contem packages e e compilado por colcon build."],
-        ["package.xml", "Declara metadados e dependencias do package."],
-        ["launch", "Arranca varios nos com parametros consistentes."],
-        ["rqt_graph", "Mostra a topologia de nos e topicos."],
+        ["workspace", "Contém packages e é compilado por colcon build."],
+        ["package.xml", "Declara metadados e dependências do package."],
+        ["launch", "Arranca vários nós com parâmetros consistentes."],
+        ["rqt_graph", "Mostra a topologia de nós e tópicos."],
         ["RViz2", "Visualiza TF, sensores, odometria e markers."],
       ]}
     />
@@ -116,7 +116,7 @@ export function SimulationDecisionLab() {
     <ChoiceLab
       interactionId="simulation-decision"
       icon={<Boxes size={15} />}
-      title="decisor — simulacao"
+      title="decisor — simulação"
       scenarios={[
         {
           prompt: "Preciso descrever links e joints de um robot.",
@@ -128,10 +128,10 @@ export function SimulationDecisionLab() {
           prompt: "Preciso de mundo completo com terreno, luzes e sensores simulados.",
           options: ["SDF", "RViz2", "package.xml"],
           correct: "SDF",
-          note: "SDF pode descrever modelos de simulacao e mundos completos.",
+          note: "SDF pode descrever modelos de simulação e mundos completos.",
         },
         {
-          prompt: "Quero ver TF e odometria publicados por ROS2, sem fisica.",
+          prompt: "Quero ver TF e odometria publicados por ROS2, sem física.",
           options: ["Gazebo", "RViz2", "Webots"],
           correct: "RViz2",
           note: "RViz2 visualiza dados; Gazebo/Webots simulam.",
@@ -146,13 +146,13 @@ export function VisionPipelineExplorer() {
     <StageFlow
       interactionId="vision-pipeline"
       icon={<Eye size={15} />}
-      title="pipeline visao → acao"
+      title="pipeline visão → ação"
       stages={[
         ["camera driver", "Publica imagens como mensagens ROS2 Image."],
         ["cv_bridge", "Converte Image para arrays OpenCV/NumPy."],
-        ["OpenCV/HSV", "Segmenta cor, brilho e saturacao quando basta visao classica."],
+        ["OpenCV/HSV", "Segmenta cor, brilho e saturação quando basta visão clássica."],
         ["YOLO", "Deteta objetos com modelo de deep learning."],
-        ["decision node", "Transforma percecao em comando ou alerta."],
+        ["decision node", "Transforma perceção em comando ou alerta."],
       ]}
     />
   );
@@ -162,7 +162,7 @@ export function MqttBridgeLab() {
   const [bridgeAll, setBridgeAll] = useState(false);
   const [qos, setQos] = useState("1");
   const warnings = [
-    bridgeAll ? "bridging indiscriminado aumenta bandwidth e dados obsoletos" : "bridge seletiva reduz ruido",
+    bridgeAll ? "bridging indiscriminado aumenta bandwidth e dados obsoletos" : "bridge seletiva reduz ruído",
     qos === "0" ? "QoS 0 pode perder mensagens" : qos === "2" ? "QoS 2 aumenta overhead" : "QoS 1 equilibra entrega e custo",
   ];
 
@@ -192,7 +192,7 @@ export function MqttBridgeLab() {
               onChange={(event) => setBridgeAll(event.target.checked)}
               className="accent-rubric"
             />
-            publicar todos os topicos
+            publicar todos os tópicos
           </label>
           <div>
             <div className="mb-2 font-mono text-[10px] uppercase tracking-widest text-ink-fade">
@@ -234,7 +234,7 @@ export function EdgeCloudDecisionLab() {
       title="decisor — edge/cloud/tiny"
       scenarios={[
         {
-          prompt: "Latencia baixa e privacidade sao prioridade no dispositivo.",
+          prompt: "Latência baixa e privacidade são prioridade no dispositivo.",
           options: ["Edge AI", "Cloud-only", "Dashboard"],
           correct: "Edge AI",
           note: "Edge AI processa perto do dispositivo.",
@@ -243,7 +243,7 @@ export function EdgeCloudDecisionLab() {
           prompt: "Modelo pequeno corre num microcontrolador.",
           options: ["TinyML", "Federated Learning", "MQTT QoS"],
           correct: "TinyML",
-          note: "TinyML leva inferencia leve a hardware limitado.",
+          note: "TinyML leva inferência leve a hardware limitado.",
         },
       ]}
     />
@@ -259,9 +259,9 @@ export function ElectronicsLab() {
 
   return (
     <div className="my-6 rounded-lg border border-border bg-card p-4 shadow-[0_12px_30px_rgba(26,21,18,0.05)] sm:p-5">
-      <LabTitle icon={<Zap size={15} />} title="laboratorio — sensores e eletronica" />
+      <LabTitle icon={<Zap size={15} />} title="laboratório — sensores e eletrónica" />
       <div className="grid gap-4 sm:grid-cols-2">
-        <Slider label="tensao (V)" value={voltage} min={1} max={10} onChange={setVoltage} />
+        <Slider label="tensão (V)" value={voltage} min={1} max={10} onChange={setVoltage} />
         <Slider label="resistencia total (kΩ)" value={resistance} min={1} max={10} onChange={setResistance} />
       </div>
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -275,7 +275,7 @@ export function ElectronicsLab() {
         className="mt-4 h-10"
         onClick={() => learning?.markInteractionComplete("electronics-lab")}
       >
-        marcar interacao
+        marcar interação
       </Button>
     </div>
   );
@@ -289,22 +289,22 @@ export function MqttProtocolDrill() {
       title="drill — MQTT"
       scenarios={[
         {
-          prompt: "devices/+/battery corresponde a um nivel no lugar de +.",
+          prompt: "devices/+/battery corresponde a um nível no lugar de +.",
           options: ["verdadeiro", "falso"],
           correct: "verdadeiro",
-          note: "+ faz match de exatamente um nivel.",
+          note: "+ faz match de exatamente um nível.",
         },
         {
           prompt: "QoS 2 significa:",
           options: ["at most once", "at least once", "exactly once"],
           correct: "exactly once",
-          note: "QoS 2 e a garantia mais forte.",
+          note: "QoS 2 é a garantia mais forte.",
         },
         {
-          prompt: "Mosquitto permite clientes anonimos com:",
+          prompt: "Mosquitto permite clientes anónimos com:",
           options: ["allow_anonymous true", "anonymous_clients = yes", "set_anon true"],
           correct: "allow_anonymous true",
-          note: "Esta e a diretiva que aparece nos apontamentos.",
+          note: "Esta é a diretiva que aparece nos apontamentos.",
         },
       ]}
     />
@@ -318,12 +318,12 @@ export function IotTwinFlow() {
       icon={<Cloud size={15} />}
       title="fluxo cloud e digital twin"
       stages={[
-        ["device/sensor", "Mede o mundo fisico."],
-        ["gateway/edge", "Filtra e reduz latencia/bandwidth."],
+        ["device/sensor", "Mede o mundo físico."],
+        ["gateway/edge", "Filtra e reduz latência/bandwidth."],
         ["cloud ingestion", "Recebe stream de eventos."],
-        ["analytics", "Transforma dados em estado e previsoes."],
+        ["analytics", "Transforma dados em estado e previsões."],
         ["dashboard/action", "Mostra, alerta ou atua."],
-        ["digital twin", "Mantem representacao digital do sistema fisico."],
+        ["digital twin", "Mantém representação digital do sistema físico."],
       ]}
     />
   );
@@ -441,7 +441,7 @@ function ChoiceLab({
         </div>
         {answer ? (
           <div className={`mt-3 rounded-md border p-3 text-sm leading-relaxed ${correct ? "border-[rgba(92,140,92,0.35)] bg-[rgba(92,140,92,0.1)] text-[#456b45]" : "border-rubric/30 bg-rubric/10 text-rubric"}`}>
-            {correct ? scenario.note : "Rever a distincao antes de avancar."}
+            {correct ? scenario.note : "Rever a distinção antes de avançar."}
           </div>
         ) : null}
       </div>
@@ -469,7 +469,7 @@ function CompleteButton({ interactionId }: { interactionId: string }) {
       className="mt-4 h-10"
       onClick={() => learning?.markInteractionComplete(interactionId)}
     >
-      {done ? "interacao concluida" : "marcar interacao"}
+      {done ? "interação concluída" : "marcar interação"}
     </Button>
   );
 }

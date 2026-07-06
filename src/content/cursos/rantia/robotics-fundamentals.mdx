@@ -17,6 +17,9 @@ import { Cog } from "lucide-react";
   ]}
 />
 
+<MobileStepScreens>
+<MobileStepScreen label="conteúdo" title="Conteúdo">
+
 <LessonStage step="1" title="Conteúdo" subtitle="Lê os conceitos que aparecem como definições curtas no exame." />
 
 <Body>
@@ -60,10 +63,19 @@ Robots móveis usam rodas, pernas, lagartas ou outros mecanismos. Em exame, saib
   Confundir resolution com repeatability. Dizer que MoveL é movimento articular. Confundir z-zone com velocidade. Ignorar vantagens dos cobots (colaboração segura com humanos).
 </Marginalia>
 
+</MobileStepScreen>
+<MobileStepScreen label="interação" title="Interação">
+
 <LessonStage step="2" title="Interação" subtitle="Escolhe a especificação correta antes do checkpoint." />
 
 <RoboticsComparison />
 
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
 <LessonStage step="3" title="Quiz" subtitle="Fecha a secção com perguntas no formato dos exames anteriores." />
 
 <SectionQuiz sectionId="robotics_fundamentals" topic="robotics_fundamentals" title="Checkpoint — fundamentos de robótica" />
+
+</MobileStepScreen>
+</MobileStepScreens>

@@ -17,6 +17,9 @@ import { Wifi } from "lucide-react";
   ]}
 />
 
+<MobileStepScreens>
+<MobileStepScreen label="conteúdo" title="Conteúdo">
+
 <LessonStage step="1" title="Conteúdo" subtitle="Aprende QoS, wildcards, Mosquitto e escolhas de protocolo." />
 
 <Body>
@@ -67,10 +70,19 @@ Exemplo: `home/+/led` match `home/livingroom/led`.
   Escolher QoS 1 quando a pergunta pede "exactly once" (é QoS 2). Usar + para match multi-nível (+ é um nível, # é multi-nível). Esquecer allow_anonymous true para Mosquitto.
 </Marginalia>
 
+</MobileStepScreen>
+<MobileStepScreen label="interação" title="Interação">
+
 <LessonStage step="2" title="Interação" subtitle="Responde a mini-casos MQTT antes do checkpoint." />
 
 <MqttProtocolDrill />
 
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
 <LessonStage step="3" title="Quiz" subtitle="Treina QoS, wildcards e configuração Mosquitto." />
 
 <SectionQuiz sectionId="iot_protocols" topic="iot_protocols" title="Checkpoint — protocolos IoT e MQTT" />
+
+</MobileStepScreen>
+</MobileStepScreens>
