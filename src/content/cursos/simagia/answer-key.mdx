@@ -1,88 +1,383 @@
 import SectionHeader from "@/components/shared/SectionHeader";
 import Callout from "@/components/shared/Callout";
 import Marginalia from "@/components/shared/Marginalia";
-import Highlight from "@/components/shared/Highlight";
 import Body from "@/components/shared/Body";
-import Kbd from "@/components/shared/Kbd";
+import TermTooltip from "@/components/shared/TermTooltip";
 import { Key } from "lucide-react";
 
-<SectionHeader num="09" title="Chave de Respostas" subtitle="respostas consolidadas e templates de exame" vol="vol. viii" />
+<SectionHeader
+  num="09"
+  title="Exames Anteriores Resolvidos"
+  subtitle="2021, 2022 e 2024 — enunciados e respostas-modelo"
+  vol="vol. viii"
+/>
 
 <Body>
 
-### Pergunta 1 — Propriedades de Agentes
+Use esta secção para treinar respostas discursivas. Os enunciados foram
+transcritos dos exames recebidos; cada resposta é um modelo de estudo, claro e
+adaptável ao cenário pedido. Passe o cursor, use Tab ou toque num termo
+sublinhado para ver uma definição rápida.
 
-- — "Percebe o estado do seu ambiente" → <Highlight>perceção/sensing/reatividade</Highlight>.
-- — "Raciocina sobre ações possíveis" → <Highlight>raciocínio/tomada de decisão</Highlight>.
-- — "Age sem controlo humano direto" → <Highlight>autonomia</Highlight>.
-- — "Coopera com outros agentes" → <Highlight>capacidade social/cooperação</Highlight>.
-- — "Muda comportamento futuro com base em resultados" → <Highlight>aprendizagem/adaptação</Highlight>.
-- — "Ações possíveis" e "ambiente" → <Highlight>situatedness e capacidade de ação</Highlight>.
+> Nota de nomenclatura: o exame de 2022 escreve **KQLM**, mas a sigla técnica
+> habitual é <TermTooltip term="KQML" definition="Knowledge Query and Manipulation Language: linguagem histórica de comunicação entre agentes baseada em mensagens e atos comunicativos.">KQML</TermTooltip>. A linguagem normalizada é
+> <TermTooltip term="ACL" definition="Agent Communication Language: formato estruturado para agentes trocarem pedidos, informações, propostas e decisões.">ACL</TermTooltip>; “ACML” é normalmente um lapso por ACL.
 
-### Pergunta 2 — Físicos vs. Software
+## Exame de Época Normal — 9 de julho de 2021
 
-Agentes físicos sentem o mundo através de sensores como câmaras, lidar, sensores de temperatura, GPS, microfones ou toque. Exemplo: robot de armazém que sente obstáculos e localização de itens. Agentes software sentem ambientes digitais através de APIs, bases de dados, logs, eventos, páginas web ou input do utilizador. Exemplo: agente de e-commerce que sente preço, disponibilidade e opções de entrega.
+**Duração da prova: 1h00**
 
-### Pergunta 3 — Arquiteturas
+### Questão 1
 
-- — **Deliberativa**: modelo simbólico e planeamento. Vantagem: forte raciocínio/planeamento. Desvantagem: mais lenta e depende de modelo do mundo preciso.
-- — **Reativa**: regras perceção-ação. Vantagem: resposta rápida. Desvantagem: fraco planeamento a longo prazo.
-- — **Híbrida**: combina camadas reativas e deliberativas. Vantagem: equilíbrio prático. Desvantagem: integração e manutenção mais complexas.
+> Considere a seguinte definição de Agente:
+>
+> *Um Agente tem a capacidade de ler o estado do mundo em que habita, procurando raciocinar, actuar de modo independente ou cooperar com outros agentes no sentido de conduzir o mundo em que se encontra para um estado que deseje. Tal agente interpreta os resultados das suas intervenções, podendo em próximas ocasiões agir de modo diferente se tais resultados não forem os desejados.*
+>
+> Diga quais são as características ou propriedades realçadas nesta definição, associando a cada característica ou propriedade o trecho da definição correspondente.
 
-### Pergunta 4 — BDI
+#### Modelo de resposta
 
-Exemplo — agente de entrega: Crenças: localização do pacote, destino, rota atual, tráfego/atraso, capacidade do veículo. Desejos: entregar a tempo, minimizar custo, evitar entrega falhada. Intenções: seguir rota selecionada, recolher pacote, entregar no destino, replanear se bloqueado. Planos: calcular rota, reservar recolha, notificar cliente, tratar entrega falhada. Ações: enviar mensagens, mover pacote, atualizar estado, solicitar rota alternativa.
+A definição descreve um <TermTooltip term="agente" definition="Entidade de software ou robótica que percebe o ambiente, toma decisões e atua para atingir objetivos.">agente</TermTooltip> situado, autónomo, racional, social, proativo e adaptável:
 
-### Pergunta 5 — Coordenação
+- **Perceção / situatedness** — “ler o estado do mundo em que habita”: o agente observa o ambiente antes de decidir.
+- **Raciocínio** — “procurando raciocinar”: avalia informação e ações possíveis.
+- **Autonomia** — “actuar de modo independente”: decide e atua sem controlo externo permanente.
+- **Capacidade social** — “cooperar com outros agentes”: consegue comunicar, coordenar ou negociar.
+- **Proatividade e objetivos** — “conduzir o mundo ... para um estado que deseje”: toma iniciativa para atingir um estado desejado, em vez de apenas reagir.
+- **Capacidade de atuar** — “resultados das suas intervenções”: tem ações que alteram, ou tentam alterar, o ambiente.
+- **Adaptação / aprendizagem** — “agir de modo diferente se tais resultados não forem os desejados”: usa resultados anteriores para melhorar decisões futuras.
 
-1. — **Recursos partilhados**: agentes podem precisar do mesmo caminho de robot, sala de operações ou máquina.
-2. — **Dependências de tarefas**: uma tarefa pode precisar que outra termine primeiro.
+### Questão 2
 
-Outras razões válidas: evitar conflito, evitar trabalho duplicado, combinar conhecimento parcial, sincronizar ações, lidar com mudanças dinâmicas.
+> Considere que numa comunidade de agentes temos agentes que representam interesses segundo critérios diferentes (custo, tempo, qualidade, desempenho, etc) e que num dado momento têm que negociar entre si no sentido de tomarem uma decisão (por exemplo, decidir sobre a aquisição de um equipamento tendo propostas de vários fornecedores). Acha que o protocolo da Rede de Contratos (Contract Net) é adequado para o efeito? Justifique a sua opinião, fundamentando através de um exemplo.
 
-### Pergunta 6 — Fases de Negociação
+#### Modelo de resposta
 
-1. — Preparação/pré-negociação: definir objetivos, restrições, preferências e valores de reserva.
-2. — Troca de propostas: enviar ofertas, CFPs, licitações ou contra-ofertas.
-3. — Avaliação/concessão: comparar ofertas usando critérios e ajustar se necessário.
-4. — Acordo/fecho: aceitar, rejeitar, confirmar execução ou terminar negociação.
+O <TermTooltip term="Contract Net Protocol" definition="Protocolo de atribuição de tarefas: um gestor anuncia uma tarefa, recebe propostas de executores e seleciona uma delas.">Contract Net Protocol</TermTooltip> é útil para recolher propostas, mas não resolve sozinho uma decisão com interesses diferentes e critérios conflituosos. O protocolo é especialmente adequado quando existe uma tarefa bem definida, um gestor e vários possíveis executores.
 
-### Pergunta 7 — ACL e KQML
+Neste caso, o agente de custos pode preferir a proposta mais barata, o agente de qualidade pode preferir a mais fiável e o agente de operações pode preferir a mais rápida. É necessário acrescentar uma regra de decisão comum: por exemplo, uma função de utilidade multicritério, pesos acordados, votação ou mediação.
 
-Ambas são linguagens de comunicação de alto nível baseadas em performativos/atos comunicativos. Expressam não apenas dados mas <Highlight>intenção comunicativa</Highlight>. ACL está associada à FIPA e inclui atos como <Kbd>inform</Kbd>, <Kbd>request</Kbd>, <Kbd>cfp</Kbd>, <Kbd>agree</Kbd>, <Kbd>failure</Kbd>, <Kbd>accept-proposal</Kbd>, <Kbd>reject-proposal</Kbd> e <Kbd>not-understood</Kbd>. Mensagens também precisam de content language, ontology e metadados como sender/receiver.
+Exemplo: um agente de compras envia um <TermTooltip term="CFP" definition="Call for Proposals: mensagem que anuncia uma tarefa e convida agentes a enviarem propostas.">CFP</TermTooltip> a fornecedores para adquirir um equipamento. O fornecedor A propõe 80 000 €, entrega em duas semanas e garantia de um ano; o fornecedor B propõe 95 000 €, entrega em quatro semanas e garantia de cinco anos. O Contract Net recolhe as propostas, mas os agentes de custo, prazo e qualidade precisam de avaliar os compromissos. Se o coordenador usar pesos previamente acordados, pode escolher a proposta com melhor valor global e justificar a decisão.
 
-### Pergunta 8 — Facilitador e Broker
+### Questão 3
 
-Facilitador: ajuda agentes a encontrar fornecedores/serviços, normalmente através de registo e pesquisa. Broker: medeia pedidos entre consumidores e fornecedores, frequentemente encaminhando ou coordenando a interação. Vantagem: descoberta e desacoplamento. Inconveniente: bottleneck, dependência, possível ponto único de falha, comunicação extra.
+> Relativamente ao Challenge 4, indique como poderia “expandir” o SMA desenvolvido, caracterizando os novos tipos de agentes a incluir, no que diz respeito ao seu comportamento e interação com os agentes já existentes.
 
-### Pergunta 9 — Adequação do Contract Net
+#### Modelo de resposta
 
-Contract Net é maioritariamente adequado se o requerente anuncia a tarefa de entrega e fornecedores submetem propostas. O requerente pode avaliar propostas usando preço, tempo de recolha, tempo de entrega e fiabilidade. Pode precisar de adaptação para pontuação multi-critério, rondas de negociação e contra-propostas.
+Como o enunciado não descreve o Challenge 4, a resposta deve adaptar os exemplos seguintes ao sistema desenvolvido. Uma expansão coerente de um <TermTooltip term="SMA" definition="Sistema Multi-Agente: conjunto de agentes autónomos que interagem para resolver um problema distribuído.">SMA</TermTooltip> pode incluir:
 
-<Kbd>CFP → propostas → avaliação com função de utilidade → adjudicação → confirmação/execução → relatório</Kbd>
+- **Agente de monitorização**, reativo, que observa eventos, atrasos e exceções e envia mensagens **INFORM** aos restantes agentes.
+- **Agente coordenador**, com arquitetura BDI ou híbrida, que mantém prioridades globais, divide objetivos em tarefas, resolve conflitos e lança CFPs quando precisa de recursos.
+- **Agente de recursos/executor**, reativo para tarefas simples ou BDI quando precisa de planear; anuncia capacidades, disponibilidade e limitações.
+- **Agente de aprendizagem/análise**, deliberativo, que recolhe indicadores de desempenho e sugere novas regras, prioridades ou critérios de escolha.
+- **Agente de interface**, orientado a eventos, que traduz pedidos de utilizadores em mensagens do sistema e apresenta explicações sobre as decisões.
 
-### Pergunta 10 — Mercado de Peixe
+Os novos agentes devem usar uma <TermTooltip term="ACL" definition="Linguagem de comunicação entre agentes baseada em atos comunicativos, como informar, pedir, propor, aceitar ou recusar.">ACL</TermTooltip> comum, com mensagens como **REQUEST**, **CFP**, **PROPOSE**, **ACCEPT-PROPOSAL**, **REJECT-PROPOSAL** e **INFORM**. Assim, aumentam a observação, coordenação e adaptação sem alterar a responsabilidade dos agentes já existentes.
 
-Contract Net clássico não é o melhor fit porque o cenário é um leilão de preço descendente com compra parcial de lotes. Protocolo melhor: (1) Vendedor anuncia lote, quantidade e preço inicial. (2) Compradores avaliam e respondem com aceitar/quantidade ou sem proposta. (3) Se não há aceitação, vendedor baixa preço ou retira. (4) Se compra parcial, quantidade restante continua em novas rondas. (5) Quando vendido ou retirado, negociação fecha.
+### Questão 4
 
-### Pergunta 11 — SMA de Armazém
+> Considere o problema do escalonamento de operações no bloco cirúrgico de um hospital. Neste contexto são normalmente consideradas cirurgias programadas e cirurgias não-programadas sendo que estas podem ocorrer em situações de emergência, e que podem obrigar a desvios nas restantes cirurgias programadas. Efetue a modelização desse problema usando um sistema Multi-Agente, indicando quais os agentes que deveriam estar envolvidos e como negociariam com vista a que fossem cumpridos os objetivos. Desta forma devem ser considerados aspetos como os diferentes tipos de cirurgia a realizar no bloco operatório, os pacientes e a cirurgia a realizar assim como cada equipa médica responsável por realizar cada procedimento cirúrgico.
 
-Agentes possíveis: agente de encomenda, gestor/coordenador de armazém, agentes robot de picking, agente de packing, agentes robot de transporte, agente de inventário, agente de recursos/caminhos, agente de expedição.
+#### Modelo de resposta
 
-Arquiteturas: robots — híbrida (reativa para colisão + deliberativa para planeamento de rota). Gestor — deliberativa/BDI para alocação e otimização. Inventário/recursos — reativa/orientada a serviço.
+O objetivo é respeitar prioridade clínica e segurança do doente, minimizando atrasos, cancelamentos, tempo ocioso e horas extraordinárias. A urgência clínica é uma restrição forte: só depois de garantir uma solução clinicamente válida se comparam custo e impacto no plano. O agente coordenador mantém o escalonamento global e negoceia com salas, equipas, pacientes e recursos para encontrar a alternativa viável com menor perturbação.
 
-Sequência exemplo: (1) Agente de encomenda envia nova encomenda ao gestor. (2) Gestor pede localizações ao inventário. (3) Gestor envia CFP/pedido a robots de picking. (4) Robots respondem com propostas. (5) Gestor adjudica tarefa. (6) Robot de picking reserva caminho e recolhe item. (7) Agente de packing recebe e empacota. (8) Robot de transporte move para despacho. (9) Agente de expedição confirma. (10) Gestor atualiza estado.
+### Questão 4.a)
 
-### Pergunta 12 — Extensão MARL
+> Especifique os agentes que acham que deveriam estar envolvidos e as respetivas arquiteturas.
 
-MARL pode ser incorporado se o armazém tem interações repetidas, estado observável, ações definidas, recompensas mensuráveis e ambiente de treino/simulação. Mudanças: representação de estado (posições, tarefas, bateria, congestionamento), ações (mover, recolher, esperar, carregar), recompensa (encomendas bem-sucedidas, tempo reduzido, evitar colisões), simulador de treino, política aprendida para robots, camada de segurança. Se MARL completo é demasiado complexo, um componente RL pode otimizar seleção de rotas, alocação de tarefas ou evitar congestionamento.
+#### Modelo de resposta
+
+- **Agente de triagem/emergência** — reativo baseado em regras ou BDI; classifica a urgência, identifica o procedimento e inicia o pedido de escalonamento.
+- **Agente coordenador do bloco** — híbrido ou <TermTooltip term="BDI" definition="Arquitetura baseada em Beliefs, Desires e Intentions: crenças sobre o mundo, objetivos desejados e compromissos em execução.">BDI</TermTooltip>; mantém o plano global, compara alternativas e confirma o novo horário.
+- **Agente de caso/paciente** — BDI; representa prioridade, preparação, consentimento, disponibilidade, incompatibilidades e prazo clínico.
+- **Agente de cirurgia/procedimento** — BDI ou baseado em conhecimento; representa duração, especialidade, risco, equipamento, equipa e necessidades pós-operatórias.
+- **Agente de sala operatória** — reativo com reservas; controla ocupação, limpeza, equipamento instalado e horários livres.
+- **Agente de equipa médica** — BDI; representa disponibilidade, competências e tempos de preparação de cirurgião, anestesista e enfermagem.
+- **Agente de recursos clínicos** — reativo; representa equipamento, camas de recobro/UCI, sangue, transporte e outros recursos partilhados.
+- **Agente facilitador/diretório** — reativo; ajuda a descobrir salas, equipas e recursos aptos para cada tipo de cirurgia.
+
+O coordenador só aceita uma proposta compatível com a especialidade, sala, equipa, equipamento, preparação do doente e capacidade pós-operatória.
+
+### Questão 4.b)
+
+> Especifique um protocolo de negociação, ilustre graficamente, através de um diagrama de sequência, o protocolo a utilizar.
+>
+> *(os alunos que participaram no Hackthon estão dispensados de fazer esta questão)*
+
+#### Modelo de resposta
+
+Pode usar-se o Contract Net complementado por uma negociação de reagendamento. A triagem envia um pedido urgente ao coordenador; este envia CFPs às salas, equipas e recursos compatíveis. Cada candidato responde com **PROPOSE** ou **REFUSE**. Se uma alternativa deslocar uma cirurgia programada, o coordenador propõe o novo horário ao agente do caso afetado. Depois escolhe a opção clinicamente válida com menor impacto, envia **ACCEPT-PROPOSAL** aos escolhidos, **REJECT-PROPOSAL** aos restantes e recebe confirmações **INFORM**.
+
+<ConceptFlow
+  title="sequência de negociação no bloco"
+  steps={[
+    "Triagem → Coordenador: REQUEST(cirurgia urgente, prioridade, requisitos)",
+    "Coordenador → Salas/equipas/recursos: CFP(janela, duração, requisitos)",
+    "Recursos → Coordenador: PROPOSE(alternativa) ou REFUSE",
+    "Coordenador → Caso afetado: PROPOSE(reagendamento)",
+    "Caso afetado → Coordenador: AGREE, COUNTERPROPOSE ou REJECT",
+    "Coordenador → Escolhidos: ACCEPT-PROPOSAL; restantes: REJECT-PROPOSAL",
+    "Recursos → Coordenador/Triagem: INFORM(reservas e plano confirmados)",
+  ]}
+/>
+
+### Questão 4.c)
+
+> Exemplifique, com base num pequeno exemplo, a aplicação do protocolo a um caso concreto.
+
+#### Modelo de resposta
+
+Às 10h00 chega um doente que necessita de cirurgia urgente de 90 minutos, com equipa de cirurgia geral, anestesista e equipamento laparoscópico, devendo iniciar até às 10h30. A triagem envia **REQUEST** ao coordenador, que lança CFPs.
+
+- A Sala 1 está ocupada até às 12h00.
+- A Sala 2 propõe iniciar às 10h20 se uma cirurgia eletiva for reagendada para as 14h00.
+- A Sala 3 está livre, mas não tem o equipamento necessário.
+- A equipa B confirma que pode trabalhar na Sala 2.
+
+O coordenador propõe o reagendamento ao agente do caso eletivo. Como o novo horário respeita as restrições do doente e da equipa, recebe **AGREE**, aceita a proposta da Sala 2 e da equipa B e rejeita as restantes. A urgência é tratada no prazo clínico e a cirurgia eletiva mantém-se no mesmo dia.
+
+## Exame de Época Normal — 8 de julho de 2022
+
+**Duração da prova: 1h00**
+
+### Questão 1
+
+> Caracterize com detalhe as linguagens KQLM e ACL.
+
+#### Modelo de resposta
+
+O enunciado escreve **KQLM**; a designação habitual é KQML — *Knowledge Query and Manipulation Language*. É uma linguagem de comunicação entre agentes baseada em mensagens com uma <TermTooltip term="performativa" definition="Ação comunicativa que indica a intenção da mensagem, por exemplo informar, pedir, perguntar, propor ou recusar.">performativa</TermTooltip>. Exemplos de KQML são **tell** para informar, **ask-if** para perguntar se uma afirmação é verdadeira, **achieve** para pedir uma ação e **advertise** para divulgar uma capacidade.
+
+Uma mensagem KQML separa a intenção do conteúdo e pode incluir emissor, recetor, conteúdo, linguagem de conteúdo, ontologia, identificador de resposta e prazo. Esta separação permite a comunicação entre agentes diferentes quando partilham uma <TermTooltip term="ontologia" definition="Vocabulário e significado comum dos conceitos usados nas mensagens entre agentes.">ontologia</TermTooltip> e uma linguagem de conteúdo.
+
+A FIPA ACL também usa performativas, por exemplo **inform**, **request**, **query-ref**, **cfp**, **propose**, **accept-proposal**, **reject-proposal**, **agree**, **refuse** e **failure**. Uma mensagem ACL pode conter **sender**, **receiver**, **content**, **language**, **ontology**, **protocol**, **conversation-id**, **reply-with**, **in-reply-to** e **reply-by**.
+
+A diferença principal é que ACL possui semântica mais formal e protocolos de interação padronizados, como **request**, **contract-net**, **subscribe** e **propose**. Ambas transmitem intenção e conteúdo, mas ACL favorece mais interoperabilidade entre plataformas independentes.
+
+### Questão 2
+
+> Descreva as arquiteturas por camadas e elabore sobre as vantagens e desvantagens de cada um dos tipos.
+
+#### Modelo de resposta
+
+Uma arquitetura por camadas divide o controlo de um agente em níveis com horizontes temporais e abstrações diferentes: uma camada reativa responde rapidamente a perceções, uma camada executiva coordena a execução e uma camada deliberativa raciocina sobre objetivos e planos.
+
+- **Arquitetura horizontal**: cada camada recebe perceções e pode propor ou executar ações diretamente; as camadas funcionam em paralelo e um mecanismo de arbitragem resolve conflitos.
+  - *Vantagens*: elevada reatividade, paralelismo e alguma tolerância a falhas.
+  - *Desvantagens*: conhecimento duplicado, possíveis ações contraditórias e maior dificuldade de depuração.
+- **Arquitetura vertical**: a informação sobe de baixo para cima e as decisões descem de cima para baixo, passando sequencialmente pelas camadas.
+  - *Vantagens*: fluxo de controlo claro, melhor coordenação entre níveis e visão global mais consistente.
+  - *Desvantagens*: maior latência, menor reação imediata e risco de uma camada intermédia se tornar gargalo.
+
+Uma solução híbrida costuma ser adequada: a parte reativa trata eventos urgentes e a deliberativa gere objetivos e planeamento de médio prazo.
+
+### Questão 3
+
+> Relativamente ao Challenge 4, especifique com detalhe uma arquitetura BDI para um dos agentes, à sua escolha, de entre os que fazem parte do sistema que propôs. Explique e fundamente com detalhe, instanciando com exemplos concretos.
+
+#### Modelo de resposta
+
+Como o Challenge 4 não está descrito, escolhe-se um agente coordenador de tarefas e adapta-se o exemplo ao sistema realizado.
+
+- **Beliefs / crenças**: o que o agente considera verdadeiro agora, por exemplo pedido P17 com prioridade alta, recurso R2 disponível, tarefa T8 por atribuir e agente A3 com capacidade de transporte. As crenças são atualizadas por sensores e mensagens.
+- **Desires / desejos**: objetivos a atingir, como cumprir prazos, reduzir custo, evitar atribuições duplicadas e responder a falhas.
+- **Intentions / intenções**: compromissos assumidos e planos em execução. Ao receber um pedido urgente, o agente compromete-se com a intenção de atribuir T8.
+- **Biblioteca de planos**: ao receber um novo pedido, cria e prioriza tarefas; se uma tarefa estiver sem executor, procura agentes elegíveis e pede propostas; se receber **failure**, atualiza crenças, revoga a atribuição e negoceia outra; se surgir uma urgência, replana intenções de menor prioridade.
+
+O ciclo BDI é perceber ou receber mensagens, atualizar crenças, identificar eventos, escolher planos aplicáveis, selecionar uma intenção, agir e monitorizar o resultado. Assim, se receber **failure(T8)**, não reage apenas à mensagem: avalia o impacto no objetivo global e ativa o plano de contingência.
+
+### Questão 4
+
+> Nos grandes mercados de peixe do mediterrâneo, o peixe fresco é tradicionalmente vendido em transações entre o comerciante e diferentes compradores em lotas perto dos portos de pesca. Nestes espaços os peixes são agrupados em conjuntos de caixas, chamados de lotes e são negociados em sucessivas rondas de negociação. Inicialmente é lançada uma oferta pelo comerciante com um preço base podendo cada comprador enviar uma proposta de compra a confirmar ou não a intenção de compra ao preço referido. Caso não haja nenhuma intenção de compra por parte dos compradores presentes na lota, o comerciante pode baixar o preço de venda e lançar nova ronda de negociação com os compradores ou simplesmente retirar o produto disponível para venda.
+>
+> O comprador que apresente uma oferta de acordo com o preço afixado, pode decidir comprar o lote completo ou apenas parte do lote. Neste último caso, as caixas restantes do lote podem continuar a ser negociadas até serem todas vendidas ou retiradas.
+>
+> Alguns destes mercados têm vindo a adaptar os seus métodos de venda às novas tecnologias e dessa forma é proposto o desenvolvimento de um Sistema Multi-Agente capaz de automatizar o processo de negociação acima referido.
+
+#### Modelo de resposta
+
+O sistema deve separar as regras estáveis do mercado das preferências privadas dos participantes. O comerciante anuncia os lotes, os compradores decidem se aceitam o preço e a quantidade, e um leiloeiro aplica as regras de prazo, desempate e quantidade restante. Como o preço baixa quando não existe procura e são permitidas compras parciais, o mecanismo central é um leilão holandês multiunidade, não uma simples atribuição de tarefas.
+
+### Questão 4.a)
+
+> Especifique os agentes que acham que deveriam ser desenvolvidos e as respetivas arquiteturas e comportamentos. Justifique com detalhe.
+
+#### Modelo de resposta
+
+- **Agente comerciante/gestor de lote** — BDI ou híbrido; mantém quantidade restante, frescura, preço atual, preço de reserva e prazo de venda. Inicia rondas, reduz preço sem procura e retira o lote quando atinge o limite.
+- **Agente comprador** — BDI; representa orçamento, quantidade desejada, qualidade mínima, urgência e preço máximo. Aceita o lote total ou parcial, ou espera pela ronda seguinte se o risco compensar.
+- **Agente leiloeiro/gestor de mercado** — máquina de estados reativa; difunde anúncios, recebe intenções de compra, fecha rondas, aplica desempate e impede que a quantidade atribuída ultrapasse o lote disponível.
+- **Agente de pagamento e rastreabilidade** — reativo, orientado a eventos; valida pagamento e regista comprador, quantidade, preço e origem.
+- **Agente <TermTooltip term="Facilitator" definition="Agente ou serviço de diretório que permite descobrir que agentes oferecem um determinado serviço.">Facilitator</TermTooltip>/DF** — diretório; permite descobrir comerciantes, compradores e serviços ativos.
+
+BDI é adequada ao comerciante e comprador porque ambos têm preferências e adaptam decisões a novas rondas. O leiloeiro deve ser mais simples e determinístico, pois garante as regras comuns do mercado.
+
+### Questão 4.b)
+
+> Considera que o protocolo de negociação através de rede de contratos seria o mais adequado para representar o processo de negociação anteriormente referido? Justifique claramente a sua opinião.
+
+#### Modelo de resposta
+
+Não. A rede de contratos é apropriada para distribuir uma tarefa: um gestor anuncia a tarefa, os contratantes propõem a sua execução e o gestor escolhe um executor. Neste cenário há venda de um bem perecível, preço descendente e compra parcial de quantidades.
+
+O protocolo mais adequado é um <TermTooltip term="leilão holandês multiunidade" definition="Leilão em rondas no qual o preço começa alto e diminui até existirem aceitações; permite atribuir apenas parte das unidades disponíveis.">leilão holandês multiunidade</TermTooltip>:
+
+1. o comerciante anuncia lote, quantidade, preço inicial, preço de reserva e duração da ronda;
+2. os compradores enviam aceitação e quantidade desejada ao preço corrente;
+3. o leiloeiro atribui a quantidade disponível segundo uma regra explícita para pedidos simultâneos;
+4. se não houver compras, diminui o preço e abre nova ronda;
+5. se o lote esgotar, fecha a venda; se atingir o preço de reserva ou o prazo, retira o restante.
+
+O Contract Net poderia ser útil depois da venda para atribuir a entrega do lote a transportadores, mas não descreve bem a negociação da lota.
+
+### Questão 4.c)
+
+> Ilustre graficamente, com detalhe, o desenvolvimento do protocolo que considere mais adequado a este exemplo.
+
+#### Modelo de resposta
+
+<ConceptFlow
+  title="leilão holandês multiunidade"
+  steps={[
+    "Comerciante → Leiloeiro: INFORM(lote, quantidade, preço inicial, reserva)",
+    "Leiloeiro → Compradores: INFORM(ronda, preço, quantidade, prazo)",
+    "Compradores → Leiloeiro: PROPOSE(quantidade, preço corrente)",
+    "Leiloeiro: valida pedidos, aplica desempate e calcula quantidades",
+    "Leiloeiro → Compradores: ACCEPT-PROPOSAL ou REJECT-PROPOSAL",
+    "Leiloeiro → Pagamento: REQUEST(registar e liquidar)",
+    "Sem propostas: baixa o preço e repete; no limite: vende ou retira o restante",
+  ]}
+/>
+
+O leiloeiro deve manter a quantidade disponível após cada aceitação. Se dois compradores pedirem mais caixas do que as disponíveis, aplica uma regra conhecida, por exemplo ordem temporal, prioridade definida pelo mercado ou repartição proporcional.
+
+### Questão 4.d)
+
+> Exemplifique, com base num pequeno exemplo, a aplicação do protocolo considerado a outro cenário/contexto.
+
+#### Modelo de resposta
+
+O mesmo protocolo pode vender quartos de hotel que ficariam vazios nessa noite. O agente do hotel anuncia 15 quartos a 190 € e baixa 10 € em cada ronda sem procura. Uma agência aceita quatro quartos a 170 € e outra aceita seis; o leiloeiro confirma essas quantidades, mantém cinco quartos disponíveis e abre nova ronda apenas para os restantes. Tal como na lota, o bem perde valor com o tempo, o preço desce e é possível comprar apenas parte da oferta.
+
+## Exame de Época Normal — 2 de julho de 2024
+
+**Duração da prova: 1h15**
+
+### Questão 1
+
+> Apresente duas razões para a necessidade de coordenação de múltiplos agentes (2,5 val).
+
+#### Modelo de resposta
+
+1. **Recursos partilhados e dependências**: vários agentes podem precisar do mesmo recurso, espaço ou período. A coordenação evita colisões, duplicação de trabalho, reservas incompatíveis e bloqueios. Por exemplo, dois robôs não devem receber a mesma recolha nem ocupar simultaneamente um corredor estreito.
+2. **Objetivos interdependentes e conhecimento distribuído**: cada agente tem uma visão local, mas o resultado depende de decisões compatíveis. A coordenação permite partilhar informação, sincronizar ações e melhorar o resultado global. Por exemplo, recolher um artigo não serve se não existir capacidade de embalagem ou transporte antes do prazo.
+
+### Questão 2
+
+> Descreva com detalhe as 4 fases principais de um processo de negociação (3 val).
+
+#### Modelo de resposta
+
+1. **Preparação**: o agente identifica uma necessidade, define objeto, participantes, restrições, preferências, valor de reserva, prazo e protocolo. Exemplo: pedir transporte para uma encomenda antes de determinada hora.
+2. **Negociação**: os participantes trocam propostas, contrapropostas, recusas, pedidos de esclarecimento e compromissos provisórios para acordar preço, quantidade, qualidade, prazo e responsabilidades.
+3. **Execução/performance**: depois do acordo, cada participante realiza as ações a que se comprometeu, atualiza o estado, monitoriza prazos e comunica falhas.
+4. **Aceitação/encerramento**: quem pediu o serviço verifica se as condições foram cumpridas, aceita ou rejeita o resultado, regista a transação e inicia renegociação se houver incumprimento.
+
+### Questão 3
+
+> A maior parte das plataformas de desenvolvimento de Agentes dispõe de um Agente “Facilitator” ou “Broker”. Qual a função de cada um desses agentes? Que vantagens e inconvenientes vê no uso dos mesmos? (3 val).
+
+#### Modelo de resposta
+
+Um Facilitator, muitas vezes um *Directory Facilitator*, funciona como páginas amarelas do SMA. Os agentes registam os serviços que oferecem; um cliente pesquisa o diretório e contacta diretamente um prestador adequado.
+
+Um <TermTooltip term="Broker" definition="Intermediário ativo que recebe um pedido, procura prestadores, encaminha ou agrega respostas e devolve o resultado ao cliente.">Broker</TermTooltip> é mais ativo: recebe o pedido do cliente, contacta prestadores, pode selecionar um deles, encaminhar mensagens e agregar resultados. O cliente pode não conhecer a identidade do prestador.
+
+**Vantagens:** facilitam descoberta de serviços, reduzem acoplamento, permitem substituição de agentes, controlo de acesso e balanceamento de carga; um broker pode ainda esconder complexidade e agregar serviços.
+
+**Inconvenientes:** podem tornar-se gargalo, ponto único de falha ou alvo de ataque; aumentam latência e tráfego; um diretório desatualizado pode devolver agentes indisponíveis; e o broker concentra informação, reduzindo privacidade e negociação direta.
+
+### Questão 4
+
+> A empresa de logística BoasEntregas pretende desenvolver um Sistema Multiagente (SMA) de gestão de armazéns utilizado para otimizar a movimentação e o armazenamento de mercadorias. O sistema é constituído por vários componentes robóticos responsáveis pela recolha, embalagem e transporte de artigos dentro do armazém. O objetivo é minimizar o tempo de atendimento, reduzir os custos operacionais e melhorar a eficiência no envio de encomendas.
+
+#### Modelo de resposta
+
+O sistema deve decompor cada encomenda em recolha, embalagem, transporte e expedição. Um gestor coordena tarefas e prioridades; agentes especializados representam inventário, robôs, estações e tráfego. As decisões de negócio beneficiam de deliberação e replaneamento, enquanto os robôs físicos precisam de comportamentos reativos de baixa latência para operar em segurança.
+
+### Questão 4.a)
+
+> Especifique os agentes que acham que deveriam ser desenvolvidos e as respetivas arquiteturas e comportamentos. Justifique com detalhe. (3 val)
+
+#### Modelo de resposta
+
+- **Gestor de encomendas** — BDI; recebe encomendas, decompõe-as, prioriza por prazo, coordena atribuições e replana perante atrasos ou falhas.
+- **Agente de inventário e mapa** — reativo e orientado a eventos; mantém stock, localização, reservas, corredores e zonas indisponíveis.
+- **Robôs de recolha** — arquitetura híbrida; uma camada reativa trata obstáculos e paragem segura, enquanto uma camada deliberativa escolhe rota, avalia bateria e aceita ou recusa tarefas.
+- **Agente de embalagem/estação** — reativo com regras de capacidade e qualidade; recebe itens, valida a encomenda, embala e comunica bloqueios.
+- **Robôs de transporte/AMR** — híbridos; movem caixas, evitam colisões, gerem recarga e confirmam entrega na zona seguinte.
+- **Agente de tráfego/carregamento** — coordenador reativo; reserva corredores críticos, evita conflitos espaciais e atribui postos de carregamento.
+
+Esta combinação separa decisões planeadas das reações de segurança. Um robô nunca deve executar uma rota deliberada se a camada reativa detetar um obstáculo ou uma condição insegura.
+
+### Questão 4.b)
+
+> Ilustre graficamente um exemplo relativo a um possível fluxo de interação e troca de mensagens existente para a tarefa de gestão de encomendas especificada no cenário anteriormente referido. (3 val)
+
+#### Modelo de resposta
+
+<ConceptFlow
+  title="fluxo de uma encomenda no armazém"
+  steps={[
+    "Gestor → Inventário: QUERY-REF(itens); Inventário → Gestor: INFORM(stock, localização, reserva)",
+    "Gestor → Robôs de recolha: CFP(local, prazo); Robôs → Gestor: PROPOSE(ETA, custo, bateria)",
+    "Gestor → Robô escolhido: ACCEPT-PROPOSAL; restantes: REJECT-PROPOSAL",
+    "Robô de recolha → Estação: REQUEST(entrega dos itens); Robô → Gestor: INFORM-DONE(recolha)",
+    "Estação → Gestor: INFORM(encomenda embalada)",
+    "Gestor → Robô de transporte: REQUEST(doca de expedição); Robô → Gestor: AGREE e INFORM-DONE",
+    "Se houver falha: executor → Gestor: FAILURE; Gestor atribui a tarefa a outro robô",
+  ]}
+/>
+
+O trecho entre o gestor e os robôs de recolha aplica Contract Net: o gestor anuncia a tarefa, cada robô propõe prazo, custo e disponibilidade, e o gestor escolhe o candidato com melhor valor para a encomenda.
+
+### Questão 4.c)
+
+> Exemplifique, com base num pequeno exemplo, como o fluxo anteriormente descrito poderia ser aplicado a outro cenário/contexto (2,5 val).
+
+#### Modelo de resposta
+
+O mesmo fluxo aplica-se à distribuição de medicação num hospital. O gestor recebe a prescrição, o inventário da farmácia confirma e reserva o medicamento, técnicos ou robôs propõem a recolha, uma estação prepara e valida a dose e um robô de transporte leva-a à enfermaria. Se o robô escolhido falhar ou surgir uma urgência, o gestor atribui a tarefa a outro recurso, tal como no armazém.
+
+### Questão 5
+
+> A solução desenvolvida no quarto desafio relativo à componente de Sistemas Multiagente poderia evoluir para utilizar aprendizagem por reforço multiagente (MARL)? Justifique a sua opinião explicando claramente as características desta tecnologia que permitem (ou não) a sua incorporação na solução desenvolvida. Caso não seja aplicável explique como poderia incorporar uma componente RL, descrevendo alterações necessárias a nível de arquitetura, agentes e seus comportamentos. (3 val)
+
+#### Modelo de resposta
+
+Sim, este cenário é adequado a <TermTooltip term="MARL" definition="Multi-Agent Reinforcement Learning: aprendizagem por reforço em que vários agentes aprendem decisões que se influenciam mutuamente.">MARL</TermTooltip>, porque há agentes que tomam decisões repetidas num ambiente dinâmico e partilham objetivos globais: reduzir atraso, custo, consumo de energia, congestionamento e colisões, aumentando encomendas concluídas.
+
+Cada robô pode observar posição, bateria, carga, fila de tarefas, obstáculos e mensagens. As ações podem incluir aceitar ou recusar uma tarefa, escolher rota, velocidade, momento de recarga ou proposta de negociação. A recompensa combina prémios por recolhas e entregas concluídas com penalizações por atraso, consumo, bloqueio e colisão.
+
+Uma abordagem adequada é <TermTooltip term="CTDE" definition="Centralized Training, Decentralized Execution: treino com informação global e execução por cada agente usando apenas observações locais.">CTDE</TermTooltip>. No treino, um simulador ou crítico centralizado avalia o efeito conjunto das decisões; em produção, cada robô executa a sua política com informação local e mensagens do SMA.
+
+As alterações necessárias são criar um simulador ou gémeo digital, definir estado, ações, recompensas, episódios e métricas, acrescentar uma política de <TermTooltip term="RL" definition="Reinforcement Learning: aprendizagem de decisões através de recompensas obtidas na interação com o ambiente.">RL</TermTooltip>/MARL aos robôs ou ao gestor e treinar offline antes de usar robôs reais. A camada reativa de segurança e os protocolos ACL/Contract Net devem manter-se: a política aprendida ajuda a decidir que rota, tarefa ou proposta escolher, mas não pode permitir colisões ou ações proibidas. Também deve existir um escalonador determinístico de recurso para baixa confiança ou falha.
+
+Os riscos são não estacionaridade, atribuição de mérito entre agentes, observabilidade parcial, custo de treino e segurança física. Por isso, MARL complementa regras críticas de segurança, não as substitui.
 
 </Body>
 
-<Callout icon={Key} title="templates de alto rendimento">
-  **Template de propriedades**: A definição mostra: Perceção: "...", Autonomia: "...", Proatividade: "...", Capacidade social: "...", Aprendizagem: "...". **Template de cenário SMA**: Objetivo do sistema → agentes → perceções/crenças, objetivos, ações, arquitetura por agente → comunicação → protocolo → sequência → conflitos → justificação. **Template Contract Net**: Adequado se alocação de tarefas com gestor e contratantes. Menos adequado se leilão, barganha repetida ou multi-critério complexo.
+<Callout icon={Key} title="Como estudar com estes modelos">
+  Comece por identificar o verbo do enunciado: *caracterize*, *justifique*,
+  *especifique*, *ilustre* ou *exemplifique*. Depois siga a estrutura pedida:
+  definição clara, aplicação ao cenário, mensagens/protocolo quando necessário,
+  e uma justificação que explique por que a escolha é adequada.
 </Callout>
 
-<Marginalia label="use estes templates em exame">
-  Estes templates cobrem os tipos de pergunta mais recorrentes. Adapte o conteúdo ao cenário dado mas mantenha a estrutura. O examinador quer ver que consegue aplicar conceitos de forma concreta e estruturada.
+<Marginalia label="atenção ao Challenge 4">
+  Os enunciados de 2021 e 2022 referem um Challenge que não está nas imagens.
+  Os exemplos apresentados mostram a estrutura esperada, mas devem ser
+  substituídos pelos agentes, dados e decisões do Challenge que realizou.
 </Marginalia>
