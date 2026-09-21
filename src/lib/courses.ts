@@ -143,4 +143,25 @@ export const COURSES: Course[] = [
     questionCount: 25,
     accent: "#c7502e",
   },
+  {
+    slug: "world-models",
+    vol: "vol. x",
+    title: "World Models",
+    subtitle: "Learning by predicting, not by labeling",
+    description:
+      "Self-supervised models that learn how the world behaves by predicting missing or future parts of their own input. Covers pretext vs downstream tasks, pixel vs latent prediction, representation collapse, EMA target encoders, masking, and the JEPA family up to V-JEPA 2.",
+    topics: [
+      "Prediction vs Classification",
+      "Encoder",
+      "Predictor",
+      "Latent Space",
+      "Collapse",
+      "EMA",
+      "Masking",
+      "JEPA",
+    ],
+    sectionCount: 9,
+    questionCount: 25,
+    accent: "#c7502e",
+  },
 ];

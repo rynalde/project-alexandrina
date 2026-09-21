@@ -1,0 +1,104 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { Brain } from "lucide-react";
+import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
+
+<SectionHeader num="00" title="What a World Model Is" subtitle="learning by predicting, not by labeling" vol="vol. x" />
+
+<LearningObjectives
+  sectionId="inicio"
+  items={[
+    "Tell a classifier apart from a world model.",
+    "Explain why prediction produces free labels.",
+    "Say what a model is forced to learn in order to predict well.",
+  ]}
+/>
+
+<MobileStepScreens>
+<MobileStepScreen label="content" title="Content">
+
+<LessonStage step="1" title="Content" subtitle="Five short beats. Read them in order." />
+
+<Body>
+
+### 1. The usual recipe: input → label
+
+A classifier learns a mapping you supervise. Photo of a cat → "cat". It only knows what is in your label set, and every example costs a human a few seconds of labeling.
+
+That ceiling is the whole problem. ImageNet took years and millions of dollars to label, while there are billions of hours of unlabeled video sitting on the internet doing nothing.
+
+### 2. The other recipe: input → what comes next
+
+A world model learns a different mapping. Show it frames 1–8 of a video and ask for frame 9. Show it an image with a hole and ask what is behind the hole.
+
+Nobody wrote a label — <Highlight>frame 9 already exists in the file</Highlight>. The data supervises itself. This is *self-supervised* learning, and it is what unlocks all that unlabeled video.
+
+### 3. Why prediction forces understanding
+
+To guess frame 9 above chance, the network has no choice but to internalize how the world behaves: objects do not teleport, a ball in flight keeps going and curves down, an occluded arm still exists behind the torso, a person mid-jump comes back down.
+
+None of that was ever labeled. It is the *only* way to reduce the prediction error. That accumulated know-how — physics, permanence, causality — is what we call the <Highlight>world model</Highlight>.
+
+### 4. The twist that trips people up
+
+After training, we usually **throw the prediction away**. The predicted frame was never the point. The point is the internal representation the encoder learned in order to make that prediction — a compact vector that captures "what is going on here".
+
+There are always two tasks:
+
+- — <Highlight>Pretext task</Highlight>: the fake job used for training (predict the missing part). Disposable.
+- — <Highlight>Downstream task</Highlight>: the real job you care about (classify the action, detect a fall, plan a robot's next move).
+
+### 5. Where the name comes from
+
+Ha &amp; Schmidhuber (2018) trained an agent to drive a racing game by first learning a model of the game, then training the controller *inside its own imagination* of that game. They called the learned component a world model.
+
+Meta's JEPA family (2023–2025) is the modern version, scaled to real video — and that is where V-JEPA lives.
+
+</Body>
+
+<Callout icon={Brain} title="one sentence to keep">
+  A world model is a network that learns physics and common sense by predicting the future, not by memorizing labels — and what we keep afterwards is the representation, not the prediction.
+</Callout>
+
+<Marginalia label="traps">
+  "World model = generative model" — no, generation is one use, not the definition. "Self-supervised = unsupervised" — no, there IS a target, it comes from the data. "The goal is an accurate prediction" — no, the goal is the representation. Mixing up pretext and downstream tasks.
+</Marginalia>
+
+</MobileStepScreen>
+<MobileStepScreen label="interaction" title="Interaction">
+
+<LessonStage step="2" title="Interaction" subtitle="Step through both paths and compare the label cost." />
+
+<ConceptFlow
+  title="Classifier path vs world model path"
+  steps={[
+    "Classifier: collect 1000 videos and pay humans to label every one.",
+    "Classifier: train CNN on input → label. It only knows your label set.",
+    "World model: collect 1,000,000 videos and label none of them.",
+    "World model: hide part of each video and train the network to predict the hidden part.",
+    "World model: throw the prediction away, keep the encoder's representation.",
+    "World model: add just 50 labeled examples on top → same task, ~20× fewer labels.",
+  ]}
+/>
+
+<ExamTrap title="the reveal">
+  Both paths end at the same answer. The difference is that the world model paid for its understanding with unlabeled data instead of human hours.
+</ExamTrap>
+
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
+<LessonStage step="3" title="Quiz" subtitle="Close the chapter before moving to the roadmap." />
+
+<SectionQuiz
+  sectionId="inicio"
+  topic="overview"
+  source={WORLD_MODELS_QUESTIONS}
+  title="Checkpoint — what a world model is"
+/>
+
+</MobileStepScreen>
+</MobileStepScreens>

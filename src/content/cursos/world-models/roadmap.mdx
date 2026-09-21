@@ -1,0 +1,32 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+
+<SectionHeader num="01" title="Roadmap" subtitle="where this caderno is going" vol="vol. x" />
+
+<Body>
+
+### vol. x — World Models (this caderno)
+
+- — <Highlight>00 What a world model is</Highlight> — done
+- — 01 The three ingredients — encoder, predictor, loss
+- — 02 Pixel vs latent — why predicting pixels blurs, why predicting representations works
+- — 03 Collapse — the "everything becomes zero" problem and its fixes
+- — 04 Family tree — Ha &amp; Schmidhuber, Dreamer, BYOL, I-JEPA, V-JEPA, V-JEPA 2
+- — 05 Anatomy of I-JEPA — context encoder, target encoder (EMA), predictor, masks
+- — 06 From I-JEPA to V-JEPA — tubelets, spatio-temporal masking, video attention
+- — 07 How to use one — linear probe, attentive probe, fine-tuning, planning
+- — ∞ Final simulation — 25 exam-style questions
+
+### What follows
+
+- — <Highlight>vol. xi — PyTorch for World Models</Highlight>: tensors, autograd, training loop, Dataset/DataLoader, nn.Module, Colab GPU.
+- — <Highlight>vol. xii — Building Your Own World Model</Highlight>: Moving MNIST, a pixel next-frame predictor, then a JEPA-style latent predictor with an EMA target encoder.
+- — <Highlight>vol. xiii — Making It Useful</Highlight>: freeze the encoder, train a probe, move to pretrained V-JEPA 2 on a UCF101 subset, measure calibration.
+
+</Body>
+
+<Marginalia label="rule">
+  One chapter at a time. A chapter is only done when its checkpoint feels easy — not when it has been read.
+</Marginalia>
