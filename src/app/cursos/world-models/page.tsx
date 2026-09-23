@@ -7,10 +7,12 @@ import CoursePage from "@/components/course/CoursePage";
 import WorldModelsSimuladoSection from "@/components/quiz/WorldModelsSimuladoSection";
 
 import InicioSection from "@/content/cursos/world-models/inicio.mdx";
+import IngredientsSection from "@/content/cursos/world-models/ingredients.mdx";
 import RoadmapSection from "@/content/cursos/world-models/roadmap.mdx";
 
 const SECTION_MAP: Record<string, ComponentType> = {
   inicio: InicioSection,
+  ingredients: IngredientsSection,
   roadmap: RoadmapSection,
   simulado: WorldModelsSimuladoSection,
 };

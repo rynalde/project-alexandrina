@@ -53,10 +53,63 @@ export const WORLD_MODELS_QUESTIONS: Question[] = [
     correct: 1,
     exp: "Pixel generation is one option, not the definition. JEPA predicts in representation space and never reconstructs pixels.",
   },
+  {
+    id: 5,
+    topic: "ingredients",
+    q: "In a world model, the 'context' and the 'target' are:",
+    opts: [
+      "The input and its human-written label.",
+      "Two parts of the same input: the visible part and the hidden part.",
+      "The training set and the test set.",
+      "The encoder and the predictor.",
+    ],
+    correct: 1,
+    exp: "Both come from the same clip. The mask decides which part is visible (context) and which is hidden (target). No human label is involved.",
+  },
+  {
+    id: 6,
+    topic: "ingredients",
+    q: "What is the job of the predictor?",
+    opts: [
+      "Turn raw pixels into a representation vector.",
+      "Decide which patches to hide.",
+      "Guess the target from the context's representation and the target's position.",
+      "Compute the gradient of the loss.",
+    ],
+    correct: 2,
+    exp: "The predictor is the 'imagination': given what was seen and where the hidden part is, it guesses what the hidden part contains.",
+  },
+  {
+    id: 7,
+    topic: "ingredients",
+    q: "After pretraining, which component is normally kept for downstream tasks?",
+    opts: [
+      "The predictor.",
+      "The mask.",
+      "The loss function.",
+      "The encoder.",
+    ],
+    correct: 3,
+    exp: "The encoder learned to see and summarize — that's the reusable part. The predictor was scaffolding for the training game (V-JEPA 2 planning is a later exception).",
+  },
+  {
+    id: 8,
+    topic: "ingredients",
+    q: "Which design decision determines whether a model is pixel-predicting or latent-predicting (JEPA-style)?",
+    opts: [
+      "The number of encoder layers.",
+      "What the loss compares the prediction against: raw pixels or representations.",
+      "Whether the data is video or images.",
+      "The learning rate.",
+    ],
+    correct: 1,
+    exp: "The loss target is the key choice. Compare against pixels → pixel prediction. Compare against the target's representation → latent prediction (JEPA).",
+  },
 ];
 
 export const WORLD_MODELS_TOPIC_LABELS: Record<string, string> = {
   overview: "What a World Model Is",
+  ingredients: "The Three Ingredients",
 };
 
 export const WORLD_MODELS_SECTIONS: Section[] = [
@@ -67,8 +120,14 @@ export const WORLD_MODELS_SECTIONS: Section[] = [
     subtitle: "Learning by predicting, not by labeling",
   },
   {
-    id: "roadmap",
+    id: "ingredients",
     num: "01",
+    title: "The Three Ingredients",
+    subtitle: "Encoder, predictor, loss",
+  },
+  {
+    id: "roadmap",
+    num: "→",
     title: "Roadmap",
     subtitle: "Where this caderno is going",
   },

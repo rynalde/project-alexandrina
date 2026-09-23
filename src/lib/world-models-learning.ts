@@ -29,6 +29,26 @@ export const WORLD_MODELS_LEARNING_CONFIG: LearningCourseConfig = {
         kind: "flow",
       },
     },
+    ingredients: {
+      id: "ingredients",
+      objectives: [
+        "Name the three parts every world model has and what each one does.",
+        "Explain context and target as two parts of the same input.",
+        "Say which part is usually kept after training, and why.",
+      ],
+      keyConcepts: ["encoder", "predictor", "loss", "mask", "context", "target"],
+      examTraps: [
+        "Context and target are two parts of the same input, not input and label.",
+        "The predictor is usually discarded; the encoder is kept.",
+        "The loss target (pixels vs representations) is the key design decision.",
+      ],
+      quizTopic: "ingredients",
+      interaction: {
+        id: "wm-ingredients-match",
+        title: "Who does what?",
+        kind: "matching",
+      },
+    },
     roadmap: {
       id: "roadmap",
       objectives: [

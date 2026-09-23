@@ -1,0 +1,117 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { Layers } from "lucide-react";
+import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
+
+<SectionHeader num="01" title="The Three Ingredients" subtitle="encoder, predictor, loss" vol="vol. x" />
+
+<LearningObjectives
+  sectionId="ingredients"
+  items={[
+    "Name the three parts every world model has and what each one does.",
+    "Explain context and target as two parts of the same input.",
+    "Say which part is usually kept after training, and why.",
+  ]}
+/>
+
+<MobileStepScreens>
+<MobileStepScreen label="content" title="Content">
+
+<LessonStage step="1" title="Content" subtitle="Three parts, one loop. Read them in order." />
+
+<Body>
+
+### Start from one input, split in two
+
+Take one clip: 9 frames of a ball bouncing. Hide frame 9. Now you have two pieces of the **same** input:
+
+- — <Highlight>Context</Highlight>: what the model is allowed to see (frames 1–8).
+- — <Highlight>Target</Highlight>: what it must guess (frame 9).
+
+The rule that decides what gets hidden is called the <Highlight>mask</Highlight>. Hide the future and you get "predict what's next". Hide random blocks and you get "fill in the gap". Same machine, different mask.
+
+### Ingredient 1 — the encoder
+
+The encoder turns raw input into a <Highlight>representation</Highlight>: a vector of numbers that summarizes what is going on.
+
+Think of it as the eyes plus the part of the brain that says "a ball, moving right, falling". It throws away what doesn't matter (exact pixel noise) and keeps what does (position, velocity, identity).
+
+In notation: <Kbd>z = f(x)</Kbd> — input `x` in, representation `z` out.
+
+### Ingredient 2 — the predictor
+
+The predictor takes the representation of the context and guesses the target.
+
+It is the imagination: "given a ball moving right and falling, frame 9 should show it lower and further right". It needs to know **where/when** the target is, so it also receives the target's position (which frame, which patch).
+
+In notation: <Kbd>ẑ = g(z_context, where)</Kbd>.
+
+### Ingredient 3 — the loss
+
+The loss measures how wrong the guess was. It compares the prediction with the real target and returns one number. Training = repeatedly nudging the encoder and predictor weights to make that number smaller.
+
+The big design decision hides here: **what exactly is "the real target"?**
+
+- — Raw pixels of frame 9 → a pixel-prediction model.
+- — The *representation* of frame 9 → a latent-prediction model (this is JEPA).
+
+That single choice changes everything. It is the whole of the next chapter.
+
+### The loop
+
+1. Mask the input → context + target.
+2. Encoder turns the context into `z_context`.
+3. Predictor guesses the target from `z_context`.
+4. Loss compares guess vs target.
+5. Backpropagate, update weights, repeat millions of times.
+
+### Which part do you keep?
+
+Usually the **encoder**. It is what learned to see. The predictor was scaffolding for the training game. (Nuance for later: V-JEPA 2 also reuses a predictor for robot *planning* — imagining the result of an action before doing it.)
+
+</Body>
+
+<Callout icon={Layers} title="one sentence to keep">
+  Encoder = sees and summarizes. Predictor = imagines the hidden part. Loss = says how wrong the imagination was. The mask decides what is hidden, and the loss target decides whether you predict pixels or meaning.
+</Callout>
+
+<Marginalia label="traps">
+  Context and target are NOT input and label — they are two parts of the same input. The predictor is usually discarded, the encoder is kept. The encoder can't learn alone — without a predictor and a loss there is nothing to train it on. Choosing the loss target (pixels vs representations) is the most important design decision.
+</Marginalia>
+
+</MobileStepScreen>
+<MobileStepScreen label="interaction" title="Interaction">
+
+<LessonStage step="2" title="Interaction" subtitle="Match each part to its job." />
+
+<MatchingDrill
+  sectionId="ingredients"
+  title="Who does what?"
+  pairs={[
+    { prompt: "Encoder", answer: "Turns raw input into a representation vector" },
+    { prompt: "Predictor", answer: "Guesses the target from the context's representation" },
+    { prompt: "Loss", answer: "Measures how far the guess is from the real target" },
+    { prompt: "Mask", answer: "Decides which part of the input is hidden" },
+    { prompt: "Context", answer: "The visible part of the input" },
+    { prompt: "Target", answer: "The hidden part the model must predict" },
+  ]}
+/>
+
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
+<LessonStage step="3" title="Quiz" subtitle="Close the chapter before moving on." />
+
+<SectionQuiz
+  sectionId="ingredients"
+  topic="ingredients"
+  source={WORLD_MODELS_QUESTIONS}
+  title="Checkpoint — the three ingredients"
+/>
+
+</MobileStepScreen>
+</MobileStepScreens>
