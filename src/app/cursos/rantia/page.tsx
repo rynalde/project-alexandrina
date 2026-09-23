@@ -4,7 +4,6 @@ import { type ComponentType } from "react";
 import { RANTIA_SECTIONS } from "@/lib/rantia-data";
 import { RANTIA_LEARNING_CONFIG } from "@/lib/rantia-learning";
 import CoursePage from "@/components/course/CoursePage";
-import RantiaSimuladoSection from "@/components/quiz/RantiaSimuladoSection";
 import RantiaAssessment from "@/components/quiz/RantiaAssessment";
 
 import InicioSection from "@/content/cursos/rantia/inicio.mdx";

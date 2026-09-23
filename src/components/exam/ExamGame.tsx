@@ -269,7 +269,15 @@ export default function ExamGame({ customQuestions, customMetadata, questionsPer
   );
 }
 
-function IntroScreen({ activeMetadata, activeQuestions, onStart }: { activeMetadata: any, activeQuestions: any, onStart: () => void }) {
+function IntroScreen({
+  activeMetadata,
+  activeQuestions,
+  onStart,
+}: {
+  activeMetadata: NonNullable<ExamGameProps["customMetadata"]>;
+  activeQuestions: ExamQuestion[];
+  onStart: () => void;
+}) {
   return (
     <div className="paper-texture min-h-[100svh] font-sans text-ink flex flex-col">
       <header className="px-4 sm:px-8 pt-[max(env(safe-area-inset-top),1rem)] pb-2">
