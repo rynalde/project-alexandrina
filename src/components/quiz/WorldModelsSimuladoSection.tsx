@@ -12,6 +12,7 @@ export default function WorldModelsSimuladoSection() {
         num="∞"
         title="Final Simulation"
         subtitle="exam-style questions, growing as chapters land"
+        vol="vol. x"
       />
       <p className="font-sans text-sm sm:text-[15px] leading-[1.75] text-ink mb-2 max-w-[68ch]">
         Cumulative simulation for vol. x. Answer everything and click{" "}
