@@ -34,15 +34,30 @@ That ceiling is the whole problem. ImageNet took years and millions of dollars t
 
 A world model learns a different mapping. Show it frames 1–8 of a video and ask for frame 9. Show it an image with a hole and ask what is behind the hole.
 
-Nobody wrote a label — <Highlight>frame 9 already exists in the file</Highlight>. The data supervises itself. This is *self-supervised* learning, and it is what unlocks all that unlabeled video.
+Nobody wrote a label — <Highlight>frame 9 already exists in the file</Highlight>. The data supervises itself. This is <TermTip term="self-supervised learning">the target is cut out of the input itself — no human writes it</TermTip>, and it is what unlocks all that unlabeled video.
+
+<QuickCheck
+  q="Which of these is self-supervised?"
+  options={["Training on photos a human tagged cat or dog", "Predicting the next word of a sentence from the words before it", "Grouping photos into clusters with no target at all"]}
+  correct={1}
+  why="The next word is already in the text, so the data supplies its own target. The first is supervised (human labels); the third is unsupervised (no target)."
+/>
 
 ### 3. Why prediction forces understanding
+
+Before reading on, play the game yourself:
+
+<NextFrameGuess />
 
 To guess frame 9 above chance, the network has no choice but to internalize how the world behaves: objects do not teleport, a ball in flight keeps going and curves down, an occluded arm still exists behind the torso, a person mid-jump comes back down.
 
 None of that was ever labeled. It is the *only* way to reduce the prediction error. That accumulated know-how — physics, permanence, causality — is what we call the <Highlight>world model</Highlight>.
 
 ### 4. The twist that trips people up
+
+<PredictReveal prompt="Training is over. The model predicts frame 9 very well. What do you think we actually keep and reuse?">
+Not the predictions. We keep the encoder — the part that turned frames into a compact description of what's happening. The predicted frames get thrown away.
+</PredictReveal>
 
 After training, we usually **throw the prediction away**. The predicted frame was never the point. The point is the internal representation the encoder learned in order to make that prediction — a compact vector that captures "what is going on here".
 
@@ -51,9 +66,9 @@ There are always two tasks:
 - — <Highlight>Pretext task</Highlight>: the fake job used for training (predict the missing part). Disposable.
 - — <Highlight>Downstream task</Highlight>: the real job you care about (classify the action, detect a fall, plan a robot's next move).
 
-### 5. Where the name comes from
+### 5. Where the name was popularised
 
-Ha &amp; Schmidhuber (2018) trained an agent to drive a racing game by first learning a model of the game, then training the controller *inside its own imagination* of that game. They called the learned component a world model.
+Ha &amp; Schmidhuber (2018) learned compressed models of game environments (a racing game and VizDoom). In VizDoom they went further: the controller was trained *entirely inside the model's own dream* of the game, then transferred back to the real one. Their paper popularised the term world model (the idea goes back to Schmidhuber's work around 1990).
 
 Meta's JEPA family (2023–2025) is the modern version, scaled to real video — and that is where V-JEPA lives.
 
@@ -75,17 +90,17 @@ Meta's JEPA family (2023–2025) is the modern version, scaled to real video —
 <ConceptFlow
   title="Classifier path vs world model path"
   steps={[
-    "Classifier: collect 1000 videos and pay humans to label every one.",
+    "Classifier: collect 1,000 videos and pay humans to label every one.",
     "Classifier: train CNN on input → label. It only knows your label set.",
     "World model: collect 1,000,000 videos and label none of them.",
     "World model: hide part of each video and train the network to predict the hidden part.",
     "World model: throw the prediction away, keep the encoder's representation.",
-    "World model: add just 50 labeled examples on top → same task, ~20× fewer labels.",
+    "World model: add a small labeled set on top → the same task with far fewer labels.",
   ]}
 />
 
 <ExamTrap title="the reveal">
-  Both paths end at the same answer. The difference is that the world model paid for its understanding with unlabeled data instead of human hours.
+  Both paths aim at the same answer. The difference is that the world model paid for its understanding with unlabeled data instead of human hours. (The numbers here are illustrative, not from a paper.)
 </ExamTrap>
 
 </MobileStepScreen>

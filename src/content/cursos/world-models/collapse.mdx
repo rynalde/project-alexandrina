@@ -1,0 +1,97 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { ShieldAlert } from "lucide-react";
+import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
+
+<SectionHeader num="03" title="Collapse" subtitle="the zero-loss cheat, and three ways to block it" vol="vol. x" />
+
+<LearningObjectives
+  sectionId="collapse"
+  items={[
+    "Explain representation collapse and why latent prediction invites it.",
+    "Name the three families of defenses and one example of each.",
+    "Say which defense I-JEPA and V-JEPA use, and how you'd detect collapse in your own runs.",
+  ]}
+/>
+
+<MobileStepScreens>
+<MobileStepScreen label="content" title="Content">
+
+<LessonStage step="1" title="Content" subtitle="The cheat, then the three fixes." />
+
+<Body>
+
+### The cheat
+
+<PredictReveal prompt="The prediction and the target both come out of learned encoders. What's the laziest way to make them match — for every input, forever?">
+Make the encoder output the same vector no matter what it sees, and have the predictor output that same vector. Prediction = target, always. Loss = 0. And the representation is useless, because it says nothing about the input.
+</PredictReveal>
+
+That failure has a name: <Highlight>representation collapse</Highlight>. The loss looks perfect and the model has learned nothing.
+
+### Why pixel models never collapse
+
+Pixels are fixed data. The model can't change what frame 9 looks like, so it can't make the target trivial. Moving the target inside the model (chapter 02) is exactly what opens the door.
+
+### Defense 1 — contrastive: push things apart
+
+Pull two views of the *same* input together, and push *different* inputs apart. Those "different inputs" are called **negatives**. A constant output can't push anything apart, so it's punished. Examples: SimCLR, MoCo (2020). Cost: you need lots of negatives, usually big batches.
+
+### Defense 2 — regularize: demand variety
+
+VICReg (Bardes, Ponce &amp; LeCun, 2022) adds three terms:
+
+- — **Variance**: each embedding dimension must keep a minimum spread across the batch. A constant has zero spread.
+- — **Invariance**: two views of the same input should match.
+- — **Covariance**: different dimensions should not carry the same information.
+
+### Defense 3 — asymmetry: a slow-moving, gradient-free teacher
+
+BYOL (2020) showed you can skip negatives entirely by making the two sides *different*:
+
+- — a **predictor** sits on the online side only;
+- — the target side gets a <TermTip term="stop-gradient">treat the value as a constant: no gradient flows back through it</TermTip>;
+- — the target encoder is an **EMA** (a slow moving average) of the online encoder's weights.
+
+This is the defense **I-JEPA and V-JEPA use**. (SimSiam, 2021, later showed the EMA isn't strictly required — stop-gradient plus a predictor is enough.) Honest note: *why* this asymmetry prevents collapse is still being studied. It works reliably in practice; the full theory is younger than the trick.
+
+<QuickCheck
+  q="Your training loss drops to 0.00 in the first epoch, and the per-dimension standard deviation of your embeddings is ≈ 0. What happened?"
+  options={["A great model", "Representation collapse", "Overfitting", "A learning-rate that's too low"]}
+  correct={1}
+  why="Zero loss plus zero spread means every input maps to the same point. Real learning keeps the embeddings spread out."
+/>
+
+### How you'll check for it in your own lab
+
+Two cheap alarms for vol. xii: log the **standard deviation of each embedding dimension** across a batch (it should not sink toward 0), and run a quick **linear probe** now and then (stuck at chance = nothing learned).
+
+</Body>
+
+<Callout icon={ShieldAlert} title="one sentence to keep">
+  If both sides of the loss are learned, the model can win by outputting a constant; contrastive negatives, variance regularization, or an asymmetric EMA-teacher-plus-predictor design block that cheat — JEPA uses the asymmetric one.
+</Callout>
+
+<Marginalia label="traps">
+  Low loss is not proof of learning — collapse gives zero loss. Pixel-reconstruction models don't collapse this way; the risk comes from learned targets. BYOL/JEPA need no negatives. EMA alone is not the whole story — the predictor and stop-gradient are part of the asymmetry.
+</Marginalia>
+
+</MobileStepScreen>
+<MobileStepScreen label="interaction" title="Interaction">
+
+<LessonStage step="2" title="Interaction" subtitle="Train with no protection, then try each defense." />
+
+<CollapseLab />
+
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
+<LessonStage step="3" title="Quiz" subtitle="Close the chapter before moving on." />
+
+<SectionQuiz sectionId="collapse" topic="collapse" source={WORLD_MODELS_QUESTIONS} title="Checkpoint — collapse" />
+
+</MobileStepScreen>
+</MobileStepScreens>

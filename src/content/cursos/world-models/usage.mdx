@@ -1,0 +1,104 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { Crosshair } from "lucide-react";
+import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
+
+<SectionHeader num="07" title="How to Use One" subtitle="probes, fine-tuning, and planning" vol="vol. x" />
+
+<LearningObjectives
+  sectionId="usage"
+  items={[
+    "Choose between a linear probe, an attentive probe and fine-tuning.",
+    "Explain how an attentive probe works and why V-JEPA needs one.",
+    "Explain how V-JEPA 2-AC plans robot actions in latent space.",
+  ]}
+/>
+
+<MobileStepScreens>
+<MobileStepScreen label="content" title="Content">
+
+<LessonStage step="1" title="Content" subtitle="You have a pretrained encoder. Now what?" />
+
+<Body>
+
+### Keep the encoder, usually frozen
+
+After pretraining you keep the encoder (chapter 01) and — most of the time — **freeze** it. Testing a frozen encoder is the fair test of a world model: it measures what it learned on its own, not what a fine-tuning run taught it afterwards.
+
+### Option 1 — linear probe
+
+Average all the patch tokens into one vector, train a single linear layer on top. Cheapest possible read-out: a fast sanity check, with a lower ceiling.
+
+### Option 2 — attentive probe
+
+V-JEPA outputs one feature per tubelet — **thousands of tokens** (1,568 for a 16-frame, 224px clip) and **no special "class" token**. The paper also points out that nothing in the feature-prediction objective makes the features *linearly* separable, and averaging lets the background drown out the action. So the attentive probe learns a **query token** that cross-attends over all the tokens, adds the result back to the query (residual), and passes it through a small MLP. Only the probe is trained.
+
+- — **V-JEPA**: one cross-attention layer + a 2-layer MLP.
+- — **V-JEPA 2**: a deeper probe — 4 transformer blocks, the last one using cross-attention with the learnable query.
+
+<AttentivePoolViz />
+
+### Option 3 — fine-tune
+
+Unfreeze everything and train on labeled data. Best accuracy, highest cost, easy to overfit on small datasets.
+
+<QuickCheck
+  q="Why is an attentive probe the standard read-out for V-JEPA?"
+  options={["It has no patch tokens", "Its features are per-patch, not guaranteed to be linearly separable, and averaging dilutes the signal", "Linear layers can't be trained on video", "Attentive probes need no labels"]}
+  correct={1}
+  why="V-JEPA's features are per-patch. A learned query picks out what matters for the task; plain averaging treats background and action the same."
+/>
+
+### Option 4 — plan with it (V-JEPA 2-AC)
+
+V-JEPA 2 goes past classification. Keep the encoder frozen, then train a **new** ~300M-parameter **action-conditioned predictor** on **less than 62 hours** of unlabeled robot video (DROID), where it learns: given the current state and an action, what comes next.
+
+To reach a goal shown in an image, the robot runs a loop:
+
+<ConceptFlow
+  title="Planning in latent space"
+  steps={[
+    "Encode the current camera frame and the goal image.",
+    "Sample many candidate action sequences (Cross-Entropy Method).",
+    "Imagine each sequence's outcome with the predictor — in representation space, no pixels.",
+    "Score each: L1 distance between the imagined final state and the goal representation.",
+    "Execute only the first action of the best sequence.",
+    "Observe, then replan from the new state (receding horizon).",
+  ]}
+/>
+
+Deployed zero-shot on Franka arms in two labs, it did reach and pick-and-place from image goals (for pick-and-place it was also given two sub-goal images along the way). Planning took about **16 seconds per action**, against about **4 minutes** for a pixel video-generation baseline (Cosmos).
+
+<PredictReveal prompt="For your dissertation you'll use a frozen V-JEPA 2 with an attentive probe on a free Colab GPU. Why frozen instead of fine-tuned?">
+A large ViT seeing 2,048–8,192 tokens per clip (V-JEPA 2 at 256px, 16–64 frames) won't fit training gradients on a T4. Frozen, you can run the encoder once, cache the features to Drive, and train only the small probe — fast and cheap. It's also the fair, standard way to evaluate what the world model learned.
+</PredictReveal>
+
+</Body>
+
+<Callout icon={Crosshair} title="one sentence to keep">
+  Freeze the encoder and read it out with a linear probe (fast check), an attentive probe (V-JEPA's standard — a learned query cross-attending over patch tokens), or fine-tune for maximum accuracy; V-JEPA 2-AC goes further and plans actions by imagining outcomes in latent space.
+</Callout>
+
+<Marginalia label="traps">
+  Frozen evaluation doesn't mean nothing is trained — the probe is. An attentive probe is not fine-tuning. V-JEPA 2-AC plans in representation space; it never generates pixels. For planning, V-JEPA 2-AC trains a NEW action-conditioned predictor on the frozen encoder — the pretraining predictor is not reused.
+</Marginalia>
+
+</MobileStepScreen>
+<MobileStepScreen label="interaction" title="Interaction">
+
+<LessonStage step="2" title="Interaction" subtitle="Four scenarios. Pick the right tool for each." />
+
+<ProbeLab />
+
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
+<LessonStage step="3" title="Quiz" subtitle="Close the chapter, then take the final simulation." />
+
+<SectionQuiz sectionId="usage" topic="usage" source={WORLD_MODELS_QUESTIONS} title="Checkpoint — how to use one" />
+
+</MobileStepScreen>
+</MobileStepScreens>

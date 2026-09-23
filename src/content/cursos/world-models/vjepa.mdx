@@ -1,0 +1,110 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { Film } from "lucide-react";
+import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
+
+<SectionHeader num="06" title="From I-JEPA to V-JEPA" subtitle="tubelets, tube masks, and scaling to V-JEPA 2" vol="vol. x" />
+
+<LearningObjectives
+  sectionId="vjepa"
+  items={[
+    "Explain how a video clip becomes tokens (tubelets) and compute the token count.",
+    "Explain V-JEPA's masking: why ~90%, and why the same mask in every frame.",
+    "List what V-JEPA 2 changed: data, model size, positions, training recipe.",
+  ]}
+/>
+
+<MobileStepScreens>
+<MobileStepScreen label="content" title="Content">
+
+<LessonStage step="1" title="Content" subtitle="Same recipe as I-JEPA — adapted for time." />
+
+<Body>
+
+### The input: a clip
+
+V-JEPA takes **16 frames**, sampled every 4th frame (about 3 seconds of video), at 224×224.
+
+### Tokens: from patches to tubelets
+
+Images were cut into 2D patches. Video is cut into <TermTip term="tubelets">3D patches spanning space and time</TermTip>: each one covers **2 frames × 16 × 16 pixels**. So 16 frames become 8 time steps, and each frame a 14×14 grid:
+
+**8 × 14 × 14 = 1,568 tokens** per clip.
+
+<TokenCounter />
+
+### Masking: hide ~90%
+
+Each clip gets **two masks**, and each one is its own prediction task: a **short-range** mask (the union of 8 blocks, each ~15% of a frame) and a **long-range** mask (the union of 2 blocks, each ~70%). Because blocks overlap and are merged, the average masking ratio comes out at about **90%**.
+
+<PredictReveal prompt="MAE hides 75% of an image. Why does V-JEPA hide as much as 90% of a video?">
+Video is extremely redundant — neighbouring frames and neighbouring patches are nearly identical. With light masking, the model can fill gaps by copying and interpolating, which needs no understanding. Heavy masking forces it to model what's actually going on.
+</PredictReveal>
+
+### The key trick: the same mask in every frame
+
+The spatial blocks are **repeated across the whole time axis** — a "tube" through the clip. If each frame had its own mask, a hidden patch would often be visible at the same spot one frame earlier. The model would copy it and learn nothing about motion. The interaction on the next screen lets you count those leaks.
+
+### Everything else
+
+- — Loss: **L1** between predicted and target features (I-JEPA used L2).
+- — Target encoder: EMA, momentum **0.998 → 1.0**.
+- — Predictor: narrow transformer, 12 blocks, width 384.
+- — Data: **VideoMix2M** — about 2M videos from HowTo100M, Kinetics-400/600/700 and Something-Something-v2.
+- — Results (frozen backbone, attentive probe, largest model ViT-H/16 at 384px): **81.9%** Kinetics-400, **72.2%** Something-Something-v2, **77.9%** ImageNet.
+
+<QuickCheck
+  q="Why are V-JEPA's spatial masks repeated across all frames?"
+  options={["It saves GPU memory", "So hidden patches can't be copied from neighbouring frames", "Because tubelets require it", "To make the loss smaller"]}
+  correct={1}
+  why="Consecutive frames are nearly identical. A tube mask removes the copy-from-the-next-frame shortcut."
+/>
+
+### V-JEPA 2 (2025): the same idea, scaled
+
+- — **Data**: over 1M hours of video plus 1M images (VideoMix22M).
+- — **Model**: up to ViT-g, over 1B parameters.
+- — **Positions**: <Highlight>3D-RoPE</Highlight> — rotary position embeddings applied separately to time, height and width.
+- — **Recipe**: progressive resolution — train mostly at 16 frames / 256px, then a short cooldown with longer, higher-resolution clips (64 frames; 384px for the ViT-g/384 model). About 8× cheaper.
+- — **Results**: 77.3% on Something-Something-v2, 39.7 recall@5 on Epic-Kitchens-100 action anticipation; aligned with a language model it reaches 84.0 on PerceptionTest.
+
+</Body>
+
+<Callout icon={Film} title="one sentence to keep">
+  V-JEPA is I-JEPA for video: 2×16×16 tubelets (1,568 tokens per clip), ~90% masking with the same spatial mask through time, L1 feature prediction and an EMA target — and V-JEPA 2 scales it to 1M+ hours of video, a 1B-parameter ViT-g and 3D-RoPE.
+</Callout>
+
+<Marginalia label="traps">
+  A tubelet spans 2 frames, not 1. The ~90% is masking of the video, not of each frame independently. V-JEPA's loss is L1; I-JEPA's is L2. V-JEPA results are with a frozen encoder — no fine-tuning.
+</Marginalia>
+
+</MobileStepScreen>
+<MobileStepScreen label="interaction" title="Interaction">
+
+<LessonStage step="2" title="Interaction" subtitle="Count the leaks with per-frame masks, then switch to tubes." />
+
+<TubeMaskLab />
+
+<MatchingDrill
+  sectionId="vjepa"
+  title="Which model?"
+  pairs={[
+    { prompt: "Images, 4 target blocks, L2 loss", answer: "I-JEPA" },
+    { prompt: "Video, tubelets 2×16×16, ~90% masking, L1 loss", answer: "V-JEPA" },
+    { prompt: "1M+ hours of video, ViT-g, 3D-RoPE", answer: "V-JEPA 2" },
+    { prompt: "Action-conditioned predictor for robot planning", answer: "V-JEPA 2-AC" },
+  ]}
+/>
+
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
+<LessonStage step="3" title="Quiz" subtitle="Close the chapter before moving on." />
+
+<SectionQuiz sectionId="vjepa" topic="vjepa" source={WORLD_MODELS_QUESTIONS} title="Checkpoint — V-JEPA" />
+
+</MobileStepScreen>
+</MobileStepScreens>

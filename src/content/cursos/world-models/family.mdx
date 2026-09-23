@@ -1,0 +1,110 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { GitBranch } from "lucide-react";
+import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
+
+<SectionHeader num="04" title="Family Tree" subtitle="from dreaming agents to V-JEPA 2" vol="vol. x" />
+
+<LearningObjectives
+  sectionId="family"
+  items={[
+    "Place the main world-model papers on a timeline, 2018–2025.",
+    "Sort them into the pixel branch and the representation branch.",
+    "Say what JEPA inherited from each ancestor.",
+  ]}
+/>
+
+<MobileStepScreens>
+<MobileStepScreen label="content" title="Content">
+
+<LessonStage step="1" title="Content" subtitle="Two branches. Read one at a time." />
+
+<Body>
+
+### Branch A — generative world models (predict pixels)
+
+**World Models (Ha &amp; Schmidhuber, 2018).** Three parts: V, a VAE that compresses each frame; M, a recurrent network that predicts the next compressed frame; C, a tiny controller. In VizDoom the controller was trained entirely inside the model's "dream", then transferred back to the real game. It popularised the term "world model".
+
+**Dreamer (Hafner et al., 2020 → DreamerV3, 2023).** Learns latent dynamics with a pixel-reconstruction loss, then learns to act by imagining futures in latent space. DreamerV3 collected diamonds in Minecraft from scratch.
+
+**MAE (He et al., 2021).** Not a video world model, but the masking blueprint: hide 75% of image patches and reconstruct their pixels.
+
+### Branch B — joint-embedding (predict representations)
+
+**BYOL (Grill et al., 2020).** Predict one view's representation from another view's. EMA target, predictor, no negatives — the anti-collapse recipe from chapter 03.
+
+**data2vec (Baevski et al., 2022).** A student sees a masked input and predicts the representations an EMA teacher produces from the full input — for speech, images and text. The I-JEPA paper calls it the closest prior work.
+
+**JEPA (LeCun, 2022).** A position paper, *A Path Towards Autonomous Machine Intelligence*: predict in representation space, stack JEPAs into a hierarchy (H-JEPA), and put that world model at the centre of an agent.
+
+**I-JEPA (2023) → V-JEPA (2024) → V-JEPA 2 (2025).** Meta's implementations: images, then video, then video at scale with robot planning. Chapters 05–07 open each one up.
+
+<SortBuckets
+  title="Which branch does each model belong to?"
+  buckets={["reconstructs pixels", "predicts representations"]}
+  items={[
+    { label: "MAE", bucket: 0, why: "MAE reconstructs the pixels of masked patches." },
+    { label: "BYOL", bucket: 1, why: "BYOL predicts the target network's representation." },
+    { label: "Dreamer", bucket: 0, why: "Dreamer's world model is trained with pixel reconstruction." },
+    { label: "I-JEPA", bucket: 1, why: "I-JEPA predicts target-block representations." },
+    { label: "World Models (2018)", bucket: 0, why: "Its VAE is trained to reconstruct frames." },
+    { label: "V-JEPA 2", bucket: 1, why: "Pure feature prediction, at scale." },
+  ]}
+/>
+
+### What JEPA inherited
+
+- — From <Highlight>World Models / Dreamer</Highlight>: the goal — a model of the world an agent can plan with.
+- — From <Highlight>MAE</Highlight>: masking as the pretext task, at scale, with ViTs.
+- — From <Highlight>BYOL</Highlight>: the EMA target + predictor that prevents collapse.
+- — From <Highlight>LeCun 2022</Highlight>: the insistence on predicting in representation space.
+
+<QuickCheck
+  q="Which ancestor contributed JEPA's anti-collapse design (EMA target + predictor, no negatives)?"
+  options={["MAE", "Dreamer", "BYOL", "World Models (2018)"]}
+  correct={2}
+  why="BYOL introduced learning without negatives using an EMA target network and an online predictor. I-JEPA and V-JEPA reuse it."
+/>
+
+</Body>
+
+<Callout icon={GitBranch} title="one sentence to keep">
+  Generative world models (World Models, Dreamer) and masked autoencoders (MAE) learn by reconstructing pixels; the joint-embedding line (BYOL → JEPA → I-JEPA → V-JEPA → V-JEPA 2) learns by predicting representations.
+</Callout>
+
+<Marginalia label="traps">
+  Dreamer's policy imagines in latent space, but its world model is still trained with pixel reconstruction — don't file it under JEPA. MAE masks like I-JEPA but predicts pixels. The 2022 JEPA paper is a proposal, not a trained model.
+</Marginalia>
+
+</MobileStepScreen>
+<MobileStepScreen label="interaction" title="Interaction">
+
+<LessonStage step="2" title="Interaction" subtitle="Filter the timeline by learning signal, then drill the cards." />
+
+<FamilyTimeline />
+
+<FlashcardDrill
+  sectionId="family"
+  title="Who did what?"
+  cards={[
+    { front: "World Models (2018)", back: "VAE + MDN-RNN + tiny controller; in VizDoom the controller trained inside the model's dream." },
+    { front: "Dreamer", back: "Latent dynamics trained with pixel reconstruction; acts by imagining in latent space." },
+    { front: "MAE", back: "Hides 75% of patches and reconstructs their pixels." },
+    { front: "BYOL", back: "EMA target + predictor; no negatives; predicts the target's representation." },
+    { front: "I-JEPA", back: "One context block predicts the representations of 4 target blocks." },
+    { front: "V-JEPA 2", back: "Over 1M hours of video, ViT-g; an action-conditioned version plans robot actions." },
+  ]}
+/>
+
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
+<LessonStage step="3" title="Quiz" subtitle="Close the chapter before moving on." />
+
+<SectionQuiz sectionId="family" topic="family" source={WORLD_MODELS_QUESTIONS} title="Checkpoint — family tree" />
+
+</MobileStepScreen>
+</MobileStepScreens>

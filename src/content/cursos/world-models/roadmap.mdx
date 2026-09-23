@@ -3,26 +3,26 @@ import Marginalia from "@/components/shared/Marginalia";
 import Highlight from "@/components/shared/Highlight";
 import Body from "@/components/shared/Body";
 
-<SectionHeader num="→" title="Roadmap" subtitle="where this caderno is going" vol="vol. x" />
+<SectionHeader num="→" title="Roadmap" subtitle="the whole caderno, and what comes next" vol="vol. x" />
 
 <Body>
 
 ### vol. x — World Models (this caderno)
 
-- — <Highlight>00 What a world model is</Highlight> — done
-- — <Highlight>01 The three ingredients — encoder, predictor, loss</Highlight> — done
-- — 02 Pixel vs latent — why predicting pixels blurs, why predicting representations works
-- — 03 Collapse — the "everything becomes zero" problem and its fixes
-- — 04 Family tree — Ha &amp; Schmidhuber, Dreamer, BYOL, I-JEPA, V-JEPA, V-JEPA 2
-- — 05 Anatomy of I-JEPA — context encoder, target encoder (EMA), predictor, masks
-- — 06 From I-JEPA to V-JEPA — tubelets, spatio-temporal masking, video attention
-- — 07 How to use one — linear probe, attentive probe, fine-tuning, planning
-- — ∞ Final simulation — 25 exam-style questions
+- — **00** What a world model is — predict, don't label
+- — **01** The three ingredients — encoder, predictor, loss
+- — **02** Pixel vs latent — blur, wasted capacity, joint embeddings
+- — **03** Collapse — the zero-loss cheat and three defenses
+- — **04** Family tree — World Models, Dreamer, MAE, BYOL, JEPA, V-JEPA 2
+- — **05** Anatomy of I-JEPA — masks, three networks, EMA
+- — **06** From I-JEPA to V-JEPA — tubelets, tube masks, V-JEPA 2
+- — **07** How to use one — probes, fine-tuning, planning
+- — **∞** Final simulation — 32 questions
 
 ### What follows
 
 - — <Highlight>vol. xi — PyTorch for World Models</Highlight>: tensors, autograd, training loop, Dataset/DataLoader, nn.Module, Colab GPU.
-- — <Highlight>vol. xii — Building Your Own World Model</Highlight>: Moving MNIST, a pixel next-frame predictor, then a JEPA-style latent predictor with an EMA target encoder.
+- — <Highlight>vol. xii — Building Your Own World Model</Highlight>: Moving MNIST, a pixel next-frame predictor, then a JEPA-style latent predictor with an EMA target encoder — and watching for collapse.
 - — <Highlight>vol. xiii — Making It Useful</Highlight>: freeze the encoder, train a probe, move to pretrained V-JEPA 2 on a UCF101 subset, measure calibration.
 
 </Body>

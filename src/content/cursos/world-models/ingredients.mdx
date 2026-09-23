@@ -36,7 +36,7 @@ The rule that decides what gets hidden is called the <Highlight>mask</Highlight>
 
 ### Ingredient 1 — the encoder
 
-The encoder turns raw input into a <Highlight>representation</Highlight>: a vector of numbers that summarizes what is going on.
+The encoder turns raw input into a <TermTip term="representation">a list of numbers (a vector) that describes the input — similar inputs get similar vectors</TermTip>: a compact summary of what is going on.
 
 Think of it as the eyes plus the part of the brain that says "a ball, moving right, falling". It throws away what doesn't matter (exact pixel noise) and keeps what does (position, velocity, identity).
 
@@ -61,6 +61,10 @@ The big design decision hides here: **what exactly is "the real target"?**
 
 That single choice changes everything. It is the whole of the next chapter.
 
+<PredictReveal prompt="Could you train the encoder with no loss at all?">
+No. An encoder only learns when a loss tells it how wrong something was. In predictive architectures like BYOL and JEPA, that loss is computed on a predictor's output. (Contrastive and VICReg-style methods skip the predictor and compare two embeddings directly — but there is always a loss.)
+</PredictReveal>
+
 ### The loop
 
 1. Mask the input → context + target.
@@ -71,7 +75,14 @@ That single choice changes everything. It is the whole of the next chapter.
 
 ### Which part do you keep?
 
-Usually the **encoder**. It is what learned to see. The predictor was scaffolding for the training game. (Nuance for later: V-JEPA 2 also reuses a predictor for robot *planning* — imagining the result of an action before doing it.)
+<QuickCheck
+  q="Pretraining is done. Which part goes into your downstream classifier?"
+  options={["The predictor", "The encoder", "The mask", "The loss"]}
+  correct={1}
+  why="The encoder learned to see. The predictor was scaffolding for the training game."
+/>
+
+Usually the **encoder**. It is what learned to see. The predictor was scaffolding for the training game. (Nuance for later: for robot *planning*, V-JEPA 2 keeps the frozen encoder and trains a **new**, action-conditioned predictor. The pretraining predictor is still thrown away.)
 
 </Body>
 
@@ -80,13 +91,15 @@ Usually the **encoder**. It is what learned to see. The predictor was scaffoldin
 </Callout>
 
 <Marginalia label="traps">
-  Context and target are NOT input and label — they are two parts of the same input. The predictor is usually discarded, the encoder is kept. The encoder can't learn alone — without a predictor and a loss there is nothing to train it on. Choosing the loss target (pixels vs representations) is the most important design decision.
+  Context and target are NOT input and label — they are two parts of the same input. The predictor is usually discarded, the encoder is kept. The encoder can't learn without a loss; in JEPA-style models that loss is computed on the predictor's output. Choosing the loss target (pixels vs representations) is the most important design decision.
 </Marginalia>
 
 </MobileStepScreen>
 <MobileStepScreen label="interaction" title="Interaction">
 
-<LessonStage step="2" title="Interaction" subtitle="Match each part to its job." />
+<LessonStage step="2" title="Interaction" subtitle="Change the mask rule, then match each part to its job." />
+
+<MaskPlayground />
 
 <MatchingDrill
   sectionId="ingredients"

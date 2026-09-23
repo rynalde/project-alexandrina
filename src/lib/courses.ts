@@ -160,8 +160,8 @@ export const COURSES: Course[] = [
       "Masking",
       "JEPA",
     ],
-    sectionCount: 9,
-    questionCount: 25,
+    sectionCount: 10,
+    questionCount: 32,
     accent: "#c7502e",
   },
 ];

@@ -1,0 +1,97 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { Layers } from "lucide-react";
+import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
+
+<SectionHeader num="05" title="Anatomy of I-JEPA" subtitle="three networks, two masks, one loss" vol="vol. x" />
+
+<LearningObjectives
+  sectionId="ijepa"
+  items={[
+    "Describe the masking strategy: 4 target blocks and 1 context block.",
+    "Explain what each of the three networks sees and outputs.",
+    "Explain why targets come from the target encoder's output, and how the EMA update works.",
+  ]}
+/>
+
+<MobileStepScreens>
+<MobileStepScreen label="content" title="Content">
+
+<LessonStage step="1" title="Content" subtitle="Everything from chapters 01–03, assembled for images." />
+
+<Body>
+
+### The setup
+
+One image. **No hand-crafted augmentations** — no crops-and-colour-jitter pairs like BYOL needs. The image is cut into patches; with 16px patches a 224px image becomes a 14×14 grid of tokens.
+
+### Step 1 — the masks
+
+- — <Highlight>4 target blocks</Highlight>, each 15–20% of the image, aspect ratio 0.75–1.5.
+- — <Highlight>1 context block</Highlight>, 85–100% of the image, square — then every target patch is removed from it.
+
+Targets are **big** so they are semantic (a whole part of an object, not a stray pixel). The context is **spread out** so it is informative. The paper found both matter.
+
+<MaskSampler />
+
+### Step 2 — three networks
+
+- — **Context encoder** (a ViT) sees *only* the context patches.
+- — **Target encoder** (same architecture) sees the *full* image. Its weights are an EMA of the context encoder.
+- — **Predictor** (a narrow ViT, width 384) receives the context tokens plus one <Kbd>mask token</Kbd> per target patch, each tagged with its position. It runs **once per target block** (4 times) and outputs a predicted representation for every patch of that block.
+
+<PredictReveal prompt="Why cut the targets out of the target encoder's OUTPUT, instead of feeding only the target patches into it?">
+Output tokens have already attended to the whole image, so each target representation is context-aware and high-level. Feed only the target patches in and you'd get low-level, local features. The I-JEPA paper calls masking the output crucial for semantic targets.
+</PredictReveal>
+
+### Step 3 — loss and update
+
+The loss is the **average L2 distance** between predicted and target patch representations. Gradients update the predictor and the context encoder. The target encoder gets no gradient; after each step:
+
+<Kbd>θ_target ← τ · θ_target + (1 − τ) · θ_context</Kbd>
+
+with τ ramping from **0.996 to 1.0** over training.
+
+<EmaLab />
+
+### Did it pay off?
+
+A ViT-H/14 trained on ImageNet in **under 72 hours on 16 A100s**. Linear probe: **79.3%** top-1 after 300 epochs — above MAE's 77.2% after 1600 epochs.
+
+<QuickCheck
+  q="Which network in I-JEPA does NOT receive gradients?"
+  options={["The context encoder", "The predictor", "The target encoder", "All three receive gradients"]}
+  correct={2}
+  why="The target encoder is only updated by EMA from the context encoder. That stop-gradient + EMA asymmetry is the anti-collapse design from chapter 03."
+/>
+
+</Body>
+
+<Callout icon={Layers} title="one sentence to keep">
+  I-JEPA encodes a big context block, asks a narrow predictor to guess the representations of 4 large target blocks at given positions, compares them (L2) with the target encoder's output on the full image, and updates the target encoder only by EMA.
+</Callout>
+
+<Marginalia label="traps">
+  The context encoder sees only context patches; the target encoder sees the whole image. Targets come from the target encoder's output, not its input. No hand-crafted augmentations. The predictor is narrow on purpose — it's a helper, not the prize.
+</Marginalia>
+
+</MobileStepScreen>
+<MobileStepScreen label="interaction" title="Interaction">
+
+<LessonStage step="2" title="Interaction" subtitle="Step through the architecture, then turn on gradient flow." />
+
+<IJepaDiagram />
+
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
+<LessonStage step="3" title="Quiz" subtitle="Close the chapter before moving on." />
+
+<SectionQuiz sectionId="ijepa" topic="ijepa" source={WORLD_MODELS_QUESTIONS} title="Checkpoint — I-JEPA" />
+
+</MobileStepScreen>
+</MobileStepScreens>

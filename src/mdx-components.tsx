@@ -30,6 +30,28 @@ import {
   SimulationDecisionLab,
   VisionPipelineExplorer,
 } from "@/components/playground/rantia/RantiaInteractions";
+import {
+  PredictReveal,
+  QuickCheck,
+  SortBuckets,
+  TermTip,
+} from "@/components/playground/world-models/Micro";
+import {
+  BlurLab,
+  CollapseLab,
+  MaskPlayground,
+  NextFrameGuess,
+} from "@/components/playground/world-models/ConceptLabs";
+import {
+  AttentivePoolViz,
+  EmaLab,
+  FamilyTimeline,
+  IJepaDiagram,
+  MaskSampler,
+  ProbeLab,
+  TokenCounter,
+  TubeMaskLab,
+} from "@/components/playground/world-models/JepaLabs";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
@@ -60,6 +82,22 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     Ros2ToolingFlow,
     SimulationDecisionLab,
     VisionPipelineExplorer,
+    PredictReveal,
+    QuickCheck,
+    SortBuckets,
+    TermTip,
+    BlurLab,
+    CollapseLab,
+    MaskPlayground,
+    NextFrameGuess,
+    AttentivePoolViz,
+    EmaLab,
+    FamilyTimeline,
+    IJepaDiagram,
+    MaskSampler,
+    ProbeLab,
+    TokenCounter,
+    TubeMaskLab,
     ...components,
   };
 }
