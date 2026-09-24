@@ -1,9 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Boxes, Calculator, Clock3, Crosshair, Film, GitMerge, Layers, Shuffle, Target, Waves } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Boxes, Calculator, Clock3, Crosshair, Eye, Film, GitMerge, Layers, Navigation, Pause, Play, RotateCcw, Shuffle, StepForward, Target, Waves } from "lucide-react";
 import { useLearningProgress } from "@/components/learning/LearningProgressProvider";
-import { CompleteButton, LabShell, Meter, Panel, Seg, WM, mulberry32 } from "./ui";
+import {
+  OCCLUDER,
+  PLAN_H,
+  PLAN_ITERS,
+  PLAN_W,
+  PLAN_WALL,
+  SURPRISE_FRAMES,
+  createPlanner,
+  plannerTick,
+  surpriseSeries,
+  type Planner,
+  type Pt,
+  type SurpriseScenario,
+} from "@/lib/world-models-sim";
+import { CompleteButton, LabShell, Meter, Panel, Seg, Sparkline, WM, mulberry32 } from "./ui";
 
 /* ───────────────────────── ch04 · family timeline ───────────────────────── */
 
@@ -54,7 +68,7 @@ const FAMILY: Array<{
     who: "Baevski et al. (Meta)",
     signal: "representations",
     idea: "A student sees a masked input and predicts the representations an EMA teacher produces from the full input — one recipe for speech, images and text.",
-    lesson: "Masked prediction in latent space with an EMA teacher — the I-JEPA paper's closest prior work.",
+    lesson: "Masked prediction in latent space with an EMA teacher — the I-JEPA paper names it (with Context Autoencoders) as its closest prior work.",
   },
   {
     year: "2022",
@@ -77,8 +91,32 @@ const FAMILY: Array<{
     name: "V-JEPA",
     who: "Bardes et al. (Meta)",
     signal: "representations",
-    idea: "Video. Feature prediction only, ~90% spatio-temporal masking, ~2M videos. Frozen backbone + attentive probe (ViT-H/16, 384px): 81.9% Kinetics-400, 72.2% SSv2, 77.9% ImageNet.",
+    idea: "Video. Feature prediction only, ~90% spatio-temporal masking, ~2M videos. Frozen backbone + attentive probe (ViT-H/16, 384px): 81.9% Kinetics-400, 72.2% SSv2, 77.4% ImageNet (77.9% with a two-layer probe).",
     lesson: "Latent prediction learns motion without labels or pixels.",
+  },
+  {
+    year: "2024",
+    name: "DINO-WM",
+    who: "Zhou, Pan, LeCun & Pinto",
+    signal: "representations",
+    idea: "A world model on top of frozen DINOv2 patch features: a predictor learns how those features change under actions, from offline trajectories. At test time it plans toward a goal image by searching in feature space — no reward model, no expert demonstrations, no pixel reconstruction.",
+    lesson: "Planning can happen entirely inside a frozen encoder's space.",
+  },
+  {
+    year: "2025",
+    name: "Cosmos",
+    who: "Agarwal et al. (NVIDIA)",
+    signal: "pixels",
+    idea: "Open-weight 'world foundation models' that generate future video, meant to be fine-tuned into simulators for robots and cars.",
+    lesson: "The pixel branch at industrial scale — and V-JEPA 2-AC's planning baseline (about 4 min per action vs 16 s).",
+  },
+  {
+    year: "2025",
+    name: "Intuitive physics",
+    who: "Garrido et al.",
+    signal: "representations",
+    idea: "Violation-of-expectation tests: show a possible and an impossible clip and measure surprise = prediction error in representation space. V-JEPA shows object permanence and shape consistency; pixel predictors and multimodal LLMs stay closer to chance. Even one week of video gets above chance.",
+    lesson: "“Understands physics” becomes measurable — though IntPhys 2 (2025) shows complex scenes are still near chance for most models.",
   },
   {
     year: "2025",
@@ -88,41 +126,88 @@ const FAMILY: Array<{
     idea: "Over 1M hours of video, ViT-g (~1B params). 77.3% SSv2. V-JEPA 2-AC trains a new action-conditioned predictor on the frozen encoder with under 62 h of robot video, and plans zero-shot pick-and-place on Franka arms.",
     lesson: "Understanding → prediction → planning with one world model.",
   },
+  {
+    year: "2025",
+    name: "LeJEPA",
+    who: "Balestriero & LeCun",
+    signal: "representations",
+    idea: "Proves that isotropic Gaussian embeddings are the best target, then enforces them with SIGReg. No stop-gradient, no teacher–student, no schedulers; one trade-off hyperparameter, about 50 lines of code. 79% ImageNet linear probe with a ViT-H/14.",
+    lesson: "Collapse prevention becomes a single statistical test.",
+  },
+  {
+    year: "2025",
+    name: "VL-JEPA",
+    who: "Chen et al.",
+    signal: "representations",
+    idea: "Vision–language: predicts the embedding of the answer text instead of generating tokens. 1.6B parameters; 50% fewer trainable parameters than a token-space VLM with the same vision encoder and data; selective decoding needs 2.85× fewer decoding operations.",
+    lesson: "JEPA is a training objective, not a vision-only trick.",
+  },
+  {
+    year: "2026",
+    name: "V-JEPA 2.1",
+    who: "Mur-Labadia et al.",
+    signal: "representations",
+    idea: "Dense features: the loss uses both visible and masked tokens. 20 points better real-robot grasping than V-JEPA 2-AC, 0.307 RMSE depth on NYUv2 with a linear probe, 77.7 on SSv2.",
+    lesson: "Planning needs to know where things are, not only what they are.",
+  },
+  {
+    year: "2026",
+    name: "LeWorldModel",
+    who: "Maes et al.",
+    signal: "representations",
+    idea: "An end-to-end JEPA world model from raw pixels with only two losses: next-embedding prediction + SIGReg. About 15M parameters, one GPU, a few hours; tunable loss hyperparameters cut from 6 to 1; plans up to 48× faster than foundation-model world models.",
+    lesson: "A world model a student can train — chapter 08's step 6 tries its two losses at toy scale.",
+  },
+  {
+    year: "2026",
+    name: "LeVJEPA",
+    who: "Kuhn et al.",
+    signal: "representations",
+    idea: "SIGReg for video: no EMA target, no stop-gradient, no capacity-limited predictor. At matched epochs on identical data, it matches or beats V-JEPA 2 across ViT-S/B/L at 5.6–20.8× less pretraining compute.",
+    lesson: "The heuristic-free recipe scales to video.",
+  },
 ];
 
+type FamilyFilter = "all" | "recent" | Signal;
+const inFilter = (filter: FamilyFilter, item: (typeof FAMILY)[number]) =>
+  filter === "all" || (filter === "recent" ? Number(item.year) >= 2025 : item.signal === filter);
+
 export function FamilyTimeline() {
-  const [filter, setFilter] = useState<"all" | Signal>("all");
+  const [filter, setFilter] = useState<FamilyFilter>("all");
   const [active, setActive] = useState(() => FAMILY.findIndex((item) => item.name === "I-JEPA"));
-  const shown = FAMILY.map((item, index) => ({ item, index })).filter(
-    ({ item }) => filter === "all" || item.signal === filter,
-  );
+  const shown = FAMILY.map((item, index) => ({ item, index })).filter(({ item }) => inFilter(filter, item));
   const current = FAMILY[active];
+
+  const chooseFilter = (next: FamilyFilter) => {
+    setFilter(next);
+    if (!inFilter(next, FAMILY[active])) setActive(FAMILY.findIndex((item) => inFilter(next, item)));
+  };
 
   return (
     <LabShell icon={<GitMerge size={15} />} title="The family tree, in one line">
       <Seg
         label="learning signal"
         value={filter}
-        onChange={setFilter}
+        onChange={chooseFilter}
         options={[
           { value: "all", label: "all" },
           { value: "pixels", label: "reconstructs pixels" },
           { value: "representations", label: "predicts representations" },
+          { value: "recent", label: "new since 2025" },
         ]}
       />
       <div className="relative mt-5">
         <div className="absolute left-0 right-0 top-[15px] h-px bg-border" />
         <div className="relative flex gap-1 overflow-x-auto pb-2">
-          {FAMILY.map((item, index) => {
-            const visible = shown.some((entry) => entry.index === index);
+          {shown.map(({ item, index }) => {
             const isActive = index === active;
             return (
               <button
                 key={item.name}
                 type="button"
-                disabled={!visible}
+                aria-pressed={isActive}
                 onClick={() => setActive(index)}
-                className={`flex min-w-[76px] flex-col items-center gap-1 rounded-md px-1 pb-1 transition ${visible ? "opacity-100" : "opacity-25"}`}
+                className="flex min-w-[76px] flex-col items-center gap-1 rounded-md px-1 pb-1 transition animate-fade-in"
               >
                 <span
                   className="flex size-[30px] items-center justify-center rounded-full border-2 font-mono text-[9px]"
@@ -689,6 +774,299 @@ export function AttentivePoolViz() {
       <div className="mt-2 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-widest text-ink-fade">
         <Clock3 size={11} /> illustrative weights, not from a trained model
       </div>
+    </LabShell>
+  );
+}
+
+/* ───────────────────────── ch07 · planning lab: CEM + receding horizon, for real ───────────────────────── */
+
+const MAX_ACTIONS = 70;
+
+function planView(pl: Planner) {
+  return {
+    p: pl.state.p,
+    trail: [...pl.trail],
+    rollouts: pl.lastRollouts,
+    elites: pl.lastElites,
+    iter: pl.iter,
+    energy: [...pl.energy],
+    imagined: pl.imagined,
+    actions: pl.trail.length - 1,
+    done: pl.done,
+    subgoal: pl.subgoal,
+    goal: pl.goal,
+    wall: pl.wall,
+  };
+}
+
+const toPoints = (path: Pt[]) => path.map((pt) => `${pt.x.toFixed(2)},${pt.y.toFixed(2)}`).join(" ");
+
+export function PlanningLab() {
+  const [room, setRoom] = useState<"open" | "wall">("open");
+  const [useSubgoal, setUseSubgoal] = useState(false);
+  const [samples, setSamples] = useState(48);
+  const [fast, setFast] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [view, setView] = useState(() => planView(createPlanner({ wall: false, subgoal: false, samples: 48 })));
+  const plannerRef = useRef<Planner | null>(null);
+
+  const fresh = (opts: { room: "open" | "wall"; subgoal: boolean; samples: number }) => {
+    const pl = createPlanner({ wall: opts.room === "wall", subgoal: opts.subgoal, samples: opts.samples });
+    plannerRef.current = pl;
+    setView(planView(pl));
+    setPlaying(false);
+    return pl;
+  };
+
+  const tick = (times: number) => {
+    const pl = plannerRef.current ?? fresh({ room, subgoal: useSubgoal, samples });
+    for (let i = 0; i < times && !pl.done && pl.trail.length - 1 < MAX_ACTIONS; i += 1) plannerTick(pl);
+    setView(planView(pl));
+    return pl.done || pl.trail.length - 1 >= MAX_ACTIONS;
+  };
+
+  useEffect(() => {
+    if (!playing) return;
+    const timer = window.setInterval(() => {
+      const pl = plannerRef.current;
+      if (!pl) return;
+      for (let i = 0; i < (fast ? PLAN_ITERS * 2 : 1) && !pl.done && pl.trail.length - 1 < MAX_ACTIONS; i += 1) plannerTick(pl);
+      setView(planView(pl));
+      if (pl.done || pl.trail.length - 1 >= MAX_ACTIONS) setPlaying(false);
+    }, fast ? 60 : 200);
+    return () => window.clearInterval(timer);
+  }, [playing, fast]);
+
+  const start = () => {
+    if (playing) {
+      setPlaying(false);
+      return;
+    }
+    const pl = plannerRef.current;
+    if (!pl || pl.done || pl.trail.length - 1 >= MAX_ACTIONS) fresh({ room, subgoal: useSubgoal, samples });
+    setPlaying(true);
+  };
+
+  const stuck = !view.done && view.actions >= MAX_ACTIONS;
+  const distance = Math.abs(view.p.x - view.goal.x) + Math.abs(view.p.y - view.goal.y);
+  let story: string;
+  if (view.done) story = `Reached the goal in ${view.actions} actions. To choose them it imagined ${view.imagined.toLocaleString("en-US")} futures — none of which it ever had to live through.`;
+  else if (stuck)
+    story = "Stuck. Every imagined route around the wall ends farther from the goal than staying put, so the energy has a local minimum right here. V-JEPA 2-AC met the same problem on long tasks: for pick-and-place it was given sub-goal images. Tick \u201cgive it a sub-goal\u201d.";
+  else if (!view.actions && !view.iter && !view.rollouts.length) story = "Press plan. Each round imagines many action sequences with the world model, scores them by distance to the goal, and refits the sampler around the best few.";
+  else if (view.iter === 0) story = `Executed only the first action of the refit plan (${view.actions} so far). Now look again and replan from the new position — the receding horizon.`;
+  else story = `Round ${view.iter} of ${PLAN_ITERS}: imagined ${samples} action sequences 10 steps ahead, kept the best 6 (red), refit the sampler around them.`;
+
+  return (
+    <LabShell icon={<Navigation size={15} />} title="Plan by imagining: the Cross-Entropy Method, live">
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Seg
+          label="room"
+          value={room}
+          onChange={(value) => {
+            setRoom(value);
+            fresh({ room: value, subgoal: useSubgoal, samples });
+          }}
+          options={[
+            { value: "open", label: "open" },
+            { value: "wall", label: "wall in the way" },
+          ]}
+        />
+        <Seg
+          label="imagined plans per round"
+          value={samples}
+          onChange={(value) => {
+            setSamples(value);
+            fresh({ room, subgoal: useSubgoal, samples: value });
+          }}
+          options={[16, 48, 128].map((v) => ({ value: v, label: String(v) }))}
+        />
+        <label className={`flex items-center gap-2 self-end text-sm ${room === "wall" ? "text-ink" : "text-ink-fade"}`}>
+          <input
+            type="checkbox"
+            checked={useSubgoal}
+            disabled={room !== "wall"}
+            onChange={(event) => {
+              setUseSubgoal(event.target.checked);
+              fresh({ room, subgoal: event.target.checked, samples });
+            }}
+            className="accent-rubric"
+          />
+          give it a sub-goal (a waypoint in the gap)
+        </label>
+      </div>
+
+      <svg viewBox={`0 0 ${PLAN_W} ${PLAN_H}`} className="mt-4 w-full rounded-lg border border-border bg-background" role="img" aria-label="A robot planning its way to a goal by imagining action sequences">
+        {view.wall ? <line x1={PLAN_WALL.x} y1={0} x2={PLAN_WALL.x} y2={PLAN_WALL.gapTop} stroke={WM.ink} strokeWidth="1.6" /> : null}
+        {view.rollouts.map((path, index) => (
+          <polyline key={`r${index}`} points={toPoints(path)} fill="none" stroke={WM.ink} strokeWidth="0.25" opacity="0.18" />
+        ))}
+        {view.elites.map((path, index) => (
+          <polyline key={`e${index}`} points={toPoints(path)} fill="none" stroke={WM.rubric} strokeWidth="0.55" opacity="0.85" />
+        ))}
+        <polyline points={toPoints(view.trail)} fill="none" stroke={WM.olive} strokeWidth="0.8" />
+        <circle cx={view.goal.x} cy={view.goal.y} r="3.5" fill={WM.olive} opacity="0.25" stroke={WM.olive} strokeWidth="0.5" />
+        <text x={view.goal.x} y={view.goal.y - 5} textAnchor="middle" className="fill-ink font-mono text-[3px]">goal</text>
+        {view.subgoal ? (
+          <g>
+            <circle cx={view.subgoal.x} cy={view.subgoal.y} r="3" fill="none" stroke={WM.ink} strokeWidth="0.5" strokeDasharray="1 0.8" />
+            <text x={view.subgoal.x} y={view.subgoal.y + 6.5} textAnchor="middle" className="fill-ink font-mono text-[3px]">sub-goal</text>
+          </g>
+        ) : null}
+        <circle cx={view.p.x} cy={view.p.y} r="2.1" fill={WM.ink} />
+      </svg>
+      <div className="mt-2 flex flex-wrap gap-3 font-mono text-[9px] uppercase tracking-widest text-ink-fade">
+        <span className="flex items-center gap-1"><span className="h-0.5 w-4" style={{ background: WM.ink, opacity: 0.4 }} /> imagined futures</span>
+        <span className="flex items-center gap-1"><span className="h-0.5 w-4" style={{ background: WM.rubric }} /> best 6 (elites)</span>
+        <span className="flex items-center gap-1"><span className="h-0.5 w-4" style={{ background: WM.olive }} /> path actually taken</span>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <button type="button" onClick={start} className="flex min-h-9 items-center gap-1.5 rounded-md bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
+          {playing ? <Pause size={12} /> : <Play size={12} />} {playing ? "pause" : view.done || stuck ? "plan again" : "plan"}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setPlaying(false);
+            if (view.done || stuck) fresh({ room, subgoal: useSubgoal, samples });
+            else tick(1);
+          }}
+          className="flex min-h-9 items-center gap-1 rounded-md border border-border bg-background px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink hover:border-rubric/40"
+        >
+          <StepForward size={12} /> one round
+        </button>
+        <button type="button" onClick={() => fresh({ room, subgoal: useSubgoal, samples })} className="flex min-h-9 items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-ink hover:text-rubric">
+          <RotateCcw size={12} /> reset
+        </button>
+        <label className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-ink">
+          <input type="checkbox" checked={fast} onChange={(event) => setFast(event.target.checked)} className="accent-rubric" /> fast
+        </label>
+      </div>
+      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        <Sparkline label="energy: L1 distance to the goal" values={view.energy} min={0} color={WM.olive} display={distance.toFixed(1)} />
+        <div className="grid grid-cols-2 gap-2 font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+          <div className="rounded-md border border-border bg-background p-2">
+            imagined
+            <div className="mt-0.5 font-serif text-xl normal-case italic tracking-normal text-ink">{view.imagined.toLocaleString("en-US")}</div>
+          </div>
+          <div className="rounded-md border border-border bg-background p-2">
+            executed
+            <div className="mt-0.5 font-serif text-xl normal-case italic tracking-normal text-ink">{view.actions}</div>
+          </div>
+        </div>
+      </div>
+      <div className="mt-3">
+        <Panel label={view.done ? "goal reached" : stuck ? "local minimum" : "what just happened"}>{story}</Panel>
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-ink-fade">
+        Real CEM, toy world: the imagination here is the true physics of this little room (position + velocity, with damping).
+        In V-JEPA 2-AC the imagination is a learned predictor and the positions are representations of camera frames. Energy here is summed over the
+        imagined steps; V-JEPA 2-AC scores the imagined end state.
+      </p>
+      <CompleteButton interactionId="wm-planning-lab" />
+    </LabShell>
+  );
+}
+
+/* ───────────────────────── ch07 · surprise lab: violation of expectation ───────────────────────── */
+
+const SCENARIO_INFO: Record<SurpriseScenario, { label: string; text: string }> = {
+  possible: { label: "possible", text: "The ball rolls behind the screen and comes out where and when the model expected. Prediction error stays low the whole time." },
+  vanish: { label: "impossible: it vanishes", text: "The ball goes behind the screen and never comes out. The model keeps expecting it — object permanence — so the error jumps when the ball should reappear." },
+  teleport: { label: "impossible: it teleports", text: "The ball pops out far too early and too far to the right. The observed frame and the predicted one disagree: a surprise spike." },
+};
+
+export function SurpriseLab() {
+  const [scenario, setScenario] = useState<SurpriseScenario>("possible");
+  const [t, setT] = useState(SURPRISE_FRAMES - 1);
+  const [playing, setPlaying] = useState(false);
+  const series = useMemo(() => surpriseSeries(scenario), [scenario]);
+
+  useEffect(() => {
+    if (!playing) return;
+    const timer = window.setTimeout(() => {
+      if (t >= SURPRISE_FRAMES - 1) setPlaying(false);
+      else setT(t + 1);
+    }, 110);
+    return () => window.clearTimeout(timer);
+  }, [playing, t]);
+
+  const frame = series[t];
+  const exists = scenario !== "vanish" || frame.x <= OCCLUDER.from + 4;
+  const peak = Math.max(...series.slice(0, t + 1).map((f) => f.surprise));
+
+  return (
+    <LabShell icon={<Eye size={15} />} title="Surprise = prediction error: catch the impossible clip">
+      <Seg
+        label="clip"
+        value={scenario}
+        onChange={(value) => {
+          setScenario(value);
+          setT(0);
+          setPlaying(true);
+        }}
+        options={(Object.keys(SCENARIO_INFO) as SurpriseScenario[]).map((key) => ({ value: key, label: SCENARIO_INFO[key].label }))}
+      />
+      <svg viewBox="0 0 100 34" className="mt-4 w-full rounded-lg border border-border bg-background" role="img" aria-label="A ball rolling behind a screen">
+        <line x1="0" y1="27" x2="100" y2="27" stroke={WM.faint} strokeWidth="0.6" />
+        {exists && frame.x < 100 ? <circle cx={frame.x} cy="23" r="3.2" fill={WM.ink} /> : null}
+        <rect x={OCCLUDER.from} y="6" width={OCCLUDER.to - OCCLUDER.from} height="21" rx="1" fill={WM.paperDark} stroke={WM.fade} strokeWidth="0.4" />
+        {frame.predX < 100 ? (
+          <circle cx={frame.predX} cy="23" r="3.6" fill="none" stroke={WM.rubric} strokeWidth="0.5" strokeDasharray="1.2 0.9" />
+        ) : null}
+        <text x="2" y="4.5" className="fill-ink font-mono text-[2.4px]">frame {t + 1}</text>
+        <text x="98" y="4.5" textAnchor="end" className="fill-ink font-mono text-[2.4px]" opacity="0.7">dashed = where the model expects the ball</text>
+      </svg>
+      <div className="mt-3 flex h-20 items-end gap-[2px] rounded-lg border border-border bg-background px-2 pb-1 pt-2" role="img" aria-label="Surprise per frame">
+        {series.map((f, index) => (
+          <div
+            key={index}
+            className="flex-1 rounded-t-sm transition-all duration-150"
+            style={{
+              height: `${Math.max(4, Math.min(1.2, f.surprise) * 80)}%`,
+              background: index > t ? WM.faint : f.surprise > 0.5 ? WM.rubric : WM.ink,
+              opacity: index > t ? 0.5 : 1,
+            }}
+          />
+        ))}
+      </div>
+      <div className="mt-1 flex justify-between font-mono text-[9px] uppercase tracking-widest text-ink-fade">
+        <span>surprise per frame</span>
+        <span className="text-ink">peak so far {peak.toFixed(2)}</span>
+      </div>
+      <input
+        type="range"
+        min={0}
+        max={SURPRISE_FRAMES - 1}
+        value={t}
+        onChange={(event) => {
+          setPlaying(false);
+          setT(Number(event.target.value));
+        }}
+        className="mt-2 w-full accent-rubric"
+        aria-label="frame"
+      />
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            if (t >= SURPRISE_FRAMES - 1) setT(0);
+            setPlaying((value) => !value);
+          }}
+          className="flex min-h-9 items-center gap-1.5 rounded-md bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper"
+        >
+          {playing ? <Pause size={12} /> : <Play size={12} />} {playing ? "pause" : "play clip"}
+        </button>
+      </div>
+      <div className="mt-3">
+        <Panel label={SCENARIO_INFO[scenario].label}>{SCENARIO_INFO[scenario].text}</Panel>
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-ink-fade">
+        The predictor here is hand-built (constant velocity + object permanence) to show <i>how</i> surprise is measured.
+        Garrido et al. (2025) measured it the same way on V-JEPA, whose expectations were learned from video alone.
+      </p>
+      <CompleteButton interactionId="wm-surprise-lab" />
     </LabShell>
   );
 }

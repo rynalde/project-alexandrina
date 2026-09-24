@@ -149,7 +149,7 @@ export const COURSES: Course[] = [
     title: "World Models",
     subtitle: "Learning by predicting, not by labeling",
     description:
-      "Self-supervised models that learn how the world behaves by predicting missing or future parts of their own input. Covers pretext vs downstream tasks, pixel vs latent prediction, representation collapse, EMA target encoders, masking, and the JEPA family up to V-JEPA 2.",
+      "Self-supervised models that learn how the world behaves by predicting missing or future parts of their own input. Covers pretext vs downstream tasks, pixel vs latent prediction, representation collapse (EMA, VICReg, SIGReg), masking, the JEPA family up to V-JEPA 2.1 and LeJEPA, planning in latent space — and a verified PyTorch lab that builds a JEPA world model from scratch.",
     topics: [
       "Prediction vs Classification",
       "Encoder",
@@ -159,9 +159,11 @@ export const COURSES: Course[] = [
       "EMA",
       "Masking",
       "JEPA",
+      "Planning",
+      "PyTorch Lab",
     ],
-    sectionCount: 10,
-    questionCount: 32,
+    sectionCount: 11,
+    questionCount: 36,
     accent: "#c7502e",
   },
 ];

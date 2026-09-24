@@ -3,7 +3,7 @@ import Callout from "@/components/shared/Callout";
 import Marginalia from "@/components/shared/Marginalia";
 import Highlight from "@/components/shared/Highlight";
 import Body from "@/components/shared/Body";
-import { Scale } from "lucide-react";
+import { Lightbulb, Scale } from "lucide-react";
 import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 
 <SectionHeader num="02" title="Pixel vs Latent" subtitle="why predicting pixels blurs, and predicting meaning works" vol="vol. x" />
@@ -21,6 +21,10 @@ import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 <MobileStepScreen label="content" title="Content">
 
 <LessonStage step="1" title="Content" subtitle="One choice — what the loss compares against — changes everything." />
+
+<Callout icon={Lightbulb} title="intuition first">
+  Two images from the papers themselves. Meta: if a video shows a tree, you don't care about the exact motion of every leaf. VL-JEPA: asked what happens when you flip a switch, "the lamp is turned off" and "room will go dark" share no words, yet mean nearly the same thing — far apart as tokens, close together as embeddings. Predicting meaning gives the model one target where pixels or words would give it many.
+</Callout>
 
 <Body>
 
@@ -40,6 +44,8 @@ The average of the two futures: a half-transparent ball on each side. Neither fu
 </PredictReveal>
 
 Whenever several futures are possible, a squared-error pixel model is pushed toward their **average**. Averages of sharp images are blurry images. The model isn't bad at its job — blur *is* the optimum of that loss.
+
+This is not just theory. In chapter 08's lab, a real pixel network's guess for four frames ahead matched the average of 2,000 simulated futures (correlation 0.92) far better than it matched one real future (0.75).
 
 ### Problem 2 — most pixels are unpredictable
 
@@ -61,6 +67,8 @@ Leaves flickering, water rippling, sensor noise, the exact texture of a carpet. 
 ### The latent fix
 
 In a JEPA, the target goes through an encoder too. That encoder decides what to keep. It can drop leaf textures and sensor noise and keep "person, walking left, about to step off the curb". The predictor then only has to predict things that are **predictable**.
+
+One honest detail: a squared-error loss averages in latent space too. The difference is *what* gets averaged. Average two pictures of a ball and you get two ghosts. If the encoder stores the branch as one number, averaging "went up" and "went down" gives "50% up" — the uncertainty survives as information instead of as smear. Nothing guarantees such a tidy encoding, though: the midpoint of two embeddings can also describe a state that never happens.
 
 That's where the name comes from: <TermTip term="Joint-Embedding">both context and target are embedded by encoders</TermTip> Predictive Architecture — a predictor maps one embedding to the other.
 
@@ -86,13 +94,13 @@ If the target is produced by a learned encoder, the model can move the target. T
 </Callout>
 
 <Marginalia label="traps">
-  Blur is not a bug in the network — it is the optimum of squared error under uncertainty. "Latent" does not mean "no encoder on the target" — the target has its own encoder. Latent prediction is not free: a learned target can collapse.
+  Blur is not a bug in the network — it is the optimum of squared error under uncertainty. "Latent" does not mean "no encoder on the target" — the target has its own encoder. Latent prediction still averages; it just averages meaning, not pixels. Latent prediction is not free: a learned target can collapse.
 </Marginalia>
 
 </MobileStepScreen>
 <MobileStepScreen label="interaction" title="Interaction">
 
-<LessonStage step="2" title="Interaction" subtitle="Change the uncertainty and watch the pixel predictor go blurry." />
+<LessonStage step="2" title="Interaction" subtitle="Average the possible futures yourself — the blur is computed, not drawn." />
 
 <BlurLab />
 

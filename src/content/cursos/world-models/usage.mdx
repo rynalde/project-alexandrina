@@ -3,17 +3,18 @@ import Callout from "@/components/shared/Callout";
 import Marginalia from "@/components/shared/Marginalia";
 import Highlight from "@/components/shared/Highlight";
 import Body from "@/components/shared/Body";
-import { Crosshair } from "lucide-react";
+import { Crosshair, Lightbulb } from "lucide-react";
 import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 
-<SectionHeader num="07" title="How to Use One" subtitle="probes, fine-tuning, and planning" vol="vol. x" />
+<SectionHeader num="07" title="How to Use One" subtitle="probes, fine-tuning, planning, and surprise" vol="vol. x" />
 
 <LearningObjectives
   sectionId="usage"
   items={[
     "Choose between a linear probe, an attentive probe and fine-tuning.",
     "Explain how an attentive probe works and why V-JEPA needs one.",
-    "Explain how V-JEPA 2-AC plans robot actions in latent space.",
+    "Explain how V-JEPA 2-AC plans robot actions in latent space, and why long tasks need sub-goals.",
+    "Explain how prediction error becomes a test of intuitive physics.",
   ]}
 />
 
@@ -21,6 +22,10 @@ import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 <MobileStepScreen label="content" title="Content">
 
 <LessonStage step="1" title="Content" subtitle="You have a pretrained encoder. Now what?" />
+
+<Callout icon={Lightbulb} title="intuition first">
+  Three ways to use someone who has watched a lot of the world: ask them questions (probes), train them for one job (fine-tuning), or let them imagine what would happen (planning, surprise). The last two only work because the model can predict.
+</Callout>
 
 <Body>
 
@@ -65,12 +70,18 @@ To reach a goal shown in an image, the robot runs a loop:
     "Sample many candidate action sequences (Cross-Entropy Method).",
     "Imagine each sequence's outcome with the predictor — in representation space, no pixels.",
     "Score each: L1 distance between the imagined final state and the goal representation.",
-    "Execute only the first action of the best sequence.",
+    "Execute only the first action of the optimized sequence.",
     "Observe, then replan from the new state (receding horizon).",
   ]}
 />
 
-Deployed zero-shot on Franka arms in two labs, it did reach and pick-and-place from image goals (for pick-and-place it was also given two sub-goal images along the way). Planning took about **16 seconds per action**, against about **4 minutes** for a pixel video-generation baseline (Cosmos).
+Deployed zero-shot on Franka arms in two labs, it did reach and pick-and-place from image goals (for pick-and-place it was also given two sub-goal images along the way): 80% success with a cup and 65% with a box averaged over both labs, against 15% and 10% for the Octo baseline. It planned one step ahead at a time: 800 sampled actions, 10 CEM refinements, about **16 seconds per action** on one RTX 4090. In the lab where the pixel world model Cosmos was also tried, Cosmos needed about **4 minutes** per action with 80 samples and scored 0% on pick-and-place.
+
+Why the sub-goals? Planning far ahead is hard: prediction errors pile up and the number of possible action sequences explodes. So V-JEPA 2-AC plans greedily, one step at a time — and a long task like pick-and-place is not greedy. Sub-goal images turn it into a chain of short, greedy hops. (The paper describes its energy landscape as relatively smooth and locally convex, which should make such short hops easy to plan.) The next screen shows the greedy trap with a wall; chapter 08's lab finds a second cause: its latent distance stops tracking real distance beyond about 9–12px.
+
+### Option 5 — measure surprise
+
+A world model also tells you when something *doesn't* make sense. Show it a clip, let it predict the next frames, and measure the error in representation space: that error is its **surprise**. Garrido et al. (2025) used exactly this on V-JEPA with pairs of possible and impossible clips — for example, objects that vanish or change shape. V-JEPA was more surprised by the impossible clips on properties like object permanence and shape consistency; pixel-prediction models and multimodal LLMs stayed closer to chance. That is how "the model understands object permanence" becomes a number.
 
 <PredictReveal prompt="For your dissertation you'll use a frozen V-JEPA 2 with an attentive probe on a free Colab GPU. Why frozen instead of fine-tuned?">
 A large ViT seeing 2,048–8,192 tokens per clip (V-JEPA 2 at 256px, 16–64 frames) won't fit training gradients on a T4. Frozen, you can run the encoder once, cache the features to Drive, and train only the small probe — fast and cheap. It's also the fair, standard way to evaluate what the world model learned.
@@ -79,24 +90,37 @@ A large ViT seeing 2,048–8,192 tokens per clip (V-JEPA 2 at 256px, 16–64 fra
 </Body>
 
 <Callout icon={Crosshair} title="one sentence to keep">
-  Freeze the encoder and read it out with a linear probe (fast check), an attentive probe (V-JEPA's standard — a learned query cross-attending over patch tokens), or fine-tune for maximum accuracy; V-JEPA 2-AC goes further and plans actions by imagining outcomes in latent space.
+  Freeze the encoder and read it out with a linear probe (fast check), an attentive probe (V-JEPA's standard — a learned query cross-attending over patch tokens), or fine-tune for maximum accuracy; V-JEPA 2-AC goes further and plans actions by imagining outcomes in latent space (with sub-goals for long tasks), and prediction error doubles as a surprise meter for impossible events.
 </Callout>
 
 <Marginalia label="traps">
-  Frozen evaluation doesn't mean nothing is trained — the probe is. An attentive probe is not fine-tuning. V-JEPA 2-AC plans in representation space; it never generates pixels. For planning, V-JEPA 2-AC trains a NEW action-conditioned predictor on the frozen encoder — the pretraining predictor is not reused.
+  Frozen evaluation doesn't mean nothing is trained — the probe is. An attentive probe is not fine-tuning. V-JEPA 2-AC plans in representation space; it never generates pixels. For planning, V-JEPA 2-AC trains a NEW action-conditioned predictor on the frozen encoder — the pretraining predictor is not reused. Its energy scores the imagined END state. Surprise is prediction error, not a classifier.
 </Marginalia>
+
+</MobileStepScreen>
+<MobileStepScreen label="plan" title="Plan">
+
+<LessonStage step="2" title="Plan" subtitle="Real CEM planning: open room, then a wall, then a sub-goal." />
+
+<PlanningLab />
+
+<ExamTrap title="the reveal">
+  With a wall in the way the planner gets stuck: every imagined route around the wall ends farther from the goal than staying put. The fix is not a bigger model but a waypoint — exactly the sub-goal images V-JEPA 2-AC was given for pick-and-place.
+</ExamTrap>
 
 </MobileStepScreen>
 <MobileStepScreen label="interaction" title="Interaction">
 
-<LessonStage step="2" title="Interaction" subtitle="Four scenarios. Pick the right tool for each." />
+<LessonStage step="3" title="Interaction" subtitle="Catch the impossible clip, then pick the right tool for four scenarios." />
+
+<SurpriseLab />
 
 <ProbeLab />
 
 </MobileStepScreen>
 <MobileStepScreen label="quiz" title="Quiz">
 
-<LessonStage step="3" title="Quiz" subtitle="Close the chapter, then take the final simulation." />
+<LessonStage step="4" title="Quiz" subtitle="Close the chapter, then build one yourself in chapter 08." />
 
 <SectionQuiz sectionId="usage" topic="usage" source={WORLD_MODELS_QUESTIONS} title="Checkpoint — how to use one" />
 

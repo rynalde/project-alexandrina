@@ -3,7 +3,7 @@ import Callout from "@/components/shared/Callout";
 import Marginalia from "@/components/shared/Marginalia";
 import Highlight from "@/components/shared/Highlight";
 import Body from "@/components/shared/Body";
-import { Brain } from "lucide-react";
+import { Brain, Lightbulb } from "lucide-react";
 import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 
 <SectionHeader num="00" title="What a World Model Is" subtitle="learning by predicting, not by labeling" vol="vol. x" />
@@ -22,6 +22,10 @@ import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 
 <LessonStage step="1" title="Content" subtitle="Five short beats. Read them in order." />
 
+<Callout icon={Lightbulb} title="intuition first">
+  A good hockey player skates to where the puck is going, not to where it is — Meta used this image to introduce V-JEPA 2. To do that you need a feel for how pucks move, and nobody labels that for you: you pick it up by watching. A world model is that feel, learned by a network.
+</Callout>
+
 <Body>
 
 ### 1. The usual recipe: input → label
@@ -29,6 +33,8 @@ import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 A classifier learns a mapping you supervise. Photo of a cat → "cat". It only knows what is in your label set, and every example costs a human a few seconds of labeling.
 
 That ceiling is the whole problem. ImageNet took years and millions of dollars to label, while there are billions of hours of unlabeled video sitting on the internet doing nothing.
+
+LeCun made the same point with a back-of-the-envelope estimate in January 2024: by age four a child has taken in about 10¹⁵ bytes through the eyes alone — by his count, some 50 times more than the text the biggest language models were trained on. Most of what we know about the world was never labeled.
 
 ### 2. The other recipe: input → what comes next
 
@@ -70,7 +76,7 @@ There are always two tasks:
 
 Ha &amp; Schmidhuber (2018) learned compressed models of game environments (a racing game and VizDoom). In VizDoom they went further: the controller was trained *entirely inside the model's own dream* of the game, then transferred back to the real one. Their paper popularised the term world model (the idea goes back to Schmidhuber's work around 1990).
 
-Meta's JEPA family (2023–2025) is the modern version, scaled to real video — and that is where V-JEPA lives.
+Meta's JEPA family (2023 onward) is the modern version, scaled to real video — and that is where V-JEPA lives. The field is still moving fast: chapter 04's timeline runs to 2026, and in chapter 08 you build a small one yourself.
 
 </Body>
 

@@ -1,3 +1,4 @@
+import type { ComponentPropsWithoutRef } from "react";
 import type { MDXComponents } from "mdx/types";
 import Marginalia from "@/components/shared/Marginalia";
 import Callout from "@/components/shared/Callout";
@@ -48,13 +49,28 @@ import {
   FamilyTimeline,
   IJepaDiagram,
   MaskSampler,
+  PlanningLab,
   ProbeLab,
+  SurpriseLab,
   TokenCounter,
   TubeMaskLab,
 } from "@/components/playground/world-models/JepaLabs";
+import {
+  LabCell,
+  LabDownloads,
+  LabFigure,
+  LabFinish,
+  LabOutput,
+} from "@/components/playground/world-models/PythonLab";
+
+function ExternalAwareLink(props: ComponentPropsWithoutRef<"a">) {
+  const external = props.href?.startsWith("http");
+  return <a {...props} {...(external ? { target: "_blank", rel: "noreferrer" } : {})} />;
+}
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
+    a: ExternalAwareLink,
     Marginalia,
     Callout,
     SectionHeader,
@@ -95,9 +111,16 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     FamilyTimeline,
     IJepaDiagram,
     MaskSampler,
+    PlanningLab,
     ProbeLab,
+    SurpriseLab,
     TokenCounter,
     TubeMaskLab,
+    LabCell,
+    LabDownloads,
+    LabFigure,
+    LabFinish,
+    LabOutput,
     ...components,
   };
 }

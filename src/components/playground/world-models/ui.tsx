@@ -4,6 +4,8 @@ import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { useLearningProgress } from "@/components/learning/LearningProgressProvider";
 
+export { mulberry32 } from "@/lib/world-models-sim";
+
 /** Palette shared by every World Models interaction (matches globals.css). */
 export const WM = {
   ink: "#1a1512",
@@ -14,18 +16,6 @@ export const WM = {
   fade: "rgba(26,21,18,0.45)",
   faint: "rgba(26,21,18,0.12)",
 } as const;
-
-/** Small deterministic PRNG so SSR and client render the same "random" masks. */
-export function mulberry32(seed: number) {
-  let a = seed >>> 0;
-  return () => {
-    a = (a + 0x6d2b79f5) >>> 0;
-    let t = a;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
 
 export function LabShell({
   icon,
@@ -147,6 +137,41 @@ export function Panel({ label, children }: { label: string; children: ReactNode 
     <div className="rounded-lg border border-border bg-background p-3">
       <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">{label}</div>
       <div className="mt-1 text-sm leading-relaxed text-muted-foreground">{children}</div>
+    </div>
+  );
+}
+
+/** Tiny line chart for a live metric (loss, spread, energy…). Values are drawn as-is inside [min, max]. */
+export function Sparkline({
+  values,
+  label,
+  color = WM.rubric,
+  min,
+  max,
+  display,
+}: {
+  values: number[];
+  label: string;
+  color?: string;
+  min?: number;
+  max?: number;
+  display?: string;
+}) {
+  const lo = min ?? Math.min(...values, 0);
+  const hi = max ?? Math.max(...values, lo + 1e-9);
+  const span = hi - lo || 1;
+  const points = values
+    .map((v, i) => `${values.length > 1 ? (i / (values.length - 1)) * 100 : 0},${28 - ((Math.min(hi, Math.max(lo, v)) - lo) / span) * 26}`)
+    .join(" ");
+  return (
+    <div>
+      <div className="mb-1 flex justify-between font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+        <span>{label}</span>
+        <span className="text-ink">{display ?? (values.length ? values[values.length - 1].toFixed(3) : "—")}</span>
+      </div>
+      <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="h-10 w-full rounded border border-border bg-background" role="img" aria-label={`${label} over time`}>
+        {values.length > 1 ? <polyline points={points} fill="none" stroke={color} strokeWidth="1.2" vectorEffect="non-scaling-stroke" /> : null}
+      </svg>
     </div>
   );
 }

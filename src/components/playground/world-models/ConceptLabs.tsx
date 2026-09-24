@@ -1,8 +1,23 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Activity, CircleDot, Grid3x3, Pause, Play, Shuffle, Sparkles } from "lucide-react";
-import { CompleteButton, LabShell, Meter, Panel, Seg, WM, mulberry32 } from "./ui";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Activity, CircleDot, Grid3x3, Pause, Play, RotateCcw, Shuffle, Sparkles } from "lucide-react";
+import {
+  collapseLabels,
+  FAN_MAX,
+  FUTURE_H,
+  FUTURE_W,
+  averageFutures,
+  collapseSnapshot,
+  collapseStep,
+  createCollapseRun,
+  sampleFuture,
+  type CollapseRun,
+  type Future,
+  type FutureSpec,
+  type Strategy,
+} from "@/lib/world-models-sim";
+import { CompleteButton, LabShell, Meter, Panel, Seg, Sparkline, WM, mulberry32 } from "./ui";
 
 /* ───────────────────────── ch00 · predict the next frame ───────────────────────── */
 
@@ -192,244 +207,341 @@ export function MaskPlayground() {
   );
 }
 
-/* ───────────────────────── ch02 · blur lab ───────────────────────── */
+/* ───────────────────────── ch02 · blur lab: average the possible futures, for real ───────────────────────── */
+
+const MAX_FUTURES = 200;
+const INK_RGB = [26, 21, 18];
+const PAPER_RGB = [245, 239, 227];
+const DEFAULT_SPEC: FutureSpec = { mode: "fork", value: 0.5, ahead: 6, leaves: false };
+
+function paint(canvas: HTMLCanvasElement | null, img: Float32Array | undefined) {
+  const ctx = canvas?.getContext("2d");
+  if (!ctx) return;
+  const data = ctx.createImageData(FUTURE_W, FUTURE_H);
+  for (let i = 0; i < FUTURE_W * FUTURE_H; i += 1) {
+    const v = img ? Math.min(1, img[i]) : 0;
+    for (let c = 0; c < 3; c += 1) data.data[i * 4 + c] = Math.round(PAPER_RGB[c] + (INK_RGB[c] - PAPER_RGB[c]) * v);
+    data.data[i * 4 + 3] = 255;
+  }
+  ctx.putImageData(data, 0, 0);
+}
+
+function summarize(futures: Future[]) {
+  const n = futures.length || 1;
+  const up = futures.filter((f) => f.angle < 0).length / n;
+  const meanAngle = futures.reduce((s, f) => s + f.angle, 0) / n;
+  const angleStd = Math.sqrt(futures.reduce((s, f) => s + (f.angle - meanAngle) ** 2, 0) / n);
+  return { count: futures.length, last: futures[futures.length - 1], stats: averageFutures(futures), up, angleStd };
+}
+
+function sampleMany(spec: FutureSpec, n: number, rand: () => number) {
+  return Array.from({ length: n }, () => sampleFuture(spec, rand));
+}
 
 export function BlurLab() {
-  const [left, setLeft] = useState(50);
-  const [texture, setTexture] = useState(false);
-  const p = left / 100;
-  const uncertainty = 1 - Math.abs(2 * p - 1); // 0 = certain, 1 = coin flip
-  const pixelLoss = Math.min(1, 0.55 * uncertainty + (texture ? 0.4 : 0));
-  const latentLoss = 0.22 * uncertainty;
-  const blur = 0.4 + 2.2 * uncertainty;
+  const [spec, setSpec] = useState<FutureSpec>(DEFAULT_SPEC);
+  const [view, setView] = useState(() => summarize(sampleMany(DEFAULT_SPEC, MAX_FUTURES, mulberry32(7))));
+  const [playing, setPlaying] = useState(false);
+  const futuresRef = useRef<Future[]>([]);
+  const randRef = useRef<(() => number) | null>(null);
+  const lastCanvas = useRef<HTMLCanvasElement>(null);
+  const meanCanvas = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    paint(lastCanvas.current, view.last?.img);
+    paint(meanCanvas.current, view.count ? view.stats.mean : undefined);
+  }, [view]);
+
+  useEffect(() => {
+    if (!playing) return;
+    const timer = window.setInterval(() => {
+      randRef.current ??= mulberry32(11);
+      const futures = futuresRef.current;
+      futures.push(...sampleMany(spec, futures.length < 20 ? 1 : 6, randRef.current));
+      setView(summarize(futures));
+      if (futures.length >= MAX_FUTURES) setPlaying(false);
+    }, 60);
+    return () => window.clearInterval(timer);
+  }, [playing, spec]);
+
+  const restart = (next: FutureSpec) => {
+    setSpec(next);
+    futuresRef.current = [];
+    setView(summarize([]));
+    setPlaying(true);
+  };
+
+  const { stats } = view;
+  const fork = spec.mode === "fork";
 
   return (
-    <LabShell icon={<Sparkles size={15} />} title="Why pixel predictors go blurry">
+    <LabShell icon={<Sparkles size={15} />} title="Average the possible futures — watch the blur appear">
       <p className="mb-3 text-sm leading-relaxed text-muted-foreground">
-        A ball reaches a fork. It goes <b className="text-ink">left</b> or <b className="text-ink">right</b>. Move the slider to change how
-        likely each future is, then compare what each kind of predictor outputs.
+        A ball rolls to the right. Something makes its path uncertain. A pixel predictor trained with squared error
+        ends up outputting the <b className="text-ink">average of every future it has seen</b> — so here we compute that
+        average for real, one sampled future at a time.
       </p>
-      <label className="block">
-        <span className="mb-1 flex justify-between font-mono text-[10px] uppercase tracking-widest text-ink-fade">
-          <span>chance it goes left</span>
-          <span className="text-ink">{left}% · right {100 - left}%</span>
-        </span>
-        <input type="range" min={0} max={100} value={left} onChange={(event) => setLeft(Number(event.target.value))} className="w-full accent-rubric" />
-      </label>
-      <label className="mt-2 flex items-center gap-2 text-sm text-ink">
-        <input type="checkbox" checked={texture} onChange={(event) => setTexture(event.target.checked)} className="accent-rubric" />
-        add unpredictable detail (leaves flickering in the background)
-      </label>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Seg
+          label="what makes the future uncertain"
+          value={spec.mode}
+          onChange={(mode) => restart({ ...spec, mode, value: mode === "fork" ? 0.5 : 30 })}
+          options={[
+            { value: "fork", label: "a fork: up or down" },
+            { value: "fan", label: "a fan of directions" },
+          ]}
+        />
+        <label className="block">
+          <span className="mb-1 flex justify-between font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+            <span>{fork ? "chance it goes up" : "spread of directions"}</span>
+            <span className="text-ink">{fork ? `${Math.round(spec.value * 100)}% up` : `±${spec.value}°`}</span>
+          </span>
+          <input
+            type="range"
+            min={0}
+            max={fork ? 100 : FAN_MAX}
+            value={fork ? Math.round(spec.value * 100) : spec.value}
+            onChange={(event) => restart({ ...spec, value: fork ? Number(event.target.value) / 100 : Number(event.target.value) })}
+            className="w-full accent-rubric"
+            aria-label={fork ? "chance the ball goes up" : "spread of directions in degrees"}
+          />
+        </label>
+        <label className="block">
+          <span className="mb-1 flex justify-between font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+            <span>how far ahead we predict</span>
+            <span className="text-ink">{spec.ahead} frames</span>
+          </span>
+          <input
+            type="range"
+            min={1}
+            max={8}
+            value={spec.ahead}
+            onChange={(event) => restart({ ...spec, ahead: Number(event.target.value) })}
+            className="w-full accent-rubric"
+            aria-label="frames ahead"
+          />
+        </label>
+        <label className="flex items-center gap-2 self-end text-sm text-ink">
+          <input
+            type="checkbox"
+            checked={spec.leaves}
+            onChange={(event) => restart({ ...spec, leaves: event.target.checked })}
+            className="accent-rubric"
+          />
+          add flickering leaves (no model can predict them)
+        </label>
+      </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <div className="rounded-lg border border-border bg-background p-2.5">
-          <div className="mb-1.5 font-mono text-[10px] uppercase tracking-widest text-rubric">pixel predictor (MSE)</div>
-          <svg viewBox="0 0 60 40" className="w-full" role="img" aria-label="Pixel prediction: a blurred average of both futures">
-            <defs>
-              <filter id="wm-blur" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation={blur} />
-              </filter>
-            </defs>
-            {texture
-              ? Array.from({ length: 14 }, (_, index) => (
-                  <circle key={index} cx={4 + ((index * 37) % 52)} cy={4 + ((index * 23) % 32)} r="1.6" fill={WM.olive} opacity="0.18" filter="url(#wm-blur)" />
-                ))
-              : null}
-            <path d="M30 38 L30 22 L12 8 M30 22 L48 8" fill="none" stroke={WM.faint} strokeWidth="1" />
-            <circle cx="12" cy="10" r="4.5" fill={WM.ink} opacity={p} filter="url(#wm-blur)" />
-            <circle cx="48" cy="10" r="4.5" fill={WM.ink} opacity={1 - p} filter="url(#wm-blur)" />
-          </svg>
-          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-            MSE&apos;s best guess is the <b className="text-ink">average</b> of the futures: a faint ghost in both places.
-          </p>
+          <div className="mb-1.5 font-mono text-[10px] uppercase tracking-widest text-ink-fade">one sampled future</div>
+          <canvas ref={lastCanvas} width={FUTURE_W} height={FUTURE_H} className="w-full rounded" style={{ aspectRatio: `${FUTURE_W} / ${FUTURE_H}` }} role="img" aria-label="One possible future frame" />
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Always sharp — reality picks one.</p>
         </div>
         <div className="rounded-lg border border-border bg-background p-2.5">
-          <div className="mb-1.5 font-mono text-[10px] uppercase tracking-widest" style={{ color: WM.olive }}>latent predictor (JEPA)</div>
-          <div className="space-y-1.5 py-1 font-mono text-[11px] text-ink">
-            <div className="flex justify-between"><span>object</span><span>ball ✓</span></div>
-            <div className="flex justify-between"><span>moving</span><span>yes ✓</span></div>
-            <div>
-              <div className="mb-0.5 flex justify-between"><span>direction</span><span>L {left}% · R {100 - left}%</span></div>
-              <div className="flex h-2 overflow-hidden rounded-full">
-                <div style={{ width: `${left}%`, background: WM.ink }} />
-                <div style={{ width: `${100 - left}%`, background: WM.olive }} />
-              </div>
-            </div>
-            <div className="flex justify-between text-ink-fade"><span>leaf texture</span><span>{texture ? "ignored" : "—"}</span></div>
-          </div>
+          <div className="mb-1.5 font-mono text-[10px] uppercase tracking-widest text-rubric">pixel predictor&apos;s best guess</div>
+          <canvas ref={meanCanvas} width={FUTURE_W} height={FUTURE_H} className="w-full rounded" style={{ aspectRatio: `${FUTURE_W} / ${FUTURE_H}` }} role="img" aria-label="Average of all sampled futures" />
           <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-            The meaning stays <b className="text-ink">crisp</b>. Uncertainty becomes one clean attribute, not smeared pixels.
+            Mean of <b className="text-ink">{view.count}</b> futures = what minimises squared error.
           </p>
+        </div>
+        <div className="rounded-lg border border-border bg-background p-2.5 sm:col-span-2">
+          <div className="mb-1.5 font-mono text-[10px] uppercase tracking-widest" style={{ color: WM.olive }}>latent predictor&apos;s guess</div>
+          <div className="space-y-1.5 font-mono text-[11px] text-ink">
+            <div className="flex justify-between"><span>object</span><span>ball ✓</span></div>
+            <div className="flex justify-between"><span>distance</span><span>{spec.ahead * 5}px ✓</span></div>
+            {fork ? (
+              <div>
+                <div className="mb-0.5 flex justify-between"><span>branch</span><span>up {Math.round(view.up * 100)}% · down {Math.round((1 - view.up) * 100)}%</span></div>
+                <div className="flex h-2 overflow-hidden rounded-full">
+                  <div style={{ width: `${view.up * 100}%`, background: WM.ink }} />
+                  <div style={{ width: `${(1 - view.up) * 100}%`, background: WM.olive }} />
+                </div>
+              </div>
+            ) : (
+              <div className="flex justify-between"><span>direction</span><span>0° ± {view.angleStd.toFixed(0)}°</span></div>
+            )}
+            <div className="flex justify-between text-ink-fade"><span>leaves</span><span>{spec.leaves ? "dropped" : "—"}</span></div>
+          </div>
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Uncertainty becomes a clean number, not smeared pixels.</p>
         </div>
       </div>
 
-      <div className="mt-3 grid gap-2 sm:grid-cols-2">
-        <Meter label="pixel loss (capacity wasted)" value={pixelLoss} />
-        <Meter label="latent loss" value={latentLoss} tone="olive" />
+      <div className="mt-3 grid gap-2 sm:grid-cols-3">
+        <Meter label="sharpness of the pixel guess" value={stats.peak} />
+        <Meter label="pixel loss that can't go away" value={stats.pixelLoss / 0.02} display={stats.pixelLoss.toFixed(4)} />
+        <Meter label="latent uncertainty (px²)" value={stats.latentLoss / 400} display={stats.latentLoss.toFixed(0)} tone="olive" />
+      </div>
+      <div className="mt-3 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={() => {
+            if (playing) setPlaying(false);
+            else if (view.count > 0 && view.count < MAX_FUTURES) setPlaying(true);
+            else restart(spec);
+          }}
+          className="flex min-h-9 items-center gap-1.5 rounded-md bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper"
+        >
+          {playing ? <Pause size={12} /> : <Play size={12} />}{" "}
+          {playing ? "pause" : view.count > 0 && view.count < MAX_FUTURES ? "continue sampling" : "sample the futures again"}
+        </button>
+        <span className="font-mono text-[10px] uppercase tracking-widest text-ink-fade">{view.count} / {MAX_FUTURES} futures</span>
       </div>
       <p className="mt-2 text-xs leading-relaxed text-ink-fade">
-        Toy numbers, not a real training run. The shape is the point: unpredictable detail inflates the pixel loss;
-        the latent predictor&apos;s encoder is free to drop it.
+        Real computation, toy world. Try: fork at 100% (certain) → sharp again. Leaves on → pixel loss jumps, latent uncertainty doesn&apos;t move.
       </p>
       <CompleteButton interactionId="wm-blur-lab" />
     </LabShell>
   );
 }
 
-/* ───────────────────────── ch03 · collapse lab ───────────────────────── */
+/* ───────────────────────── ch03 · collapse lab: a real JEPA-style training run ───────────────────────── */
 
-type Defense = "none" | "contrastive" | "vicreg" | "ema";
-const DEFENSE_INFO: Record<Defense, { name: string; how: string }> = {
+const STRATEGY_INFO: Record<Strategy, { name: string; how: string }> = {
   none: {
     name: "no protection",
-    how: "Both sides are learned and nothing stops them agreeing on a constant. The loss happily goes to zero.",
+    how: "Both sides come from the same learned encoder and the gradient flows into the target too. Nothing stops them agreeing on a constant: watch the loss hit zero while every point slides into one dot.",
   },
   contrastive: {
     name: "contrastive (SimCLR, MoCo)",
-    how: "Pull two views of the same input together AND push different inputs apart using negatives. A constant output can't push anything apart.",
+    how: "InfoNCE: each embedding must pick out its own second view among the 64 in the batch — the other 63 are negatives. A constant can't tell anything apart, so it's punished. Notice the loss never gets near zero.",
   },
   vicreg: {
-    name: "VICReg",
-    how: "Add penalties: each embedding dimension must keep its variance across the batch, and dimensions must be decorrelated. A constant has zero variance, so it's punished.",
+    name: "VICReg (2022)",
+    how: "Invariance (two views should match) + variance (each dimension keeps a spread of at least 1 across the batch) + covariance (the two dimensions shouldn't copy each other). A constant has zero variance, so it's punished; the covariance term keeps both dimensions in use.",
   },
   ema: {
     name: "EMA target + predictor + stop-grad",
-    how: "The target encoder gets no gradient and only slowly follows the online encoder (EMA); a predictor sits on one side only. This asymmetry is what BYOL, I-JEPA and V-JEPA use.",
+    how: "The target is a slow moving average of the encoder and gets no gradient; a predictor sits on the online side only. BYOL, I-JEPA and V-JEPA use this. With some seeds the dots line up on one line: the spread survives, but one dimension goes unused — dimensional collapse, a milder failure. Try new seeds, then tick “remove the predictor” and watch the spread shrink.",
+  },
+  sigreg: {
+    name: "SIGReg (LeJEPA, 2025)",
+    how: "No EMA, no stop-gradient. The cloud of embeddings, seen along 8 directions, must look like a bell curve N(0, 1) — checked through its characteristic function. A single dot is far from a bell curve.",
   },
 };
-
-const CLASS_CENTERS = [
-  { x: 0, y: -0.62 },
-  { x: 0.56, y: 0.36 },
-  { x: -0.56, y: 0.36 },
-];
+const MAX_STEPS = 1500;
 const CLASS_COLORS = [WM.ink, WM.rubric, WM.olive];
+const LABELS = collapseLabels();
 
-const POINTS = (() => {
-  const rand = mulberry32(42);
-  return Array.from({ length: 15 }, (_, index) => ({
-    cls: index % 3,
-    x0: rand() * 1.8 - 0.9,
-    y0: rand() * 1.8 - 0.9,
-    jx: rand() * 0.36 - 0.18,
-    jy: rand() * 0.36 - 0.18,
-  }));
-})();
-
-function positions(defense: Defense, step: number) {
-  const s = step / 100;
-  if (defense === "none") {
-    const shrink = (1 - s) ** 2;
-    const c = { x: 0.15, y: 0.08 };
-    return POINTS.map((pt) => ({ ...pt, x: c.x + (pt.x0 - c.x) * shrink, y: c.y + (pt.y0 - c.y) * shrink }));
-  }
-  const ease = 1 - (1 - s) ** 2;
-  return POINTS.map((pt) => {
-    const center = CLASS_CENTERS[pt.cls];
-    return {
-      ...pt,
-      x: pt.x0 + (center.x + pt.jx - pt.x0) * ease,
-      y: pt.y0 + (center.y + pt.jy - pt.y0) * ease,
-    };
-  });
+function collapseView(run: CollapseRun, lossHist: number[] = [], spreadHist: number[] = []) {
+  const snap = collapseSnapshot(run);
+  return {
+    ...snap,
+    step: run.step,
+    loss: run.loss,
+    lossHist: Number.isFinite(run.loss) ? [...lossHist, run.loss].slice(-300) : lossHist,
+    spreadHist: [...spreadHist, snap.spread].slice(-300),
+  };
 }
-
-function spread(points: Array<{ x: number; y: number }>) {
-  const mx = points.reduce((sum, pt) => sum + pt.x, 0) / points.length;
-  const my = points.reduce((sum, pt) => sum + pt.y, 0) / points.length;
-  return points.reduce((sum, pt) => sum + (pt.x - mx) ** 2 + (pt.y - my) ** 2, 0) / points.length;
-}
-
-const INITIAL_SPREAD = spread(POINTS.map((pt) => ({ x: pt.x0, y: pt.y0 })));
 
 export function CollapseLab() {
-  const [defense, setDefense] = useState<Defense>("none");
-  const [step, setStep] = useState(0);
+  const [strategy, setStrategy] = useState<Strategy>("none");
+  const [usePredictor, setUsePredictor] = useState(true);
+  const [fast, setFast] = useState(false);
+  const [seed, setSeed] = useState(0);
   const [playing, setPlaying] = useState(false);
-
-  const running = playing && step < 100;
+  const [view, setView] = useState(() => collapseView(createCollapseRun("none")));
+  const runRef = useRef<CollapseRun | null>(null);
 
   useEffect(() => {
-    if (!running) return;
+    if (!playing) return;
     const timer = window.setInterval(() => {
-      setStep((value) => Math.min(100, value + 2));
-    }, 60);
+      const run = runRef.current;
+      if (!run) return;
+      const n = Math.min(fast ? 30 : 10, MAX_STEPS - run.step);
+      for (let i = 0; i < n; i += 1) collapseStep(run);
+      setView((prev) => collapseView(run, prev.lossHist, prev.spreadHist));
+      if (run.step >= MAX_STEPS) setPlaying(false);
+    }, 50);
     return () => window.clearInterval(timer);
-  }, [running]);
+  }, [playing, fast]);
 
-  const pts = positions(defense, step);
-  const variance = Math.min(1, spread(pts) / INITIAL_SPREAD);
-  const s = step / 100;
-  const loss = defense === "none" ? (1 - s) ** 2 : 0.22 + 0.78 * (1 - s) ** 2;
-  const collapsed = defense === "none" && step >= 85;
-  const info = DEFENSE_INFO[defense];
-
-  const choose = (value: Defense) => {
-    setDefense(value);
-    setStep(0);
+  const reset = (next: Strategy, withPredictor: boolean, nextSeed = seed) => {
+    const run = createCollapseRun(next, withPredictor, nextSeed);
+    runRef.current = run;
+    setStrategy(next);
+    setUsePredictor(withPredictor);
+    setSeed(nextSeed);
+    setView(collapseView(run));
     setPlaying(false);
   };
 
+  const toggle = () => {
+    if (playing) {
+      setPlaying(false);
+      return;
+    }
+    if (!runRef.current || runRef.current.step >= MAX_STEPS) {
+      const run = createCollapseRun(strategy, usePredictor, seed);
+      runRef.current = run;
+      setView(collapseView(run));
+    }
+    setPlaying(true);
+  };
+
+  const collapsed = view.spread < 0.02;
+  const info = STRATEGY_INFO[strategy];
+  const clamp = (v: number) => Math.max(-3.1, Math.min(3.1, v));
+
   return (
-    <LabShell icon={<Activity size={15} />} title="Watch a representation collapse">
+    <LabShell icon={<Activity size={15} />} title="Train a tiny JEPA — and watch it cheat">
       <Seg
         label="anti-collapse strategy"
-        value={defense}
-        onChange={choose}
+        value={strategy}
+        onChange={(value) => reset(value, true)}
         options={[
           { value: "none", label: "none" },
           { value: "contrastive", label: "contrastive" },
           { value: "vicreg", label: "VICReg" },
           { value: "ema", label: "EMA + predictor" },
+          { value: "sigreg", label: "SIGReg (2025)" },
         ]}
       />
-      <div className="mt-4 grid gap-4 md:grid-cols-[1fr_220px]">
+      {strategy === "ema" ? (
+        <label className="mt-2 flex items-center gap-2 text-sm text-ink">
+          <input type="checkbox" checked={!usePredictor} onChange={(event) => reset("ema", !event.target.checked)} className="accent-rubric" />
+          remove the predictor (BYOL&apos;s ablation)
+        </label>
+      ) : null}
+      <div className="mt-4 grid gap-4 md:grid-cols-[1fr_240px]">
         <div className="relative">
-          <svg viewBox="-1.1 -1.1 2.2 2.2" className="aspect-square w-full rounded-lg border border-border bg-background" role="img" aria-label="Embedding space scatter plot">
-            <line x1="-1.1" y1="0" x2="1.1" y2="0" stroke={WM.faint} strokeWidth="0.01" />
-            <line x1="0" y1="-1.1" x2="0" y2="1.1" stroke={WM.faint} strokeWidth="0.01" />
-            {pts.map((pt, index) => (
-              <circle key={index} cx={pt.x} cy={pt.y} r="0.055" fill={CLASS_COLORS[pt.cls]} opacity="0.85" />
+          <svg viewBox="-3.2 -3.2 6.4 6.4" className="aspect-square w-full rounded-lg border border-border bg-background" role="img" aria-label="Embeddings of 150 inputs in the 2-D representation space">
+            <line x1="-3.2" y1="0" x2="3.2" y2="0" stroke={WM.faint} strokeWidth="0.015" />
+            <line x1="0" y1="-3.2" x2="0" y2="3.2" stroke={WM.faint} strokeWidth="0.015" />
+            {view.z.map((point, index) => (
+              <circle key={index} cx={clamp(point[0])} cy={clamp(-point[1])} r="0.075" fill={CLASS_COLORS[LABELS[index]]} opacity="0.8" />
             ))}
           </svg>
           {collapsed ? (
             <div className="absolute inset-x-3 bottom-3 rounded-md bg-rubric px-3 py-2 text-center font-mono text-[10px] uppercase tracking-widest text-paper animate-fade-in">
-              collapsed · loss ≈ 0 · every input → same point
+              collapsed · loss ≈ 0 · every input → the same point
             </div>
           ) : null}
         </div>
         <div className="space-y-3">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              onClick={() => {
-                if (running) {
-                  setPlaying(false);
-                  return;
-                }
-                if (step >= 100) setStep(0);
-                setPlaying(true);
-              }}
+              onClick={toggle}
               className="flex min-h-9 items-center gap-1.5 rounded-md bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper"
             >
-              {running ? <Pause size={12} /> : <Play size={12} />} {running ? "pause" : step >= 100 ? "train again" : "train"}
+              {playing ? <Pause size={12} /> : <Play size={12} />} {playing ? "pause" : view.step >= MAX_STEPS ? "train again" : view.step ? "continue" : "train"}
             </button>
-            <span className="font-mono text-[10px] uppercase tracking-widest text-ink-fade">step {step}</span>
+            <button type="button" onClick={() => reset(strategy, usePredictor)} className="flex min-h-9 items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-ink hover:text-rubric">
+              <RotateCcw size={12} /> reset
+            </button>
+            <button type="button" onClick={() => reset(strategy, usePredictor, seed + 1)} className="flex min-h-9 items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-ink hover:text-rubric">
+              <Shuffle size={12} /> new seed
+            </button>
+            <label className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-ink">
+              <input type="checkbox" checked={fast} onChange={(event) => setFast(event.target.checked)} className="accent-rubric" /> fast
+            </label>
           </div>
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={step}
-            onChange={(event) => {
-              setPlaying(false);
-              setStep(Number(event.target.value));
-            }}
-            className="w-full accent-rubric"
-            aria-label="training step"
-          />
-          <Meter label="prediction loss" value={loss} display={loss.toFixed(2)} />
-          <Meter label="spread of embeddings" value={variance} tone="olive" />
+          <div className="font-mono text-[10px] uppercase tracking-widest text-ink-fade">step {view.step} / {MAX_STEPS} · seed {seed}</div>
+          <Sparkline label="training loss" values={view.lossHist} min={0} display={Number.isFinite(view.loss) ? view.loss.toFixed(3) : "—"} />
+          <Sparkline label="spread (collapse alarm)" values={view.spreadHist} min={0} max={1.6} color={WM.olive} display={view.spread.toFixed(3)} />
+          <Meter label="probe accuracy (chance 33%)" value={view.probe} tone="ink" />
+          <Meter label="dimensions in use (of 2)" value={Math.max(0, view.dims - 1)} display={view.dims ? view.dims.toFixed(2) : "—"} tone="olive" />
           <div className="flex flex-wrap gap-2 font-mono text-[9px] uppercase tracking-widest text-ink-fade">
             {["class A", "class B", "class C"].map((label, index) => (
               <span key={label} className="flex items-center gap-1">
@@ -443,7 +555,9 @@ export function CollapseLab() {
         <Panel label={info.name}>{info.how}</Panel>
       </div>
       <p className="mt-2 text-xs leading-relaxed text-ink-fade">
-        A toy picture, not a real run. Colours are classes the model never sees — with a defense, similar inputs end up near each other on their own.
+        Real training in your browser: 150 inputs with 8 numbers each (2 carry the class, 6 are nuisance re-drawn in every
+        view, like colour jitter), a 2×8 linear encoder, batches of 64 view pairs, plain gradient descent. The model never
+        sees the colours — a defense makes them separate on their own.
       </p>
       <CompleteButton interactionId="wm-collapse-lab" />
     </LabShell>

@@ -4,7 +4,7 @@ import Marginalia from "@/components/shared/Marginalia";
 import Highlight from "@/components/shared/Highlight";
 import Body from "@/components/shared/Body";
 import Kbd from "@/components/shared/Kbd";
-import { Layers } from "lucide-react";
+import { Layers, Lightbulb } from "lucide-react";
 import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 
 <SectionHeader num="05" title="Anatomy of I-JEPA" subtitle="three networks, two masks, one loss" vol="vol. x" />
@@ -22,6 +22,10 @@ import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 <MobileStepScreen label="content" title="Content">
 
 <LessonStage step="1" title="Content" subtitle="Everything from chapters 01–03, assembled for images." />
+
+<Callout icon={Lightbulb} title="intuition first">
+  A jigsaw with four big pieces missing. MAE would repaint the missing pieces pixel by pixel. I-JEPA only has to <i>describe</i> them — "part of a dog's ear, lit from the left" — in the same language the rest of the picture is described in.
+</Callout>
 
 <Body>
 
@@ -55,6 +59,8 @@ The loss is the **average L2 distance** between predicted and target patch repre
 <Kbd>θ_target ← τ · θ_target + (1 − τ) · θ_context</Kbd>
 
 with τ ramping from **0.996 to 1.0** over training.
+
+Reading the official code is instructive: the target features are first normalized with layer norm, and the loss in the code is smooth L1, while the paper describes it as an L2 distance. Chapter 08's lab keeps the layer norm and uses a squared (L2) loss.
 
 <EmaLab />
 

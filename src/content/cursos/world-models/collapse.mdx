@@ -3,7 +3,7 @@ import Callout from "@/components/shared/Callout";
 import Marginalia from "@/components/shared/Marginalia";
 import Highlight from "@/components/shared/Highlight";
 import Body from "@/components/shared/Body";
-import { ShieldAlert } from "lucide-react";
+import { Lightbulb, ShieldAlert } from "lucide-react";
 import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 
 <SectionHeader num="03" title="Collapse" subtitle="the zero-loss cheat, and three ways to block it" vol="vol. x" />
@@ -21,6 +21,10 @@ import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 <MobileStepScreen label="content" title="Content">
 
 <LessonStage step="1" title="Content" subtitle="The cheat, then the three fixes." />
+
+<Callout icon={Lightbulb} title="intuition first">
+  LeCun describes a JEPA as an energy-based model: it gives a pair (context, target) a low "energy" when they fit together and a high one when they don't. A useful model has hills and valleys. Collapse is the lazy landscape: flat and low everywhere, so every pair "fits" — and the model tells you nothing.
+</Callout>
 
 <Body>
 
@@ -48,6 +52,8 @@ VICReg (Bardes, Ponce &amp; LeCun, 2022) adds three terms:
 - — **Invariance**: two views of the same input should match.
 - — **Covariance**: different dimensions should not carry the same information.
 
+**SIGReg** (LeJEPA, Balestriero &amp; LeCun, 2025) folds this into one test: look at the cloud of embeddings along many random directions, and every such 1-D "shadow" must look like a standard bell curve, N(0, 1). A collapsed cloud casts a spike, far from a bell curve. The paper argues this Gaussian shape is the best one for downstream tasks, and the method needs no EMA, no stop-gradient and a single trade-off hyperparameter. LeWorldModel (2026) and LeVJEPA (2026) build on it.
+
 ### Defense 3 — asymmetry: a slow-moving, gradient-free teacher
 
 BYOL (2020) showed you can skip negatives entirely by making the two sides *different*:
@@ -56,7 +62,7 @@ BYOL (2020) showed you can skip negatives entirely by making the two sides *diff
 - — the target side gets a <TermTip term="stop-gradient">treat the value as a constant: no gradient flows back through it</TermTip>;
 - — the target encoder is an **EMA** (a slow moving average) of the online encoder's weights.
 
-This is the defense **I-JEPA and V-JEPA use**. (SimSiam, 2021, later showed the EMA isn't strictly required — stop-gradient plus a predictor is enough.) Honest note: *why* this asymmetry prevents collapse is still being studied. It works reliably in practice; the full theory is younger than the trick.
+This is the defense **I-JEPA and V-JEPA use**. (SimSiam, 2021, later showed the EMA isn't strictly required — stop-gradient plus a predictor is enough.) Honest note: *why* this asymmetry prevents collapse took years to explain. A 2025 paper (Ponce, Terver, Hebert &amp; Arbel) proved that, in the linear case, minimizing the same loss without stop-gradient or EMA always collapses — and that with them, training avoids collapse even though it no longer minimizes any smooth objective.
 
 <QuickCheck
   q="Your training loss drops to 0.00 in the first epoch, and the per-dimension standard deviation of your embeddings is ≈ 0. What happened?"
@@ -67,22 +73,26 @@ This is the defense **I-JEPA and V-JEPA use**. (SimSiam, 2021, later showed the 
 
 ### How you'll check for it in your own lab
 
-Two cheap alarms for vol. xii: log the **standard deviation of each embedding dimension** across a batch (it should not sink toward 0), and run a quick **linear probe** now and then (stuck at chance = nothing learned).
+Two cheap alarms, and chapter 08's lab uses both: log the **standard deviation of each embedding dimension** across a batch (it should not sink toward 0), and run a quick **linear probe** now and then (stuck at chance = nothing learned).
+
+In that lab, removing the stop-gradient and the EMA made the loss fall to 0.0001 while the spread fell from 0.35 to 0.008 — and the probe then scored *worse* than an untrained encoder.
+
+There is also a milder cousin: **dimensional collapse**. The embeddings keep some spread but squeeze onto a few directions, leaving the other dimensions unused. A per-dimension spread can miss it; counting how many directions actually carry variance (the "dimensions in use" meter in this chapter's lab) catches it. VICReg's covariance term exists to push against it.
 
 </Body>
 
 <Callout icon={ShieldAlert} title="one sentence to keep">
-  If both sides of the loss are learned, the model can win by outputting a constant; contrastive negatives, variance regularization, or an asymmetric EMA-teacher-plus-predictor design block that cheat — JEPA uses the asymmetric one.
+  If both sides of the loss are learned, the model can win by outputting a constant; contrastive negatives, a regularizer that demands variety (VICReg, or LeJEPA's SIGReg), or an asymmetric EMA-teacher-plus-predictor design block that cheat — I-JEPA and V-JEPA use the asymmetric one.
 </Callout>
 
 <Marginalia label="traps">
-  Low loss is not proof of learning — collapse gives zero loss. Pixel-reconstruction models don't collapse this way; the risk comes from learned targets. BYOL/JEPA need no negatives. EMA alone is not the whole story — the predictor and stop-gradient are part of the asymmetry.
+  Low loss is not proof of learning — collapse gives zero loss. Pixel-reconstruction models don't collapse this way; the risk comes from learned targets. BYOL/JEPA need no negatives. EMA alone is not the whole story — the predictor and stop-gradient are part of the asymmetry. SIGReg needs neither EMA nor stop-gradient.
 </Marginalia>
 
 </MobileStepScreen>
 <MobileStepScreen label="interaction" title="Interaction">
 
-<LessonStage step="2" title="Interaction" subtitle="Train with no protection, then try each defense." />
+<LessonStage step="2" title="Interaction" subtitle="Real training in your browser: no protection first, then each defense." />
 
 <CollapseLab />
 

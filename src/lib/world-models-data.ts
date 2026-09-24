@@ -408,6 +408,59 @@ export const WORLD_MODELS_QUESTIONS: Question[] = [
     correct: 2,
     exp: "Frozen features fit the compute budget, can be cached once, and give the standard, fair evaluation of the world model.",
   },
+  // ── 08 · build one from scratch (python lab) ──
+  {
+    id: 33,
+    topic: "lab",
+    q: "In the lab, the pixel network's guess for frame t+4 correlated 0.92 with the average of 2,000 simulated futures but only 0.75 with one real future. What does that show?",
+    opts: [
+      "The network is too small to learn the task.",
+      "The simulator is wrong.",
+      "Squared error rewards predicting one sharp, likely future.",
+      "Under uncertainty, squared error pushes the prediction toward the average of the possible futures — hence the blur.",
+    ],
+    correct: 3,
+    exp: "The mean of the futures minimises squared error, and the mean of sharp frames is a blurry frame. Set KICK = 0 and the blur disappears, because the future stops being uncertain.",
+  },
+  {
+    id: 34,
+    topic: "lab",
+    q: "Without stop-gradient and EMA, the lab's loss fell to 0.0001 and the spread to 0.008; the position probe then scored 0.32, versus 0.55 for a random encoder. The best reading is:",
+    opts: [
+      "The representation collapsed: the loss was won by making every frame look the same, which destroyed information.",
+      "That model learned position better than the JEPA.",
+      "The probe is broken.",
+      "A lower loss always means a better model.",
+    ],
+    correct: 0,
+    exp: "Zero loss plus near-zero spread is the collapse signature from chapter 03. The probe confirms it: the collapsed encoder carries less information than an untrained one.",
+  },
+  {
+    id: 35,
+    topic: "lab",
+    q: "What does SIGReg (LeJEPA, 2025) ask of a batch of embeddings?",
+    opts: [
+      "That every embedding equal the EMA teacher's embedding.",
+      "That embeddings of different inputs be pushed apart using negatives.",
+      "That every 1-D projection of the embedding cloud look like a standard Gaussian, N(0, 1).",
+      "That the embeddings reconstruct the input pixels.",
+    ],
+    correct: 2,
+    exp: "SIGReg compares the characteristic function of random 1-D projections with the Gaussian's. A collapsed cloud projects to a spike, far from a bell curve, so no EMA or stop-gradient is needed.",
+  },
+  {
+    id: 36,
+    topic: "lab",
+    q: "The lab's planner reached far goals only 44% of the time until it was given a sub-goal image (100%). Why?",
+    opts: [
+      "The action-conditioned predictor was never trained.",
+      "CEM cannot plan more than one step ahead.",
+      "The ball moved too fast to stop.",
+      "Latent distance tracks real distance only up to ~9–12px and the planner imagines just 6 pushes ahead, so far away the energy gives no useful direction; a waypoint brings the goal back within range.",
+    ],
+    correct: 3,
+    exp: "The energy is an L1 distance in representation space. Where that distance is flat, every imagined plan scores the same. V-JEPA 2-AC was likewise given sub-goal images for pick-and-place.",
+  },
 ];
 
 export const WORLD_MODELS_TOPIC_LABELS: Record<string, string> = {
@@ -419,6 +472,7 @@ export const WORLD_MODELS_TOPIC_LABELS: Record<string, string> = {
   ijepa: "Anatomy of I-JEPA",
   vjepa: "From I-JEPA to V-JEPA",
   usage: "How to Use One",
+  lab: "Build One From Scratch",
 };
 
 export const WORLD_MODELS_SECTIONS: Section[] = [
@@ -468,7 +522,13 @@ export const WORLD_MODELS_SECTIONS: Section[] = [
     id: "usage",
     num: "07",
     title: "How to Use One",
-    subtitle: "Probes, fine-tuning, planning",
+    subtitle: "Probes, planning, surprise",
+  },
+  {
+    id: "lab",
+    num: "08",
+    title: "Build One From Scratch",
+    subtitle: "A JEPA in PyTorch, verified",
   },
   {
     id: "roadmap",
@@ -480,6 +540,6 @@ export const WORLD_MODELS_SECTIONS: Section[] = [
     id: "simulado",
     num: "∞",
     title: "Final Simulation",
-    subtitle: "32 exam-style questions",
+    subtitle: "36 exam-style questions",
   },
 ];

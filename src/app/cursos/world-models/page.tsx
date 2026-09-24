@@ -14,6 +14,7 @@ import FamilySection from "@/content/cursos/world-models/family.mdx";
 import IJepaSection from "@/content/cursos/world-models/ijepa.mdx";
 import VJepaSection from "@/content/cursos/world-models/vjepa.mdx";
 import UsageSection from "@/content/cursos/world-models/usage.mdx";
+import LabSection from "@/content/cursos/world-models/lab.mdx";
 import RoadmapSection from "@/content/cursos/world-models/roadmap.mdx";
 
 const SECTION_MAP: Record<string, ComponentType> = {
@@ -25,6 +26,7 @@ const SECTION_MAP: Record<string, ComponentType> = {
   ijepa: IJepaSection,
   vjepa: VJepaSection,
   usage: UsageSection,
+  lab: LabSection,
   roadmap: RoadmapSection,
   simulado: WorldModelsSimuladoSection,
 };

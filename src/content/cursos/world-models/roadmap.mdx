@@ -16,14 +16,28 @@ import Body from "@/components/shared/Body";
 - — **04** Family tree — World Models, Dreamer, MAE, BYOL, JEPA, V-JEPA 2
 - — **05** Anatomy of I-JEPA — masks, three networks, EMA
 - — **06** From I-JEPA to V-JEPA — tubelets, tube masks, V-JEPA 2
-- — **07** How to use one — probes, fine-tuning, planning
-- — **∞** Final simulation — 32 questions
+- — **07** How to use one — probes, fine-tuning, planning, surprise
+- — **08** Build one from scratch — a JEPA world model in PyTorch, verified end to end
+- — **∞** Final simulation — 36 questions
 
 ### What follows
 
 - — <Highlight>vol. xi — PyTorch for World Models</Highlight>: tensors, autograd, training loop, Dataset/DataLoader, nn.Module, Colab GPU.
-- — <Highlight>vol. xii — Building Your Own World Model</Highlight>: Moving MNIST, a pixel next-frame predictor, then a JEPA-style latent predictor with an EMA target encoder — and watching for collapse.
+- — <Highlight>vol. xii — Building Your Own World Model</Highlight>: chapter 08's lab, scaled up — Moving MNIST instead of one ball, a ViT encoder, masking in space and time, and the same collapse alarms and probes.
 - — <Highlight>vol. xiii — Making It Useful</Highlight>: freeze the encoder, train a probe, move to pretrained V-JEPA 2 on a UCF101 subset, measure calibration.
+
+### Read the sources
+
+Every paper result quoted in this caderno comes from one of these; LeCun's data estimate in chapter 00 comes from his [January 2024 post](https://x.com/ylecun/status/1750614681209983231), and chapter 08's numbers come from its own run. Start with the abstract and the first figure; that is usually enough.
+
+- — **ch00, ch04** · [World Models](https://arxiv.org/abs/1803.10122) (Ha &amp; Schmidhuber, 2018) · [DreamerV3](https://arxiv.org/abs/2301.04104) (Hafner et al., 2023; *Nature* 2025) · [Cosmos](https://arxiv.org/abs/2501.03575) (NVIDIA, 2025)
+- — **ch02, ch04** · [MAE](https://arxiv.org/abs/2111.06377) (He et al., 2021) · [data2vec](https://arxiv.org/abs/2202.03555) (Baevski et al., 2022)
+- — **ch03** · [BYOL](https://arxiv.org/abs/2006.07733) (Grill et al., 2020) · [SimSiam](https://arxiv.org/abs/2011.10566) (Chen &amp; He, CVPR 2021) · [VICReg](https://arxiv.org/abs/2105.04906) (Bardes et al., ICLR 2022) · [Dual perspectives on non-contrastive SSL](https://arxiv.org/abs/2507.01028) (Ponce et al., 2025) · [LeJEPA](https://arxiv.org/abs/2511.08544) (Balestriero &amp; LeCun, 2025)
+- — **ch04** · [A Path Towards Autonomous Machine Intelligence](https://openreview.net/pdf?id=BZ5a1r-kVsf) (LeCun, 2022) · [VL-JEPA](https://arxiv.org/abs/2512.10942) (Chen et al., 2025)
+- — **ch05** · [I-JEPA](https://arxiv.org/abs/2301.08243) (Assran et al., 2023)
+- — **ch06** · [V-JEPA](https://arxiv.org/abs/2404.08471) (Bardes et al., 2024) · [V-JEPA 2](https://arxiv.org/abs/2506.09985) (Assran et al., 2025) · [V-JEPA 2.1](https://arxiv.org/abs/2603.14482) (Mur-Labadia et al., 2026) · [LeVJEPA](https://arxiv.org/abs/2608.27395) (Kuhn et al., 2026)
+- — **ch07** · [DINO-WM](https://arxiv.org/abs/2411.04983) (Zhou et al., 2024) · [Intuitive physics from video](https://arxiv.org/abs/2502.11831) (Garrido et al., 2025) · [IntPhys 2](https://arxiv.org/abs/2506.09849) (Bordes et al., 2025)
+- — **ch08** · [LeWorldModel](https://arxiv.org/abs/2603.19312) (Maes et al., 2026) — step 6's two losses (prediction + SIGReg) at real scale, trained end to end with actions
 
 </Body>
 

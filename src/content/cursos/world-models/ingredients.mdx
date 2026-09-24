@@ -4,7 +4,7 @@ import Marginalia from "@/components/shared/Marginalia";
 import Highlight from "@/components/shared/Highlight";
 import Body from "@/components/shared/Body";
 import Kbd from "@/components/shared/Kbd";
-import { Layers } from "lucide-react";
+import { Layers, Lightbulb } from "lucide-react";
 import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 
 <SectionHeader num="01" title="The Three Ingredients" subtitle="encoder, predictor, loss" vol="vol. x" />
@@ -22,6 +22,10 @@ import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 <MobileStepScreen label="content" title="Content">
 
 <LessonStage step="1" title="Content" subtitle="Three parts, one loop. Read them in order." />
+
+<Callout icon={Lightbulb} title="intuition first">
+  A crossword with a coffee stain on it. The letters you can still read are the <b>context</b>; the stained squares are the <b>target</b>; where the stain landed is the <b>mask</b>. You read (encoder), you guess (predictor), and you check against the answer key (loss) — except that here the answer key is the stained part itself, so nobody had to write one.
+</Callout>
 
 <Body>
 
@@ -72,6 +76,8 @@ No. An encoder only learns when a loss tells it how wrong something was. In pred
 3. Predictor guesses the target from `z_context`.
 4. Loss compares guess vs target.
 5. Backpropagate, update weights, repeat millions of times.
+
+In chapter 08 you write each of these in a few lines of PyTorch and run the loop yourself.
 
 ### Which part do you keep?
 

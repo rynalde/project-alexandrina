@@ -1,0 +1,802 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Marginalia from "@/components/shared/Marginalia";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { FlaskConical } from "lucide-react";
+import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
+
+<SectionHeader num="08" title="Build One From Scratch" subtitle="a tiny JEPA world model in PyTorch — every number verified" vol="vol. x" />
+
+<LearningObjectives
+  sectionId="lab"
+  items={[
+    "Build every piece of a JEPA — encoder, predictor, EMA target, loss — and train it on unlabeled video.",
+    "Catch collapse with a spread alarm, and measure what the encoder learned with linear probes.",
+    "Turn the frozen encoder into a planner: an action-conditioned predictor plus the Cross-Entropy Method.",
+  ]}
+/>
+
+<MobileStepScreens>
+<MobileStepScreen label="build" title="Build">
+
+<LessonStage step="1" title="Build" subtitle="Steps 0–3: a toy world, a pixel baseline, and the JEPA itself." />
+
+<Body>
+
+### What you will build — and why a toy
+
+V-JEPA 2 trains a ViT with about a billion parameters on more than a million hours of video. The ideas don't need that. Here the "internet video" is one ball bouncing in a 24×24 box, and the whole lab runs on a laptop CPU in about a minute.
+
+Every chapter of this caderno shows up in the code:
+
+- — **Step 1** makes unlabeled video: the data supervises itself (ch00).
+- — **Step 2** trains a pixel predictor and watches it blur (ch02).
+- — **Step 3** builds the JEPA: encoder, predictor, EMA target, loss (ch01, ch05).
+- — **Step 4** breaks it on purpose to see collapse (ch03).
+- — **Steps 5–6** measure what it learned and try the 2025 anti-collapse recipe (ch03, ch07).
+- — **Steps 7–8** turn it into a planner, the way V-JEPA 2-AC does (ch07).
+
+</Body>
+
+<LabDownloads />
+
+<ImportantBlock title="verified, not imagined">
+  Every output on this page is copied from a real run of this exact code (PyTorch 2.14 on CPU, Python 3.14): about 1 minute with 4 CPU threads and 1.5 minutes with 2, with identical numbers. The last cell is a self-check: if it prints <b>all checks passed ✓</b>, your run behaved like ours. On a GPU the numbers can differ slightly.
+</ImportantBlock>
+
+<Body>
+
+### Step 0 — setup
+
+Three libraries, a fixed random seed so your numbers match ours, and a GPU if there is one.
+
+</Body>
+
+<LabCell step="0" title="setup">
+
+```python
+# Needs torch, numpy and matplotlib (all preinstalled on Colab). About 1–2 minutes on a laptop CPU.
+import copy, time
+import numpy as np
+import torch, torch.nn as nn, torch.nn.functional as F
+import matplotlib.pyplot as plt
+
+torch.manual_seed(0)
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print("device:", device)
+```
+
+</LabCell>
+
+<Body>
+
+### Step 1 — a tiny world
+
+The world is one soft dot in a 24×24 box. Every frame it moves by its velocity and bounces off the walls. With a 20% chance per frame it gets **kicked** in a random direction — that is what makes the future uncertain, like real life.
+
+`make_clips` returns videos **and** the true positions and velocities. The model never sees those numbers. We keep them only to grade the model later, the way a teacher keeps the answer key.
+
+</Body>
+
+<LabCell step="1" title="a tiny world: one ball in a 24×24 box">
+
+```python
+SIZE, SIGMA, VMAX, KICK = 24, 1.2, 1.5, 0.2   # frame size, ball radius, max speed, kick chance per frame
+LO, HI = 1.5, SIZE - 2.5                      # walls
+YY, XX = np.mgrid[0:SIZE, 0:SIZE].astype(np.float32)
+
+
+def render(pos):
+    """(n, 2) ball positions -> (n, 24, 24) grayscale frames (a soft dot)."""
+    dx = XX - pos[:, 0, None, None]
+    dy = YY - pos[:, 1, None, None]
+    return np.exp(-(dx**2 + dy**2) / (2 * SIGMA**2)).astype(np.float32)
+
+
+def step(pos, vel, rng, action=None, kick=KICK):
+    """Physics for one frame: maybe a random kick, maybe a push (action), move, bounce off walls."""
+    pos, vel = pos.copy(), vel.copy()
+    hit = rng.random(len(pos)) < kick
+    angle = rng.uniform(0, 2 * np.pi, len(pos))
+    speed = np.linalg.norm(vel, axis=1, keepdims=True)
+    vel[hit] = (np.stack([np.cos(angle), np.sin(angle)], 1) * speed)[hit]
+    if action is not None:
+        vel = vel + action
+    speed = np.linalg.norm(vel, axis=1, keepdims=True)
+    vel = np.where(speed > VMAX, vel / np.maximum(speed, 1e-8) * VMAX, vel)
+    pos = pos + vel
+    for d in range(2):
+        over, under = pos[:, d] > HI, pos[:, d] < LO
+        pos[over, d] = 2 * HI - pos[over, d]
+        pos[under, d] = 2 * LO - pos[under, d]
+        vel[over | under, d] *= -1
+    return pos, vel
+
+
+def random_state(n, rng):
+    pos = rng.uniform(LO, HI, (n, 2))
+    angle = rng.uniform(0, 2 * np.pi, n)
+    vel = np.stack([np.cos(angle), np.sin(angle)], 1) * rng.uniform(0, VMAX, (n, 1))
+    return pos, vel
+
+
+def make_clips(n, length, rng, kick=KICK):
+    """n unlabeled videos. The true states come back too, but ONLY to grade the model later."""
+    pos, vel = random_state(n, rng)
+    frames, states = [], []
+    for _ in range(length):
+        frames.append(render(pos))
+        states.append(np.concatenate([pos, vel], 1))
+        pos, vel = step(pos, vel, rng, kick=kick)
+    return torch.from_numpy(np.stack(frames, 1)), torch.tensor(np.stack(states, 1), dtype=torch.float32)
+
+
+rng = np.random.default_rng(0)
+sample = render(random_state(4096, rng)[0])
+PIX_MEAN, PIX_STD = float(sample.mean()), float(sample.std())   # used to normalize inputs later
+clip, _ = make_clips(1, 8, np.random.default_rng(1))       # one example video, just to look at
+print("one clip:", tuple(clip.shape), "= (videos, frames, height, width)")
+fig, axes = plt.subplots(1, 8, figsize=(12, 1.8))
+for t, ax in enumerate(axes):
+    ax.imshow(clip[0, t], cmap="gray_r")
+    ax.set_title(f"t={t}")
+    ax.set_xticks([]); ax.set_yticks([])                      # keep the box border, hide the ticks
+plt.savefig("fig1_clip.png", bbox_inches="tight")
+plt.show()
+```
+
+</LabCell>
+
+<LabFigure src="fig1_clip.png" alt="Eight frames of a small ball moving and bouncing inside a box" width={950} height={139} caption="One training video. No labels anywhere: just frames." />
+
+<QuickCheck
+  q="During training, what does the JEPA get to see?"
+  options={["Frames and the true positions", "Only the frames", "Only the positions and velocities", "Frames and a class label"]}
+  correct={1}
+  why="Only pixels go in. The true states are the answer key, used after training by the probes in step 5."
+/>
+
+<Body>
+
+### Step 2 — the pixel baseline
+
+Before building the JEPA, build what it improves on. A small CNN sees frames t−1 and t and must **paint** frame t+4, graded by squared error on every pixel.
+
+Then we grade it in a way only a simulator allows: for 30 new moments we simulate **2,000 possible futures** of the same moment, kicks included, and average them.
+
+</Body>
+
+<LabCell step="2" title="the pixel baseline: paint frame t+4">
+
+```python
+K = 4                                          # how many frames ahead
+
+
+class PixelPredictor(nn.Module):
+    """Two frames in -> the pixels of frame t+K out, trained with squared error."""
+    def __init__(self):
+        super().__init__()
+        self.see = nn.Sequential(nn.Conv2d(2, 32, 4, 2, 1), nn.GELU(), nn.Conv2d(32, 64, 4, 2, 1), nn.GELU(),
+                                 nn.Conv2d(64, 64, 4, 2, 1), nn.GELU(), nn.Flatten())
+        self.paint = nn.Sequential(nn.Linear(64 * 3 * 3, 512), nn.GELU(), nn.Linear(512, SIZE * SIZE))
+
+    def forward(self, two_frames):
+        x = (two_frames - PIX_MEAN) / PIX_STD      # normalize pixels
+        return self.paint(self.see(x)).view(-1, SIZE, SIZE)
+
+
+pix = PixelPredictor().to(device)
+opt = torch.optim.AdamW(pix.parameters(), lr=1e-3)
+t0 = time.time()
+for it in range(1501):
+    frames, _ = make_clips(128, 2 + K, rng)
+    frames = frames.to(device)
+    loss = F.mse_loss(pix(frames[:, :2]), frames[:, 1 + K])
+    opt.zero_grad(); loss.backward(); opt.step()
+    if it % 500 == 0:
+        print(f"step {it:4d}  pixel MSE {loss.item():.4f}")
+print(f"trained in {time.time() - t0:.0f}s")
+
+# Grade it on 30 new moments: simulate 2000 possible futures of each one and average them.
+rng_eval = np.random.default_rng(1)
+stats = []
+for trial in range(30):
+    pos0, vel0 = random_state(1, rng_eval)
+    pos1, vel1 = step(pos0, vel0, rng_eval, kick=0)            # frames t-1 and t
+    two = torch.from_numpy(np.stack([render(pos0), render(pos1)], 1)).to(device)
+    with torch.no_grad():
+        guess = pix(two)[0].cpu().numpy()
+    p, v = np.repeat(pos1, 2000, 0), np.repeat(vel1, 2000, 0)
+    for _ in range(K):
+        p, v = step(p, v, rng_eval)                            # 2000 futures, random kicks included
+    average, one_future = render(p).mean(0), render(p[:1])[0]
+    stats.append([one_future.max(), average.max(), guess.max(),
+                  np.corrcoef(guess.ravel(), average.ravel())[0, 1],
+                  np.corrcoef(guess.ravel(), one_future.ravel())[0, 1]])
+s = np.mean(stats, 0)
+print(f"brightest pixel:  one real future {s[0]:.2f} | average of futures {s[1]:.2f} | network's guess {s[2]:.2f}")
+print(f"network's guess looks like:  the average (corr {s[3]:.2f})  more than one real future (corr {s[4]:.2f})")
+
+calm_p, calm_v = pos1, vel1
+for _ in range(K):
+    calm_p, calm_v = step(calm_p, calm_v, rng_eval, kick=0)   # the future if no kick happens
+fig, axes = plt.subplots(1, 3, figsize=(7.5, 2.8))
+for ax, img, title in zip(axes, [render(calm_p)[0], average, guess],
+                          ["future if\nnothing surprising happens", "average of\n2000 possible futures", "pixel network's\nguess"]):
+    ax.imshow(img, cmap="gray_r", vmin=0, vmax=1)
+    ax.set_title(title, fontsize=9)
+    ax.axis("off")
+plt.savefig("fig2_blur.png", bbox_inches="tight")
+plt.show()
+```
+
+</LabCell>
+
+<PredictReveal prompt="Before you run it: will the network's guess look like one sharp future, or like something else?">
+Like the average of all the possible futures: a faint, smeared dot. That is chapter 02's claim, now measured. With squared error, the best single guess under uncertainty is the mean, and the mean of sharp images is blurry. The guess matches the average (correlation 0.92) much better than it matches one real future (0.75).
+</PredictReveal>
+
+<LabOutput>
+
+```text
+step    0  pixel MSE 0.0086
+step  500  pixel MSE 0.0035
+step 1000  pixel MSE 0.0035
+step 1500  pixel MSE 0.0036
+trained in 18s
+brightest pixel:  one real future 0.94 | average of futures 0.62 | network's guess 0.51
+network's guess looks like:  the average (corr 0.92)  more than one real future (corr 0.75)
+```
+
+</LabOutput>
+
+<LabFigure src="fig2_blur.png" alt="Three panels: a sharp ball, a blurry average of many futures, and the pixel network's blurry guess" width={603} height={228} caption="Left: the future if nothing surprising happens. Middle: the average of 2,000 possible futures. Right: what the pixel network paints — close to the blurry average, and never a frame that could actually happen." />
+
+<Body>
+
+### Step 3 — the JEPA
+
+Four parts, straight from chapters 01 and 05:
+
+- — **Encoder**: a small CNN. One frame in, 32 numbers out. This is the part we want to keep.
+- — **Predictor**: gets the representations of frames t−1 and t and guesses the representation of frame t+1. Two frames let it see velocity: one frame shows where the ball is, not where it is going.
+- — **Target encoder**: a copy of the encoder that gets **no gradient** (`torch.no_grad()`) and follows the encoder slowly: θ_target ← τ·θ_target + (1 − τ)·θ. Here τ ramps from 0.99 to 1.0; I-JEPA ramps from 0.996 over a much longer run.
+- — **Loss**: squared distance between the guess and the target encoder's representation of frame t+1. As in the official I-JEPA and V-JEPA code, the target is first normalized with `layer_norm`.
+
+`spread` is the collapse alarm from chapter 03: how different the representations of different frames are. Healthy is close to 1. Collapsed is close to 0.
+
+</Body>
+
+<LabCell step="3" title="the JEPA: encoder, predictor, and a slow EMA target encoder">
+
+```python
+D = 32                                         # size of the representation
+
+
+class Encoder(nn.Module):
+    """One frame (24×24) -> 32 numbers."""
+    def __init__(self):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Conv2d(1, 16, 4, 2, 1), nn.GELU(),   # 24 -> 12
+            nn.Conv2d(16, 32, 4, 2, 1), nn.GELU(),  # 12 -> 6
+            nn.Conv2d(32, 32, 4, 2, 1), nn.GELU(),  # 6 -> 3
+            nn.Flatten(), nn.Linear(32 * 3 * 3, D))
+
+    def forward(self, frames):                 # (B, 24, 24)
+        return self.net(((frames - PIX_MEAN) / PIX_STD).unsqueeze(1))
+
+
+class Predictor(nn.Module):
+    """(z_{t-1}, z_t [, action]) -> guess of z_{t+1}. Two frames of history let it see velocity."""
+    def __init__(self, action_dim=0):
+        super().__init__()
+        self.net = nn.Sequential(nn.Linear(2 * D + action_dim, 256), nn.GELU(),
+                                 nn.Linear(256, 256), nn.GELU(), nn.Linear(256, D))
+
+    def forward(self, z_prev, z_now, action=None):
+        parts = [z_prev, z_now] + ([action] if action is not None else [])
+        return self.net(torch.cat(parts, 1))
+
+
+def encode(enc, frames):                       # (B, T, 24, 24) -> (B, T, D)
+    B, T = frames.shape[:2]
+    return enc(frames.reshape(B * T, SIZE, SIZE)).reshape(B, T, D)
+
+
+def spread(enc, frames):
+    """Collapse alarm: how different the representations of different frames are. ~0 = collapsed."""
+    with torch.no_grad():
+        return F.layer_norm(enc(frames), (D,)).std(0).mean().item()
+
+
+def train_jepa(mode="ema", steps=1000, batch=128, seed=0, log_every=200):
+    """mode: 'ema' (I-JEPA / V-JEPA), 'no_stopgrad' (broken on purpose), 'sigreg' (LeJEPA-style)."""
+    torch.manual_seed(seed)
+    rng = np.random.default_rng(seed)
+    enc, pred = Encoder().to(device), Predictor().to(device)
+    target_enc = copy.deepcopy(enc).requires_grad_(False)
+    opt = torch.optim.AdamW([*enc.parameters(), *pred.parameters()], lr=1e-3, weight_decay=1e-4)
+    watch = make_clips(512, 1, np.random.default_rng(123))[0][:, 0].to(device)
+    history = []
+    for it in range(steps + 1):
+        frames, _ = make_clips(batch, 3, rng)  # frames t-1, t, t+1 (no labels!)
+        frames = frames.to(device)
+        z = encode(enc, frames)
+        if mode == "ema":                      # target from the slow copy, and no gradient through it
+            with torch.no_grad():
+                target = F.layer_norm(encode(target_enc, frames)[:, 2], (D,))
+        elif mode == "no_stopgrad":            # the target is learned by gradient too: cheating is allowed
+            target = F.layer_norm(z[:, 2], (D,))
+        else:                                  # 'sigreg': same, but a regularizer forbids the cheat
+            target = z[:, 2]
+        loss = F.mse_loss(pred(z[:, 0], z[:, 1]), target)
+        total = (loss + 0.003 * sigreg(z.reshape(-1, D), it)) if mode == "sigreg" else loss
+        opt.zero_grad(); total.backward(); opt.step()
+        if mode == "ema":
+            tau = 0.99 + 0.01 * it / steps     # momentum ramps up: the teacher slows down
+            with torch.no_grad():
+                for p_t, p_o in zip(target_enc.parameters(), enc.parameters()):
+                    p_t.mul_(tau).add_(p_o.detach(), alpha=1 - tau)
+        if it % log_every == 0:
+            history.append((it, loss.item(), spread(enc, watch)))
+            print(f"[{mode}] step {it:4d}  loss {loss.item():.4f}  spread {history[-1][2]:.3f}")
+    return enc, pred, history
+
+
+t0 = time.time()
+enc, pred, hist_ema = train_jepa("ema")
+print(f"trained in {time.time() - t0:.0f}s")
+```
+
+</LabCell>
+
+<QuickCheck
+  q="Which line keeps the gradient away from the target encoder?"
+  options={["with torch.no_grad():", "F.layer_norm(...)", "opt.step()", "tau = 0.99 + 0.01 * it / steps"]}
+  correct={0}
+  why="Everything computed under torch.no_grad() is a constant for backpropagation: that is the stop-gradient. The EMA lines then move the target slowly toward the encoder."
+/>
+
+<LabOutput>
+
+```text
+[ema] step    0  loss 0.9902  spread 0.373
+[ema] step  200  loss 0.0119  spread 0.484
+[ema] step  400  loss 0.0160  spread 0.817
+[ema] step  600  loss 0.0197  spread 0.870
+[ema] step  800  loss 0.0297  spread 0.884
+[ema] step 1000  loss 0.0174  spread 0.896
+trained in 11s
+```
+
+</LabOutput>
+
+<Body>
+
+The loss falls fast and then hovers around 0.01–0.03. It never reaches zero, and it shouldn't: the kicks make part of the future unpredictable. Meanwhile the spread **grows** from 0.37 to 0.90 — the representations become more different from each other, not less. That is what healthy learning looks like here.
+
+</Body>
+
+</MobileStepScreen>
+<MobileStepScreen label="test" title="Test">
+
+<LessonStage step="2" title="Test" subtitle="Steps 4–6: break it, measure it, and try the 2025 recipe." />
+
+<Body>
+
+### Step 4 — break it on purpose
+
+Remove the stop-gradient and the EMA: the target now comes from the same encoder, and the gradient flows through it. Nothing else changes, except that it trains for 400 steps instead of 1,000 — collapse doesn't need more.
+
+</Body>
+
+<LabCell step="4" title="break it on purpose: no stop-gradient, no EMA">
+
+```python
+enc_bad, _, hist_bad = train_jepa("no_stopgrad", steps=400, log_every=100)
+```
+
+</LabCell>
+
+<PredictReveal prompt="This run's loss reaches 0.0001, far below the real JEPA's 0.0174. Is it the better model?">
+No. Look at the spread: 0.35 → 0.008. Every frame now maps to almost the same vector, so predicting it is trivial. That is collapse: a perfect loss and a useless representation. Step 5 proves the "useless" part.
+</PredictReveal>
+
+<LabOutput>
+
+```text
+[no_stopgrad] step    0  loss 0.9902  spread 0.352
+[no_stopgrad] step  100  loss 0.0004  spread 0.019
+[no_stopgrad] step  200  loss 0.0002  spread 0.013
+[no_stopgrad] step  300  loss 0.0001  spread 0.010
+[no_stopgrad] step  400  loss 0.0001  spread 0.008
+```
+
+</LabOutput>
+
+<Body>
+
+### Step 5 — did it learn physics? Probes
+
+Freeze the encoder and fit a **linear** map from its representation to the true position — plain least squares, no training loop. R² = 1 means perfect; 0 means no better than always guessing the average. Velocity is not visible in one frame, so its probe gets two consecutive representations.
+
+</Body>
+
+<LabCell step="5" title="did it learn physics? Linear probes on the frozen encoder">
+
+```python
+def probe_r2(enc, seed=7, n_train=4000, n_test=2000):
+    """Least-squares probe. Position from z_t; velocity from (z_{t-1}, z_t). R² = 1 perfect, 0 useless."""
+    rng = np.random.default_rng(seed)
+
+    def features(n):
+        frames, states = make_clips(n, 2, rng)
+        with torch.no_grad():
+            z = encode(enc, frames.to(device)).cpu()
+        return z[:, 1], torch.cat([z[:, 0], z[:, 1]], 1), states[:, 1]
+
+    def fit(x_tr, y_tr, x_te, y_te):
+        mu, sd = x_tr.mean(0), x_tr.std(0) + 1e-6
+        x_tr = torch.cat([(x_tr - mu) / sd, torch.ones(len(x_tr), 1)], 1)
+        x_te = torch.cat([(x_te - mu) / sd, torch.ones(len(x_te), 1)], 1)
+        w = torch.linalg.lstsq(x_tr, y_tr).solution
+        return (1 - ((x_te @ w - y_te) ** 2).sum() / ((y_te - y_te.mean(0)) ** 2).sum()).item()
+
+    z1, z2, s = features(n_train)
+    z1t, z2t, st = features(n_test)
+    return fit(z1, s[:, :2], z1t, st[:, :2]), fit(z2, s[:, 2:], z2t, st[:, 2:])
+
+
+torch.manual_seed(0)
+results = {}
+for name, model in [("random encoder", Encoder().to(device)), ("JEPA (EMA)", enc), ("collapsed", enc_bad)]:
+    results[name] = probe_r2(model)
+    print(f"{name:15s} position R² {results[name][0]:5.2f}   velocity R² {results[name][1]:5.2f}")
+```
+
+</LabCell>
+
+<LabOutput>
+
+```text
+random encoder  position R²  0.55   velocity R²  0.01
+JEPA (EMA)      position R²  0.99   velocity R²  0.68
+collapsed       position R²  0.32   velocity R² -0.02
+```
+
+</LabOutput>
+
+<Body>
+
+- — **Random encoder: 0.55.** A random CNN already keeps some spatial information. That is the bar to beat.
+- — **JEPA: 0.99 for position, 0.68 for velocity.** Nobody ever told it what a position or a velocity is.
+- — **Collapsed: 0.32 — worse than random.** Its near-zero loss bought nothing.
+
+</Body>
+
+<QuickCheck
+  q="Why run an untrained, random encoder through the same probe?"
+  options={["To speed up training", "To know what 'learned something' means: only the gain over random came from training", "Because the probe needs two encoders", "To check the GPU works"]}
+  correct={1}
+  why="Random networks are not zero: here one already reaches 0.55. Without that baseline, 0.99 would be hard to interpret."
+/>
+
+<Body>
+
+### Step 6 — the 2025 recipe: SIGReg
+
+LeJEPA (Balestriero &amp; LeCun, November 2025) drops the EMA and the stop-gradient and adds one regularizer instead.
+
+Picture a batch of embeddings as a cloud of points. Shine a light from a random direction and look at the cloud's shadow on a line. SIGReg asks every such shadow to look like a bell curve, N(0, 1). A collapsed cloud — one point — casts a spike, far from a bell curve.
+
+To compare shapes it uses each shadow's **characteristic function**, a fingerprint of a distribution: the average of cos(t·x) and sin(t·x) over the points. The bell curve's fingerprint is e^(−t²/2), and the loss measures the gap. LeWorldModel (March 2026) trains a JEPA world model end to end from pixels with the same two ingredients — next-embedding prediction (conditioned on actions) plus SIGReg — and, like this cell, without any stop-gradient or EMA.
+
+</Body>
+
+<LabCell step="6" title="the 2025 recipe: no EMA, no stop-gradient, SIGReg instead">
+
+```python
+def sigreg(z, seed, n_dirs=64):
+    """SIGReg (LeJEPA, 2025): each random 1-D projection of the batch of embeddings should look like N(0, 1)."""
+    g = torch.Generator().manual_seed(seed)
+    dirs = torch.randn(z.shape[1], n_dirs, generator=g).to(z.device)
+    dirs = dirs / dirs.norm(dim=0, keepdim=True)
+    t = torch.linspace(-4, 4, 17, device=z.device)
+    gauss = torch.exp(-t**2 / 2)                 # characteristic function of N(0, 1)
+    x = (z @ dirs)[:, :, None] * t             # (batch, dirs, t)
+    err = (torch.cos(x).mean(0) - gauss) ** 2 + torch.sin(x).mean(0) ** 2
+    return torch.trapezoid(err * gauss, t, dim=1).mean() * z.shape[0]
+
+
+t0 = time.time()
+enc_sig, _, hist_sig = train_jepa("sigreg")
+results["JEPA (SIGReg)"] = probe_r2(enc_sig)
+print(f"trained in {time.time() - t0:.0f}s")
+print(f"{'JEPA (SIGReg)':15s} position R² {results['JEPA (SIGReg)'][0]:5.2f}   velocity R² {results['JEPA (SIGReg)'][1]:5.2f}")
+
+fig, ax = plt.subplots(figsize=(6, 3))
+for hist, label in [(hist_ema, "EMA + stop-grad"), (hist_bad, "no stop-grad (collapses)"), (hist_sig, "SIGReg")]:
+    ax.plot([h[0] for h in hist], [h[2] for h in hist], marker="o", label=label)
+ax.set_xlabel("training step"); ax.set_ylabel("spread of representations"); ax.legend(); ax.set_ylim(0, 1.05)
+plt.savefig("fig3_spread.png", bbox_inches="tight")
+plt.show()
+```
+
+</LabCell>
+
+<LabOutput>
+
+```text
+[sigreg] step    0  loss 0.0026  spread 0.460
+[sigreg] step  200  loss 0.0263  spread 0.979
+[sigreg] step  400  loss 0.0121  spread 0.978
+[sigreg] step  600  loss 0.0203  spread 0.983
+[sigreg] step  800  loss 0.0271  spread 0.984
+[sigreg] step 1000  loss 0.0178  spread 0.986
+trained in 10s
+JEPA (SIGReg)   position R²  1.00   velocity R²  0.84
+```
+
+</LabOutput>
+
+<LabFigure src="fig3_spread.png" alt="Line chart of representation spread over training for three runs" width={536} height={294} caption="The collapse alarm for all three runs. Without a stop-gradient the spread dies within 100 steps; the EMA recipe and SIGReg both keep it high." />
+
+<ExamTrap title="don't over-read a toy">
+  SIGReg beat EMA here (velocity R² 0.84 vs 0.68), on one seed of one toy. That is a hint, not a result. The real claims are at scale: LeJEPA reports 79% on ImageNet with a ViT-H/14, and LeVJEPA (2026), at ViT-S/B/L scale on the same data and epochs, matches or beats V-JEPA 2 with 5.6–20.8× less pretraining compute.
+</ExamTrap>
+
+</MobileStepScreen>
+<MobileStepScreen label="plan" title="Plan">
+
+<LessonStage step="3" title="Plan" subtitle="Steps 7–9: turn the frozen encoder into a planner, like V-JEPA 2-AC." />
+
+<Body>
+
+### Step 7 — an action-conditioned predictor on the frozen encoder
+
+V-JEPA 2-AC's recipe, in miniature:
+
+1. Keep the pretrained encoder **frozen**.
+2. Collect a little "robot" data where the actions are recorded — here 400 clips of random pushes, with no kicks.
+3. Train a **new** predictor: (z_t−1, z_t, action) → z_t+1.
+
+The JEPA learned from about 128,000 unlabeled three-frame clips. The action data is 400 clips. That is V-JEPA 2-AC's bet: most of the understanding should come from the cheap, unlabeled part.
+
+</Body>
+
+<LabCell step="7" title="use it: an action-conditioned predictor on the FROZEN encoder">
+
+```python
+enc.requires_grad_(False)
+AMAX = 0.5                                     # strongest push per frame
+
+
+def latent(frames):
+    """Frozen encoder + layer norm, as in V-JEPA 2-AC's planning space."""
+    with torch.no_grad():
+        return F.layer_norm(enc(frames.to(device)), (D,))
+
+
+def make_play_data(n, length, rng):
+    """A little 'robot data': random pushes, no kicks. This time the actions ARE recorded."""
+    pos, vel = random_state(n, rng)
+    frames, actions = [], []
+    for _ in range(length):
+        frames.append(render(pos))
+        a = rng.uniform(-AMAX, AMAX, (n, 2))
+        actions.append(a)
+        pos, vel = step(pos, vel, rng, action=a, kick=0)
+    return torch.from_numpy(np.stack(frames, 1)), torch.tensor(np.stack(actions, 1), dtype=torch.float32)
+
+
+rng = np.random.default_rng(3)
+play_frames, play_actions = make_play_data(400, 20, rng)
+play_z = latent(play_frames.reshape(-1, SIZE, SIZE)).reshape(400, 20, D)
+play_actions = play_actions.to(device)
+
+torch.manual_seed(1)
+ac_pred = Predictor(action_dim=2).to(device)
+opt = torch.optim.AdamW(ac_pred.parameters(), lr=1e-3)
+for it in range(2001):
+    i, t = torch.randint(0, 400, (256,)), torch.randint(1, 19, (256,))
+    loss = F.mse_loss(ac_pred(play_z[i, t - 1], play_z[i, t], play_actions[i, t]), play_z[i, t + 1])
+    opt.zero_grad(); loss.backward(); opt.step()
+    if it % 500 == 0:
+        print(f"action-conditioned predictor  step {it:4d}  loss {loss.item():.4f}")
+```
+
+</LabCell>
+
+<LabOutput>
+
+```text
+action-conditioned predictor  step    0  loss 0.9849
+action-conditioned predictor  step  500  loss 0.0105
+action-conditioned predictor  step 1000  loss 0.0072
+action-conditioned predictor  step 1500  loss 0.0049
+action-conditioned predictor  step 2000  loss 0.0036
+```
+
+</LabOutput>
+
+<Body>
+
+### Step 8 — plan: imagine, score, act, repeat
+
+The goal is a picture of the ball where we want it. Before every real move, the robot:
+
+1. imagines 256 sequences of 6 pushes with the predictor — in representation space, no pixels;
+2. scores each one: the L1 distance between the imagined representations and the goal's, summed over the imagined steps (V-JEPA 2-AC scores only the last imagined state; summing also rewards arriving early and staying);
+3. keeps the best 32, refits its sampler around them, and repeats 4 times — the Cross-Entropy Method;
+4. executes only the **first** push, looks again, and replans.
+
+</Body>
+
+<LabCell step="8" title="plan: imagine, score, act, repeat (Cross-Entropy Method + receding horizon)">
+
+```python
+@torch.no_grad()
+def plan(z_prev, z_now, z_goal, horizon=6, samples=256, elites=32, iters=4):
+    mean = torch.zeros(horizon, 2, device=device)
+    std = torch.full((horizon, 2), AMAX, device=device)
+    for _ in range(iters):
+        acts = (mean + std * torch.randn(samples, horizon, 2, device=device)).clamp(-AMAX, AMAX)
+        zp, zn = z_prev.expand(samples, -1), z_now.expand(samples, -1)
+        energy = torch.zeros(samples, device=device)
+        for h in range(horizon):               # imagine: roll the predictor forward, no pixels
+            zp, zn = zn, ac_pred(zp, zn, acts[:, h])
+            energy += (zn - z_goal).abs().mean(1)   # L1 distance to the goal, in latent space
+        best = acts[energy.argsort()[:elites]]
+        mean, std = best.mean(0), best.std(0) + 1e-3
+    return mean[0].cpu().numpy()               # execute only the first action
+
+
+def run_episode(rng, subgoal=False, steps=30):
+    pos, vel = random_state(1, rng)
+    vel[:] = 0
+    goal = rng.uniform(LO + 2, HI - 2, (1, 2))
+    start_dist = float(np.linalg.norm(pos - goal))
+    targets = [(pos + goal) / 2, goal] if subgoal else [goal]   # sub-goal: a picture of the ball halfway
+    z_targets = [latent(torch.from_numpy(render(p))) for p in targets]
+    prev, path = render(pos), [pos[0].copy()]
+    for _ in range(steps):
+        frame = render(pos)
+        z = latent(torch.from_numpy(np.concatenate([prev, frame])))
+        if len(z_targets) > 1 and (z[1:] - z_targets[0]).abs().mean() < 0.3:
+            z_targets.pop(0)                   # waypoint reached: head for the real goal
+        action = plan(z[:1], z[1:], z_targets[0])[None]
+        prev = frame
+        pos, vel = step(pos, vel, rng, action=action, kick=0)
+        path.append(pos[0].copy())
+    return start_dist, float(np.linalg.norm(pos - goal)), np.array(path), targets
+
+
+t0 = time.time()
+torch.manual_seed(0)
+success = {}
+for use_subgoal in [False, True]:
+    r = np.array([run_episode(np.random.default_rng(100 + k), subgoal=use_subgoal)[:2] for k in range(60)])
+    near, far = r[r[:, 0] < 9], r[r[:, 0] >= 9]
+    success[use_subgoal] = (np.mean(near[:, 1] < 2), np.mean(far[:, 1] < 2))
+    print(f"sub-goal={use_subgoal!s:5}  success (ends < 2px from goal):  "
+          f"near goals {success[use_subgoal][0]:4.0%} (n={len(near)})   far goals {success[use_subgoal][1]:4.0%} (n={len(far)})")
+print(f"planning took {time.time() - t0:.0f}s")
+
+far_k = int(np.argmax(r[:, 0] > 14))                 # first episode whose goal starts > 14px away
+fig, axes = plt.subplots(1, 2, figsize=(7, 3.4))
+for ax, use_subgoal in zip(axes, [False, True]):
+    _, final, path, targets = run_episode(np.random.default_rng(100 + far_k), subgoal=use_subgoal)
+    ax.plot(path[:, 0], path[:, 1], "-o", ms=2.5, color="#c7502e")
+    ax.plot(*path[0], "o", color="#1a1512", ms=8, label="start")
+    ax.plot(*targets[-1][0], "*", color="#5f6f52", ms=16, label="goal")
+    if use_subgoal:
+        ax.plot(*targets[0][0], "x", color="#1a1512", ms=10, mew=2, label="sub-goal")
+    ax.set_xlim(0, SIZE); ax.set_ylim(SIZE, 0); ax.set_aspect("equal")
+    ax.set_title(f"{'with' if use_subgoal else 'no'} sub-goal: ends {final:.1f}px away", fontsize=9)
+    ax.legend(fontsize=7, loc="lower right")
+plt.savefig("fig4_planning.png", bbox_inches="tight")
+plt.show()
+
+# Why far goals are hard: how does the latent distance grow with the real distance?
+rng = np.random.default_rng(5)
+a, b = rng.uniform(LO, HI, (3000, 2)), rng.uniform(LO, HI, (3000, 2))
+lat = (latent(torch.from_numpy(render(a))) - latent(torch.from_numpy(render(b)))).abs().mean(1).cpu().numpy()
+dist = np.linalg.norm(a - b, axis=1)
+for lo, hi in [(0, 3), (3, 6), (6, 9), (9, 12), (12, 16), (16, 24)]:
+    m = (dist >= lo) & (dist < hi)
+    print(f"real distance {lo:2d}–{hi:2d}px  ->  latent L1 {lat[m].mean():.2f}")
+```
+
+</LabCell>
+
+<PredictReveal prompt="The planner reaches near goals 96% of the time. What happens with goals more than 9px away — and why?">
+Only 44% of far goals succeed. The distance table suggests why: the latent distance grows with the real distance up to about 9–12px, then stops growing and even falls (1.18 → 1.12 → 1.05). Beyond what six imagined pushes can reach, the energy points nowhere useful. One picture of a halfway point — a sub-goal — fixes it: 100%. V-JEPA 2-AC needed the same kind of help: for pick-and-place it was given sub-goal images.
+</PredictReveal>
+
+<LabOutput>
+
+```text
+sub-goal=False  success (ends < 2px from goal):  near goals  96% (n=24)   far goals  44% (n=36)
+sub-goal=True   success (ends < 2px from goal):  near goals 100% (n=24)   far goals 100% (n=36)
+planning took 22s
+real distance  0– 3px  ->  latent L1 0.38
+real distance  3– 6px  ->  latent L1 0.82
+real distance  6– 9px  ->  latent L1 1.08
+real distance  9–12px  ->  latent L1 1.18
+real distance 12–16px  ->  latent L1 1.12
+real distance 16–24px  ->  latent L1 1.05
+```
+
+</LabOutput>
+
+<LabFigure src="fig4_planning.png" alt="Two paths of the ball toward a far goal: without a sub-goal it wanders off; with a sub-goal it goes straight there" width={590} height={309} caption="The same far goal. Without a sub-goal the energy landscape is flat and the ball wanders off; with one waypoint picture it goes straight there." />
+
+<Body>
+
+### Step 9 — self-check
+
+</Body>
+
+<LabCell step="9" title="self-check: if one of these fails, something above is broken">
+
+```python
+assert s[3] > s[4], "the pixel guess should look more like the AVERAGE of futures than like one future"
+assert results["JEPA (EMA)"][0] > 0.9 and results["random encoder"][0] < 0.9, "JEPA should beat a random encoder"
+assert hist_bad[-1][2] < 0.05 and hist_ema[-1][2] > 0.5, "no-stop-grad should collapse, EMA should not"
+assert results["JEPA (SIGReg)"][0] > 0.9, "SIGReg should also learn position"
+assert success[False][0] > 0.8 and success[True][1] > success[False][1], "planner: near goals work, a sub-goal rescues far ones"
+print("all checks passed ✓")
+```
+
+</LabCell>
+
+<LabOutput>
+
+```text
+all checks passed ✓
+```
+
+</LabOutput>
+
+<Body>
+
+### Try it yourself — we ran these too
+
+Rerun from step 0 after each change to get exactly our numbers.
+
+- — **No uncertainty.** Set `KICK = 0.0` in step 1 and rerun steps 0–2. The average of the futures becomes exactly as sharp as a real future (0.95 vs 0.95) and the network's guess sharpens to 0.85. No uncertainty, no blur. (Step 9's first check then compares two equal correlations, so ignore it for this run.)
+- — **No moving average.** In step 3 replace the τ line with `tau = 0.0`: the target becomes an exact copy of the encoder every step, still without gradient. It still works: spread 0.87, position R² 0.99, velocity R² 0.79. The moving average isn't needed here; SimSiam (2021) traced the protection to the stop-gradient plus the predictor.
+- — **No layer norm.** In step 3 drop `F.layer_norm` from the EMA target. Still no collapse (spread 0.98) and position R² 0.98, but velocity drops to 0.47. The normalization helps the representation; it is not the anti-collapse mechanism.
+- — **Look further ahead.** In step 8 call the planner with `horizon=12`. Far goals without a sub-goal rise from 44% to 67%: imagining further ahead helps, but one sub-goal still does better (97%).
+
+</Body>
+
+<LabFinish
+  items={[
+    "Step 2: the network's guess matches the average of futures better than a real future.",
+    "Step 4: the loss drops to ~0.0001 while the spread falls below 0.01.",
+    "Step 5: the JEPA probes near 0.99 for position; the collapsed encoder does worse than a random one.",
+    "Step 8: near goals work; far goals need a sub-goal.",
+    "Step 9 prints: all checks passed ✓",
+  ]}
+/>
+
+<Callout icon={FlaskConical} title="one sentence to keep">
+  A JEPA world model is four small pieces — an encoder, a predictor, a slow no-gradient target and a loss in representation space — and the core claims of this caderno can be checked at toy scale: pixels blur, the stop-gradient prevents collapse, probes read physics nobody labeled, and a frozen encoder plus an action-conditioned predictor can plan.
+</Callout>
+
+<Marginalia label="traps">
+  A low loss is not success (step 4). A random encoder is not zero (step 5). The planner's energy lives in representation space, and that space is only informative nearby (step 8). A toy result is a hint, not a benchmark.
+</Marginalia>
+
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
+<LessonStage step="4" title="Quiz" subtitle="Close the lab, then take the final simulation." />
+
+<SectionQuiz sectionId="lab" topic="lab" source={WORLD_MODELS_QUESTIONS} title="Checkpoint — build one from scratch" />
+
+</MobileStepScreen>
+</MobileStepScreens>
