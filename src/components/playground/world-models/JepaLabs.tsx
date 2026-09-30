@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Boxes, Calculator, Clock3, Crosshair, Eye, Film, GitMerge, Layers, Navigation, Pause, Play, RotateCcw, Shuffle, StepForward, Target, Waves } from "lucide-react";
+import { Boxes, Calculator, Clock3, Crosshair, Eye, Film, GitMerge, Navigation, Pause, Play, RotateCcw, Shuffle, StepForward, Target, Waves } from "lucide-react";
 import { useLearningProgress } from "@/components/learning/LearningProgressProvider";
 import {
   OCCLUDER,
@@ -17,7 +17,8 @@ import {
   type Pt,
   type SurpriseScenario,
 } from "@/lib/world-models-sim";
-import { CompleteButton, LabShell, Meter, Panel, Seg, Sparkline, WM, mulberry32 } from "./ui";
+import { LabShell, Meter, Panel, Seg, Sparkline, WM, mulberry32 } from "./ui";
+import { FigureShell, GradientLegend, PatchGrid, StepControls, TwinPipeline, useStepper, type PipePart } from "./Figures";
 
 /* ───────────────────────── ch04 · family timeline ───────────────────────── */
 
@@ -210,7 +211,7 @@ export function FamilyTimeline() {
                 className="flex min-w-[76px] flex-col items-center gap-1 rounded-md px-1 pb-1 transition animate-fade-in"
               >
                 <span
-                  className="flex size-[30px] items-center justify-center rounded-full border-2 font-mono text-[9px]"
+                  className="flex size-[30px] items-center justify-center rounded-full border-2 font-mono text-[11px]"
                   style={{
                     borderColor: item.signal === "pixels" ? WM.ink : WM.rubric,
                     background: isActive ? (item.signal === "pixels" ? WM.ink : WM.rubric) : WM.paper,
@@ -229,11 +230,11 @@ export function FamilyTimeline() {
       </div>
       <div className="mt-3 rounded-lg border border-border bg-background p-3 animate-fade-in" key={current.name}>
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <div className="font-serif text-lg italic text-ink">
+          <div className="font-serif font-semibold text-lg text-ink">
             {current.name} <span className="font-sans text-sm not-italic text-ink-fade">· {current.year}</span>
           </div>
           <span
-            className="rounded px-2 py-0.5 font-mono text-[9px] uppercase tracking-widest text-paper"
+            className="rounded px-2 py-0.5 kicker text-ledge"
             style={{ background: current.signal === "pixels" ? WM.ink : WM.rubric }}
           >
             {current.signal === "pixels" ? "reconstructs pixels" : "predicts representations"}
@@ -243,7 +244,6 @@ export function FamilyTimeline() {
         <p className="mt-2 text-sm leading-relaxed text-ink">{current.idea}</p>
         <p className="mt-2 border-l-2 border-rubric pl-2.5 text-sm italic leading-relaxed text-muted-foreground">{current.lesson}</p>
       </div>
-      <CompleteButton interactionId="wm-family-timeline" />
     </LabShell>
   );
 }
@@ -261,121 +261,59 @@ const IJEPA_STEPS: Array<{ title: string; text: string; parts: Part[]; grad?: bo
   { title: "7 · update", text: "Gradients flow into the predictor and the context encoder only. The target encoder gets none: it is updated as an EMA of the context encoder (τ ramps from 0.996 to 1.0).", parts: ["ctx", "pred", "loss", "ema", "tgt"], grad: true },
 ];
 
-function DiagramBox({ x, y, w, h, label, sub, on }: { x: number; y: number; w: number; h: number; label: string; sub?: string; on: boolean }) {
-  return (
-    <g>
-      <rect x={x} y={y} width={w} height={h} rx="2.5" fill={on ? "rgba(199,80,46,0.12)" : WM.paper} stroke={on ? WM.rubric : WM.fade} strokeWidth={on ? 0.9 : 0.45} className="transition-all duration-300" />
-      <text x={x + w / 2} y={y + (sub ? h / 2 - 0.6 : h / 2 + 1.6)} textAnchor="middle" className="fill-ink font-sans text-[4.6px] font-semibold">{label}</text>
-      {sub ? <text x={x + w / 2} y={y + h / 2 + 4.8} textAnchor="middle" className="fill-ink font-mono text-[3.4px]" opacity="0.6">{sub}</text> : null}
-    </g>
-  );
-}
+/** I-JEPA's two target blocks and the context around them, on a 6×6 patch grid. */
+const isIJepaTarget = (r: number, c: number) => (r <= 1 && c >= 3 && c <= 4) || (r >= 3 && r <= 4 && c <= 1);
 
 export function IJepaDiagram() {
-  const [step, setStep] = useState(0);
+  const stepper = useStepper(IJEPA_STEPS.length);
   const [showGrad, setShowGrad] = useState(false);
-  const current = IJEPA_STEPS[step];
+  const current = IJEPA_STEPS[stepper.step];
   const grad = showGrad || Boolean(current.grad);
-  const on = (part: Part) => current.parts.includes(part);
-  const learnColor = grad ? WM.rubric : WM.fade;
-  const frozenColor = grad ? WM.olive : WM.fade;
-
-  const cells = Array.from({ length: 36 }, (_, index) => {
-    const r = Math.floor(index / 6);
-    const c = index % 6;
-    const target = (r <= 1 && c >= 3 && c <= 4) || (r >= 3 && r <= 4 && c <= 1);
-    return { r, c, target };
-  });
+  const sampled = stepper.step >= 1;
+  const toPipe = (part: Part): PipePart => (part === "image" ? "input" : part);
 
   return (
-    <LabShell icon={<Layers size={15} />} title="I-JEPA, step by step">
-      <svg viewBox="0 0 220 128" className="w-full rounded-lg border border-border bg-background" role="img" aria-label="I-JEPA architecture diagram">
-        <defs>
-          <marker id="wm-arrow" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
-            <path d="M0 0 L6 3 L0 6 z" fill={WM.ink} />
-          </marker>
-        </defs>
-        {/* image */}
-        <g opacity={on("image") ? 1 : 0.55} className="transition-opacity duration-300">
-          {cells.map((cell) => (
-            <rect
-              key={`${cell.r}-${cell.c}`}
-              x={6 + cell.c * 6.6}
-              y={44 + cell.r * 6.6}
-              width="6"
-              height="6"
-              rx="0.6"
-              fill={step >= 1 ? (cell.target ? WM.rubric : WM.paperDark) : WM.paperDark}
-              stroke={WM.faint}
-              strokeWidth="0.2"
-            />
-          ))}
-          <text x="25.8" y="90" textAnchor="middle" className="fill-ink font-mono text-[3.6px]">image</text>
-        </g>
-        {/* arrows */}
-        <path d="M46 52 L62 30" stroke={learnColor} strokeWidth={grad ? 0.9 : 0.5} fill="none" markerEnd="url(#wm-arrow)" />
-        <text x="44" y="37" className="fill-ink font-mono text-[3px]" opacity="0.7">context only</text>
-        <path d="M46 78 L62 100" stroke={frozenColor} strokeWidth={grad ? 0.9 : 0.5} fill="none" markerEnd="url(#wm-arrow)" />
-        <text x="44" y="95" className="fill-ink font-mono text-[3px]" opacity="0.7">full image</text>
-        <path d="M108 28 L124 28" stroke={learnColor} strokeWidth={grad ? 0.9 : 0.5} markerEnd="url(#wm-arrow)" />
-        <path d="M146 52 L146 40" stroke={learnColor} strokeWidth={grad ? 0.9 : 0.5} markerEnd="url(#wm-arrow)" />
-        <path d="M168 30 L184 56" stroke={learnColor} strokeWidth={grad ? 0.9 : 0.5} fill="none" markerEnd="url(#wm-arrow)" />
-        <path d="M108 102 L124 102" stroke={frozenColor} strokeWidth={grad ? 0.9 : 0.5} markerEnd="url(#wm-arrow)" />
-        <path d="M168 100 L184 76" stroke={frozenColor} strokeWidth={grad ? 0.9 : 0.5} fill="none" markerEnd="url(#wm-arrow)" />
-        {grad ? (
-          <g className="animate-fade-in">
-            <circle cx="176" cy="88" r="3.2" fill={WM.paper} stroke={WM.olive} strokeWidth="0.6" />
-            <path d="M174 86 L178 90 M178 86 L174 90" stroke={WM.olive} strokeWidth="0.6" />
-            <text x="181" y="93" className="fill-ink font-mono text-[3px]">stop-grad</text>
-          </g>
-        ) : null}
-        {/* EMA */}
-        <path d="M86 40 L86 90" stroke={on("ema") ? WM.olive : WM.faint} strokeWidth={on("ema") ? 0.9 : 0.5} strokeDasharray="2 1.5" markerEnd="url(#wm-arrow)" />
-        <text x="89" y="67" className="fill-ink font-mono text-[3.6px]" opacity={on("ema") ? 1 : 0.5}>EMA</text>
-        {/* boxes */}
-        <DiagramBox x={64} y={18} w={44} h={22} label="context encoder" sub="ViT · trained" on={on("ctx")} />
-        <DiagramBox x={64} y={90} w={44} h={22} label="target encoder" sub="EMA copy · no grad" on={on("tgt")} />
-        <DiagramBox x={124} y={18} w={44} h={22} label="predictor" sub="narrow ViT" on={on("pred")} />
-        <DiagramBox x={124} y={90} w={44} h={22} label="target reps" sub="blocks cut from output" on={on("reps")} />
-        <DiagramBox x={184} y={55} w={32} h={22} label="L2 loss" sub="pred vs target" on={on("loss")} />
-        {/* mask tokens */}
-        <g opacity={on("tokens") ? 1 : 0.5} className="transition-opacity duration-300">
-          {[0, 1, 2, 3].map((index) => (
-            <rect key={index} x={133 + index * 7} y={53} width="5" height="5" rx="1" fill={on("tokens") ? WM.rubric : WM.paperDark} stroke={WM.fade} strokeWidth="0.3" />
-          ))}
-          <text x="146" y="64" textAnchor="middle" className="fill-ink font-mono text-[3px]">mask tokens + positions</text>
-        </g>
-      </svg>
-
-      <div className="mt-3 flex flex-wrap gap-1.5">
-        {IJEPA_STEPS.map((item, index) => (
-          <button
-            key={item.title}
-            type="button"
-            onClick={() => setStep(index)}
-            className={`min-h-9 min-w-9 rounded-md border px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest transition ${
-              index === step ? "border-transparent bg-ink text-paper" : "border-border bg-background text-ink hover:border-rubric/40"
-            }`}
-          >
-            {index + 1}
-          </button>
-        ))}
-        <label className="ml-auto flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-ink">
-          <input type="checkbox" checked={grad} onChange={(event) => setShowGrad(event.target.checked)} disabled={Boolean(current.grad)} className="accent-rubric" />
-          gradient flow
-        </label>
-      </div>
-      <div className="mt-3">
-        <Panel label={current.title}>{current.text}</Panel>
-      </div>
-      {grad ? (
-        <div className="mt-2 flex flex-wrap gap-3 font-mono text-[9px] uppercase tracking-widest text-ink-fade">
-          <span className="flex items-center gap-1"><span className="h-0.5 w-4" style={{ background: WM.rubric }} /> gets gradient</span>
-          <span className="flex items-center gap-1"><span className="h-0.5 w-4" style={{ background: WM.olive }} /> no gradient (stop-grad)</span>
-        </div>
-      ) : null}
-      <CompleteButton interactionId="wm-ijepa-diagram" />
-    </LabShell>
+    <div>
+      <FigureShell
+        kicker="Interactive figure"
+        title="I-JEPA, step by step"
+        legend={["context", "target", "encoder", "predictor", "frozen", "loss"]}
+        controls={
+          <>
+            <StepControls steps={IJEPA_STEPS} stepper={stepper} />
+            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/5 px-4 py-2.5">
+              {grad ? <GradientLegend /> : <span className="text-[12px] text-ink-fade">Top row is trained; bottom row only makes the targets.</span>}
+              <label className="flex items-center gap-2 text-[12.5px] text-ink-soft">
+                <input type="checkbox" checked={grad} disabled={Boolean(current.grad)} onChange={(event) => setShowGrad(event.target.checked)} className="accent-rubric" />
+                Show gradient flow
+              </label>
+            </div>
+          </>
+        }
+      >
+        <TwinPipeline
+          on={(part) => current.parts.some((item) => toPipe(item) === part)}
+          grad={grad}
+          topInput={
+            <div className="flex flex-col items-center gap-1">
+              <PatchGrid n={6} roleAt={(r, c) => (sampled ? (isIJepaTarget(r, c) ? null : "context") : "context")} className="w-full max-w-[92px]" />
+              <span className="text-[10.5px] text-ink-soft sm:text-[11.5px]">{sampled ? "context patches" : "image patches"}</span>
+            </div>
+          }
+          bottomInput={
+            <div className="flex flex-col items-center gap-1">
+              <PatchGrid n={6} roleAt={(r, c) => (sampled && isIJepaTarget(r, c) ? "target" : "frozen")} className="w-full max-w-[92px]" />
+              <span className="text-[10.5px] text-ink-soft sm:text-[11.5px]">full image</span>
+            </div>
+          }
+          ctx={{ title: "Context encoder", sub: "ViT · trained" }}
+          tgt={{ title: "Target encoder", sub: "EMA · no grad" }}
+          pred={{ title: "Predictor", sub: "narrow ViT", tokens: "mask tokens + positions" }}
+          select={{ title: "Target blocks", sub: "cut from the output" }}
+          lossSub="L2 · per patch"
+        />
+      </FigureShell>
+    </div>
   );
 }
 
@@ -408,7 +346,7 @@ function sampleIJepaMasks(seed: number) {
   });
 }
 
-const TARGET_SHADES = ["#c7502e", "#a8431f", "#d9714f", "#8f3a1c"];
+const TARGET_SHADES = ["#4ade80", "#22c55e", "#bbf7d0", "#16a34a"];
 
 export function MaskSampler() {
   const [seed, setSeed] = useState(3);
@@ -448,9 +386,9 @@ export function MaskSampler() {
               setSeed((value) => value * 7 + 11);
               setRolls((value) => value + 1);
             }}
-            className="flex min-h-9 items-center gap-1.5 rounded-md bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper"
+            className="flex min-h-9 items-center gap-1.5 rounded-md border border-b-3 chonk border-ledge bg-raised px-3 py-1.5 kicker text-ink hover:bg-[#232326]"
           >
-            <Shuffle size={12} /> resample {rolls > 0 ? `(${rolls})` : ""}
+            <Shuffle size={12} /> Resample {rolls > 0 ? `(${rolls})` : ""}
           </button>
         </div>
       </div>
@@ -508,7 +446,7 @@ export function EmaLab() {
         <path d={toPath(ONLINE)} fill="none" stroke={WM.rubric} strokeWidth="0.6" opacity="0.8" />
         <path d={toPath(target)} fill="none" stroke={WM.olive} strokeWidth="1.1" className="transition-all duration-300" />
       </svg>
-      <div className="mt-2 flex flex-wrap gap-3 font-mono text-[9px] uppercase tracking-widest text-ink-fade">
+      <div className="mt-2 flex flex-wrap gap-3 kicker text-ink-fade">
         <span className="flex items-center gap-1"><span className="h-0.5 w-4" style={{ background: WM.rubric }} /> online encoder (gets gradients, noisy)</span>
         <span className="flex items-center gap-1"><span className="h-0.5 w-4" style={{ background: WM.olive }} /> target encoder (EMA, smooth)</span>
       </div>
@@ -587,7 +525,7 @@ export function TubeMaskLab() {
                 );
               })}
             </div>
-            <div className="mt-1 text-center font-mono text-[9px] uppercase tracking-widest text-ink-fade">t = {f + 1}</div>
+            <div className="mt-1 text-center kicker text-ink-fade">t = {f + 1}</div>
           </div>
         ))}
       </div>
@@ -600,11 +538,10 @@ export function TubeMaskLab() {
         nearly identical, so the model could just copy — and learn nothing about motion. Repeating the mask through time closes that shortcut.
       </p>
       <div className="mt-2 flex items-center gap-3">
-        <button type="button" onClick={() => setSeed((value) => value * 5 + 3)} className="flex min-h-9 items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-ink hover:text-rubric">
-          <Shuffle size={12} /> resample
+        <button type="button" onClick={() => setSeed((value) => value * 5 + 3)} className="flex min-h-9 items-center gap-1 kicker text-ink hover:text-rubric">
+          <Shuffle size={12} /> Resample
         </button>
       </div>
-      <CompleteButton interactionId="wm-tube-mask" />
     </LabShell>
   );
 }
@@ -630,8 +567,8 @@ export function TokenCounter() {
         <div className="font-mono text-sm text-ink">
           ({frames} ÷ {tube}) × ({res} ÷ 16)² = {frames / tube} × {side} × {side}
         </div>
-        <div className="mt-1 font-serif text-3xl italic text-rubric">{tokens.toLocaleString("en-US")} tokens</div>
-        <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+        <div className="mt-1 font-serif font-semibold text-3xl text-rubric">{tokens.toLocaleString("en-US")} tokens</div>
+        <div className="mt-1 kicker text-ink-fade">
           attention cost ≈ {cost < 10 ? cost.toFixed(1) : Math.round(cost).toLocaleString("en-US")}× the V-JEPA default (1,568 tokens)
         </div>
       </div>
@@ -684,14 +621,14 @@ export function ProbeLab() {
           <span key={item.prompt} className={`h-1.5 flex-1 rounded-full ${i <= index ? "bg-rubric" : "bg-border"}`} />
         ))}
       </div>
-      <div className="font-serif text-lg italic leading-snug text-ink">{scenario.prompt}</div>
+      <div className="font-serif font-semibold text-lg leading-snug text-ink">{scenario.prompt}</div>
       <div className="mt-3 grid gap-1.5 sm:grid-cols-2">
         {PROBE_OPTIONS.map((option) => {
           const picked = answer === option;
           const tone = picked
             ? option === scenario.correct
-              ? "border-transparent bg-ink text-paper"
-              : "border-rubric text-rubric line-through bg-background"
+              ? "border-success/60 bg-success/15 text-white"
+              : "border-danger/60 text-danger line-through bg-danger/5"
             : "border-border bg-background text-ink hover:border-rubric/40";
           return (
             <button key={option} type="button" onClick={() => setAnswer(option)} disabled={correct} className={`min-h-10 rounded-md border px-3 py-2 text-left text-sm transition ${tone}`}>
@@ -717,7 +654,7 @@ export function ProbeLab() {
             }
             setAnswer(null);
           }}
-          className="mt-3 min-h-10 rounded-md bg-ink px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-paper"
+          className="mt-3 min-h-10 rounded-md border border-b-3 chonk border-ledge bg-raised px-4 py-2 kicker text-ink hover:bg-[#232326]"
         >
           {last ? "finish · mark done" : "next scenario →"}
         </button>
@@ -756,12 +693,12 @@ export function AttentivePoolViz() {
           const weight = mode === "mean" ? 1 / POOL_TOKENS.length : token.attn;
           return (
             <div key={index} className="flex flex-1 flex-col items-center justify-end gap-1">
-              <span className="font-mono text-[9px] text-ink-fade">{Math.round(weight * 100)}%</span>
+              <span className="font-mono text-[11px] text-ink-fade">{Math.round(weight * 100)}%</span>
               <div
                 className="w-full rounded-t transition-all duration-500"
                 style={{ height: `${weight * 330}%`, maxHeight: "78px", minHeight: "3px", background: token.attn > 0.1 ? WM.rubric : WM.ink, opacity: mode === "mean" ? 0.55 : 1 }}
               />
-              <span className="font-mono text-[9px] text-ink">{token.label}</span>
+              <span className="font-mono text-[11px] text-ink">{token.label}</span>
             </div>
           );
         })}
@@ -771,8 +708,8 @@ export function AttentivePoolViz() {
           ? "Mean pooling gives every token the same weight — background dilutes the signal."
           : "The attentive probe learns one query token that asks \"what matters for the action?\" through cross-attention. Arm and torso get most of the weight."}
       </p>
-      <div className="mt-2 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-widest text-ink-fade">
-        <Clock3 size={11} /> illustrative weights, not from a trained model
+      <div className="mt-2 flex items-center gap-1.5 kicker text-ink-fade">
+        <Clock3 size={11} /> Illustrative weights, not from a trained model
       </div>
     </LabShell>
   );
@@ -915,14 +852,14 @@ export function PlanningLab() {
         ) : null}
         <circle cx={view.p.x} cy={view.p.y} r="2.1" fill={WM.ink} />
       </svg>
-      <div className="mt-2 flex flex-wrap gap-3 font-mono text-[9px] uppercase tracking-widest text-ink-fade">
+      <div className="mt-2 flex flex-wrap gap-3 kicker text-ink-fade">
         <span className="flex items-center gap-1"><span className="h-0.5 w-4" style={{ background: WM.ink, opacity: 0.4 }} /> imagined futures</span>
         <span className="flex items-center gap-1"><span className="h-0.5 w-4" style={{ background: WM.rubric }} /> best 6 (elites)</span>
         <span className="flex items-center gap-1"><span className="h-0.5 w-4" style={{ background: WM.olive }} /> path actually taken</span>
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        <button type="button" onClick={start} className="flex min-h-9 items-center gap-1.5 rounded-md bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper">
+        <button type="button" onClick={start} className="flex min-h-9 items-center gap-1.5 rounded-md border border-b-3 chonk border-ledge bg-raised px-3 py-1.5 kicker text-ink hover:bg-[#232326]">
           {playing ? <Pause size={12} /> : <Play size={12} />} {playing ? "pause" : view.done || stuck ? "plan again" : "plan"}
         </button>
         <button
@@ -932,27 +869,27 @@ export function PlanningLab() {
             if (view.done || stuck) fresh({ room, subgoal: useSubgoal, samples });
             else tick(1);
           }}
-          className="flex min-h-9 items-center gap-1 rounded-md border border-border bg-background px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink hover:border-rubric/40"
+          className="flex min-h-9 items-center gap-1 rounded-md border border-border bg-background px-3 py-1.5 kicker text-ink hover:border-rubric/40"
         >
-          <StepForward size={12} /> one round
+          <StepForward size={12} /> One round
         </button>
-        <button type="button" onClick={() => fresh({ room, subgoal: useSubgoal, samples })} className="flex min-h-9 items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-ink hover:text-rubric">
-          <RotateCcw size={12} /> reset
+        <button type="button" onClick={() => fresh({ room, subgoal: useSubgoal, samples })} className="flex min-h-9 items-center gap-1 kicker text-ink hover:text-rubric">
+          <RotateCcw size={12} /> Reset
         </button>
-        <label className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-ink">
+        <label className="flex items-center gap-1.5 kicker text-ink">
           <input type="checkbox" checked={fast} onChange={(event) => setFast(event.target.checked)} className="accent-rubric" /> fast
         </label>
       </div>
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         <Sparkline label="energy: L1 distance to the goal" values={view.energy} min={0} color={WM.olive} display={distance.toFixed(1)} />
-        <div className="grid grid-cols-2 gap-2 font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+        <div className="grid grid-cols-2 gap-2 kicker text-ink-fade">
           <div className="rounded-md border border-border bg-background p-2">
             imagined
-            <div className="mt-0.5 font-serif text-xl normal-case italic tracking-normal text-ink">{view.imagined.toLocaleString("en-US")}</div>
+            <div className="mt-0.5 font-serif font-semibold text-xl normal-case tracking-normal text-ink">{view.imagined.toLocaleString("en-US")}</div>
           </div>
           <div className="rounded-md border border-border bg-background p-2">
             executed
-            <div className="mt-0.5 font-serif text-xl normal-case italic tracking-normal text-ink">{view.actions}</div>
+            <div className="mt-0.5 font-serif font-semibold text-xl normal-case tracking-normal text-ink">{view.actions}</div>
           </div>
         </div>
       </div>
@@ -964,7 +901,6 @@ export function PlanningLab() {
         In V-JEPA 2-AC the imagination is a learned predictor and the positions are representations of camera frames. Energy here is summed over the
         imagined steps; V-JEPA 2-AC scores the imagined end state.
       </p>
-      <CompleteButton interactionId="wm-planning-lab" />
     </LabShell>
   );
 }
@@ -1031,7 +967,7 @@ export function SurpriseLab() {
           />
         ))}
       </div>
-      <div className="mt-1 flex justify-between font-mono text-[9px] uppercase tracking-widest text-ink-fade">
+      <div className="mt-1 flex justify-between kicker text-ink-fade">
         <span>surprise per frame</span>
         <span className="text-ink">peak so far {peak.toFixed(2)}</span>
       </div>
@@ -1054,7 +990,7 @@ export function SurpriseLab() {
             if (t >= SURPRISE_FRAMES - 1) setT(0);
             setPlaying((value) => !value);
           }}
-          className="flex min-h-9 items-center gap-1.5 rounded-md bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper"
+          className="flex min-h-9 items-center gap-1.5 rounded-md border border-b-3 chonk border-ledge bg-raised px-3 py-1.5 kicker text-ink hover:bg-[#232326]"
         >
           {playing ? <Pause size={12} /> : <Play size={12} />} {playing ? "pause" : "play clip"}
         </button>
@@ -1066,7 +1002,6 @@ export function SurpriseLab() {
         The predictor here is hand-built (constant velocity + object permanence) to show <i>how</i> surprise is measured.
         Garrido et al. (2025) measured it the same way on V-JEPA, whose expectations were learned from video alone.
       </p>
-      <CompleteButton interactionId="wm-surprise-lab" />
     </LabShell>
   );
 }

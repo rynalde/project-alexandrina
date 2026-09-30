@@ -38,6 +38,7 @@ export default function WorldModelsPage() {
       sectionComponents={SECTION_MAP}
       vol="vol. x"
       courseTitle="World Models"
+      lang="en"
       learningConfig={WORLD_MODELS_LEARNING_CONFIG}
     />
   );

@@ -1,6 +1,5 @@
 import SectionHeader from "@/components/shared/SectionHeader";
 import Callout from "@/components/shared/Callout";
-import Marginalia from "@/components/shared/Marginalia";
 import Highlight from "@/components/shared/Highlight";
 import Body from "@/components/shared/Body";
 import { FlaskConical } from "lucide-react";
@@ -20,7 +19,6 @@ import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 <MobileStepScreens>
 <MobileStepScreen label="build" title="Build">
 
-<LessonStage step="1" title="Build" subtitle="Steps 0–3: a toy world, a pixel baseline, and the JEPA itself." />
 
 <Body>
 
@@ -30,12 +28,12 @@ V-JEPA 2 trains a ViT with about a billion parameters on more than a million hou
 
 Every chapter of this caderno shows up in the code:
 
-- — **Step 1** makes unlabeled video: the data supervises itself (ch00).
-- — **Step 2** trains a pixel predictor and watches it blur (ch02).
-- — **Step 3** builds the JEPA: encoder, predictor, EMA target, loss (ch01, ch05).
-- — **Step 4** breaks it on purpose to see collapse (ch03).
-- — **Steps 5–6** measure what it learned and try the 2025 anti-collapse recipe (ch03, ch07).
-- — **Steps 7–8** turn it into a planner, the way V-JEPA 2-AC does (ch07).
+- **Step 1** makes unlabeled video: the data supervises itself (ch00).
+- **Step 2** trains a pixel predictor and watches it blur (ch02).
+- **Step 3** builds the JEPA: encoder, predictor, EMA target, loss (ch01, ch05).
+- **Step 4** breaks it on purpose to see collapse (ch03).
+- **Steps 5–6** measure what it learned and try the 2025 anti-collapse recipe (ch03, ch07).
+- **Steps 7–8** turn it into a planner, the way V-JEPA 2-AC does (ch07).
 
 </Body>
 
@@ -259,10 +257,10 @@ network's guess looks like:  the average (corr 0.92)  more than one real future 
 
 Four parts, straight from chapters 01 and 05:
 
-- — **Encoder**: a small CNN. One frame in, 32 numbers out. This is the part we want to keep.
-- — **Predictor**: gets the representations of frames t−1 and t and guesses the representation of frame t+1. Two frames let it see velocity: one frame shows where the ball is, not where it is going.
-- — **Target encoder**: a copy of the encoder that gets **no gradient** (`torch.no_grad()`) and follows the encoder slowly: θ_target ← τ·θ_target + (1 − τ)·θ. Here τ ramps from 0.99 to 1.0; I-JEPA ramps from 0.996 over a much longer run.
-- — **Loss**: squared distance between the guess and the target encoder's representation of frame t+1. As in the official I-JEPA and V-JEPA code, the target is first normalized with `layer_norm`.
+- **Encoder**: a small CNN. One frame in, 32 numbers out. This is the part we want to keep.
+- **Predictor**: gets the representations of frames t−1 and t and guesses the representation of frame t+1. Two frames let it see velocity: one frame shows where the ball is, not where it is going.
+- **Target encoder**: a copy of the encoder that gets **no gradient** (`torch.no_grad()`) and follows the encoder slowly: θ_target ← τ·θ_target + (1 − τ)·θ. Here τ ramps from 0.99 to 1.0; I-JEPA ramps from 0.996 over a much longer run.
+- **Loss**: squared distance between the guess and the target encoder's representation of frame t+1. As in the official I-JEPA and V-JEPA code, the target is first normalized with `layer_norm`.
 
 `spread` is the collapse alarm from chapter 03: how different the representations of different frames are. Healthy is close to 1. Collapsed is close to 0.
 
@@ -382,7 +380,6 @@ The loss falls fast and then hovers around 0.01–0.03. It never reaches zero, a
 </MobileStepScreen>
 <MobileStepScreen label="test" title="Test">
 
-<LessonStage step="2" title="Test" subtitle="Steps 4–6: break it, measure it, and try the 2025 recipe." />
 
 <Body>
 
@@ -470,9 +467,9 @@ collapsed       position R²  0.32   velocity R² -0.02
 
 <Body>
 
-- — **Random encoder: 0.55.** A random CNN already keeps some spatial information. That is the bar to beat.
-- — **JEPA: 0.99 for position, 0.68 for velocity.** Nobody ever told it what a position or a velocity is.
-- — **Collapsed: 0.32 — worse than random.** Its near-zero loss bought nothing.
+- **Random encoder: 0.55.** A random CNN already keeps some spatial information. That is the bar to beat.
+- **JEPA: 0.99 for position, 0.68 for velocity.** Nobody ever told it what a position or a velocity is.
+- **Collapsed: 0.32 — worse than random.** Its near-zero loss bought nothing.
 
 </Body>
 
@@ -550,7 +547,6 @@ JEPA (SIGReg)   position R²  1.00   velocity R²  0.84
 </MobileStepScreen>
 <MobileStepScreen label="plan" title="Plan">
 
-<LessonStage step="3" title="Plan" subtitle="Steps 7–9: turn the frozen encoder into a planner, like V-JEPA 2-AC." />
 
 <Body>
 
@@ -766,10 +762,10 @@ all checks passed ✓
 
 Rerun from step 0 after each change to get exactly our numbers.
 
-- — **No uncertainty.** Set `KICK = 0.0` in step 1 and rerun steps 0–2. The average of the futures becomes exactly as sharp as a real future (0.95 vs 0.95) and the network's guess sharpens to 0.85. No uncertainty, no blur. (Step 9's first check then compares two equal correlations, so ignore it for this run.)
-- — **No moving average.** In step 3 replace the τ line with `tau = 0.0`: the target becomes an exact copy of the encoder every step, still without gradient. It still works: spread 0.87, position R² 0.99, velocity R² 0.79. The moving average isn't needed here; SimSiam (2021) traced the protection to the stop-gradient plus the predictor.
-- — **No layer norm.** In step 3 drop `F.layer_norm` from the EMA target. Still no collapse (spread 0.98) and position R² 0.98, but velocity drops to 0.47. The normalization helps the representation; it is not the anti-collapse mechanism.
-- — **Look further ahead.** In step 8 call the planner with `horizon=12`. Far goals without a sub-goal rise from 44% to 67%: imagining further ahead helps, but one sub-goal still does better (97%).
+- **No uncertainty.** Set `KICK = 0.0` in step 1 and rerun steps 0–2. The average of the futures becomes exactly as sharp as a real future (0.95 vs 0.95) and the network's guess sharpens to 0.85. No uncertainty, no blur. (Step 9's first check then compares two equal correlations, so ignore it for this run.)
+- **No moving average.** In step 3 replace the τ line with `tau = 0.0`: the target becomes an exact copy of the encoder every step, still without gradient. It still works: spread 0.87, position R² 0.99, velocity R² 0.79. The moving average isn't needed here; SimSiam (2021) traced the protection to the stop-gradient plus the predictor.
+- **No layer norm.** In step 3 drop `F.layer_norm` from the EMA target. Still no collapse (spread 0.98) and position R² 0.98, but velocity drops to 0.47. The normalization helps the representation; it is not the anti-collapse mechanism.
+- **Look further ahead.** In step 8 call the planner with `horizon=12`. Far goals without a sub-goal rise from 44% to 67%: imagining further ahead helps, but one sub-goal still does better (97%).
 
 </Body>
 
@@ -783,20 +779,32 @@ Rerun from step 0 after each change to get exactly our numbers.
   ]}
 />
 
-<Callout icon={FlaskConical} title="one sentence to keep">
-  A JEPA world model is four small pieces — an encoder, a predictor, a slow no-gradient target and a loss in representation space — and the core claims of this caderno can be checked at toy scale: pixels blur, the stop-gradient prevents collapse, probes read physics nobody labeled, and a frozen encoder plus an action-conditioned predictor can plan.
-</Callout>
+<Body>
 
-<Marginalia label="traps">
-  A low loss is not success (step 4). A random encoder is not zero (step 5). The planner's energy lives in representation space, and that space is only informative nearby (step 8). A toy result is a hint, not a benchmark.
-</Marginalia>
+### Myth or fact?
+
+<SortBuckets
+  title="Sort each claim about your run."
+  buckets={["myth", "fact"]}
+  items={[
+    { label: "A low loss means the JEPA learned", bucket: 0, why: "Myth. In step 4, collapse drove the loss to ~0.0001 while the representation died." },
+    { label: "A random encoder already scores above zero on a probe", bucket: 1, why: "Fact. Step 5 compares against that baseline, not against zero." },
+    { label: "The planner's latent distance is informative at any range", bucket: 0, why: "Myth. Step 8: it only tracks real distance nearby, so far goals need a sub-goal." },
+    { label: "A toy result is a hint, not a benchmark", bucket: 1, why: "Fact. One ball in a 24×24 box can check an idea; it can't rank real models." },
+  ]}
+/>
+
+</Body>
+
+<Callout icon={FlaskConical} title="one sentence to keep" screen>
+  Four small pieces — encoder, predictor, a slow no-gradient target and a loss in representation space — make a JEPA world model, and each core claim of this caderno can be checked at toy scale.
+</Callout>
 
 </MobileStepScreen>
 <MobileStepScreen label="quiz" title="Quiz">
 
-<LessonStage step="4" title="Quiz" subtitle="Close the lab, then take the final simulation." />
 
-<SectionQuiz sectionId="lab" topic="lab" source={WORLD_MODELS_QUESTIONS} title="Checkpoint — build one from scratch" />
+<SectionQuiz lang="en" sectionId="lab" topic="lab" source={WORLD_MODELS_QUESTIONS} title="Checkpoint — build one from scratch" />
 
 </MobileStepScreen>
 </MobileStepScreens>

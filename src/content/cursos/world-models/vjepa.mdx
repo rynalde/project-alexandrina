@@ -1,12 +1,15 @@
 import SectionHeader from "@/components/shared/SectionHeader";
 import Callout from "@/components/shared/Callout";
-import Marginalia from "@/components/shared/Marginalia";
 import Highlight from "@/components/shared/Highlight";
 import Body from "@/components/shared/Body";
 import { Film, Lightbulb } from "lucide-react";
 import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 
 <SectionHeader num="06" title="From I-JEPA to V-JEPA" subtitle="tubelets, tube masks, and scaling to V-JEPA 2" vol="vol. x" />
+
+<Callout icon={Lightbulb} title="intuition first">
+  A flip book. Neighbouring pages are almost identical, so covering a square on one page is pointless if the same square shows on the next — you just peek. To make the game hard, cover the same square on every page: a tube through the whole book.
+</Callout>
 
 <LearningObjectives
   sectionId="vjepa"
@@ -18,23 +21,17 @@ import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 />
 
 <MobileStepScreens>
-<MobileStepScreen label="content" title="Content">
-
-<LessonStage step="1" title="Content" subtitle="Same recipe as I-JEPA — adapted for time." />
-
-<Callout icon={Lightbulb} title="intuition first">
-  A flip book. Neighbouring pages are almost identical, so covering a square on one page is pointless if the same square is visible on the next one — you just peek. To make the game hard, cover the same square on every page: a tube through the whole book.
-</Callout>
+<MobileStepScreen label="learn" title="Learn">
 
 <Body>
 
 ### The input: a clip
 
-V-JEPA takes **16 frames**, sampled every 4th frame (about 3 seconds of video), at 224×224.
+Same recipe as I-JEPA, adapted for time. V-JEPA takes **16 frames**, sampled every 4th frame (about 3 seconds of video), at 224×224.
 
 ### Tokens: from patches to tubelets
 
-Images were cut into 2D patches. Video is cut into <TermTip term="tubelets">3D patches spanning space and time</TermTip>: each one covers **2 frames × 16 × 16 pixels**. So 16 frames become 8 time steps, and each frame a 14×14 grid:
+Images were cut into 2D patches. Video is cut into <TermTip term="tubelets">3D patches spanning space and time</TermTip>, each covering **2 frames × 16 × 16 pixels**. So 16 frames become 8 time steps, each a 14×14 grid:
 
 **8 × 14 × 14 = 1,568 tokens** per clip.
 
@@ -42,55 +39,79 @@ Images were cut into 2D patches. Video is cut into <TermTip term="tubelets">3D p
 
 ### Masking: hide ~90%
 
-Each clip gets **two masks**, and each one is its own prediction task: a **short-range** mask (the union of 8 blocks, each ~15% of a frame) and a **long-range** mask (the union of 2 blocks, each ~70%). Because blocks overlap and are merged, the average masking ratio comes out at about **90%**.
-
-<PredictReveal prompt="MAE hides 75% of an image. Why does V-JEPA hide as much as 90% of a video?">
+<PredictReveal prompt="MAE hides 75% of an image. Why would V-JEPA hide as much as 90% of a video?">
 Video is extremely redundant — neighbouring frames and neighbouring patches are nearly identical. With light masking, the model can fill gaps by copying and interpolating, which needs no understanding. Heavy masking forces it to model what's actually going on.
 </PredictReveal>
 
+Each clip gets **two masks**, each its own prediction task: a **short-range** mask (the union of 8 blocks, each ~15% of a frame) and a **long-range** mask (the union of 2 blocks, each ~70%). Blocks overlap and merge, so the average masking ratio comes out at about **90%**.
+
 ### The key trick: the same mask in every frame
 
-The spatial blocks are **repeated across the whole time axis** — a "tube" through the clip. If each frame had its own mask, a hidden patch would often be visible at the same spot one frame earlier. The model would copy it and learn nothing about motion. The interaction on the next screen lets you count those leaks.
-
-### Everything else
-
-- — Loss: **L1** between predicted and target features (I-JEPA used L2).
-- — Target encoder: EMA, momentum **0.998 → 1.0**.
-- — Predictor: narrow transformer, 12 blocks, width 384.
-- — Data: **VideoMix2M** — about 2M videos from HowTo100M, Kinetics-400/600/700 and Something-Something-v2.
-- — Results (frozen backbone, attentive probe, largest model ViT-H/16 at 384px): **81.9%** Kinetics-400, **72.2%** Something-Something-v2, **77.4%** ImageNet with the standard probe (77.9% with a two-layer probe).
+The spatial blocks are **repeated along the whole time axis** — a "tube" through the clip. If each frame had its own mask, a hidden patch would often be visible at the same spot one frame earlier. The model would copy it and learn nothing about motion.
 
 <QuickCheck
   q="Why are V-JEPA's spatial masks repeated across all frames?"
   options={["It saves GPU memory", "So hidden patches can't be copied from neighbouring frames", "Because tubelets require it", "To make the loss smaller"]}
   correct={1}
+  hint="Think of the flip book: what could you do if the square were uncovered on the next page?"
   why="Consecutive frames are nearly identical. A tube mask removes the copy-from-the-next-frame shortcut."
 />
 
+### The whole pipeline
+
+A clip cut into tubelets, a tube mask, two encoders, a predictor and one L1 loss. Step through it, then turn on the gradient flow to see which half actually trains.
+
+<VJepaFigure />
+
+<details>
+<summary>Go deeper: everything else in the V-JEPA recipe</summary>
+
+- Loss: **L1** between predicted and target features (I-JEPA used L2).
+- Target encoder: EMA, momentum **0.998 → 1.0**.
+- Predictor: a narrow transformer, 12 blocks, width 384.
+- Data: **VideoMix2M** — about 2M videos from HowTo100M, Kinetics-400/600/700 and Something-Something-v2.
+- Results (frozen backbone, attentive probe, largest model ViT-H/16 at 384px): **81.9%** Kinetics-400, **72.2%** Something-Something-v2, **77.4%** ImageNet with the standard probe (77.9% with a two-layer probe).
+
+</details>
+
 ### V-JEPA 2 (2025): the same idea, scaled
 
-- — **Data**: over 1M hours of video plus 1M images (VideoMix22M).
-- — **Model**: up to ViT-g, over 1B parameters.
-- — **Positions**: <Highlight>3D-RoPE</Highlight> — rotary position embeddings applied separately to time, height and width.
-- — **Recipe**: progressive resolution — train mostly at 16 frames / 256px, then a short cooldown with longer, higher-resolution clips (64 frames; 384px for the ViT-g/384 model). About 8× cheaper. The EMA momentum and weight decay stay fixed instead of following a schedule.
-- — **Results**: 77.3% on Something-Something-v2, 39.7 recall@5 on Epic-Kitchens-100 action anticipation; aligned with a language model it reaches 84.0 on PerceptionTest.
+- **Data**: over 1M hours of video plus 1M images (VideoMix22M).
+- **Model**: up to ViT-g, over 1B parameters.
+- **Positions**: <Highlight>3D-RoPE</Highlight> — rotary position embeddings applied separately to time, height and width.
+- **Recipe**: train mostly on short, low-resolution clips, then cool down briefly on longer, sharper ones — about 8× cheaper.
 
-**V-JEPA 2.1 (2026)** keeps the family recipe but asks for *dense* features: the loss now uses both visible and masked tokens. It reports 77.7 on Something-Something-v2, 0.307 RMSE for depth on NYUv2 with a linear probe, and 20 points better real-robot grasping than V-JEPA 2-AC.
+<details>
+<summary>Go deeper: V-JEPA 2's numbers, and V-JEPA 2.1</summary>
+
+- **Progressive resolution**: mostly 16 frames at 256px, then a short cooldown at 64 frames (384px for the ViT-g/384 model). The EMA momentum and weight decay stay fixed instead of following a schedule.
+- **Results**: 77.3% on Something-Something-v2, 39.7 recall@5 on Epic-Kitchens-100 action anticipation; aligned with a language model, 84.0 on PerceptionTest.
+
+**V-JEPA 2.1 (2026)** keeps the recipe but asks for *dense* features: the loss uses both visible and masked tokens. It reports 77.7 on Something-Something-v2, 0.307 RMSE for depth on NYUv2 with a linear probe, and 20 points better real-robot grasping than V-JEPA 2-AC.
+
+</details>
+
+### Myth or fact?
+
+<SortBuckets
+  title="Sort each claim."
+  buckets={["myth", "fact"]}
+  items={[
+    { label: "A tubelet spans a single frame", bucket: 0, why: "Myth. It spans 2 frames × 16 × 16 pixels." },
+    { label: "The ~90% is masking of the whole clip", bucket: 1, why: "Fact. The same spatial mask runs through time; it is not drawn per frame." },
+    { label: "V-JEPA and I-JEPA use the same loss", bucket: 0, why: "Myth. V-JEPA uses L1; I-JEPA uses L2." },
+    { label: "V-JEPA's results use a frozen encoder", bucket: 1, why: "Fact. Only the probe on top is trained — no fine-tuning." },
+  ]}
+/>
 
 </Body>
 
-<Callout icon={Film} title="one sentence to keep">
-  V-JEPA is I-JEPA for video: 2×16×16 tubelets (1,568 tokens per clip), ~90% masking with the same spatial mask through time, L1 feature prediction and an EMA target — and V-JEPA 2 scales it to 1M+ hours of video, a 1B-parameter ViT-g and 3D-RoPE.
+<Callout icon={Film} title="one sentence to keep" screen>
+  V-JEPA is I-JEPA for video: 2×16×16 tubelets, about 90% hidden by one mask that runs through time, and features predicted with an L1 loss.
 </Callout>
 
-<Marginalia label="traps">
-  A tubelet spans 2 frames, not 1. The ~90% is masking of the video, not of each frame independently. V-JEPA's loss is L1; I-JEPA's is L2. V-JEPA results are with a frozen encoder — no fine-tuning.
-</Marginalia>
-
 </MobileStepScreen>
-<MobileStepScreen label="interaction" title="Interaction">
-
-<LessonStage step="2" title="Interaction" subtitle="Count the leaks with per-frame masks, then switch to tubes." />
+<MobileStepScreen label="lab" title="Lab">
 
 <TubeMaskLab />
 
@@ -108,9 +129,7 @@ The spatial blocks are **repeated across the whole time axis** — a "tube" thro
 </MobileStepScreen>
 <MobileStepScreen label="quiz" title="Quiz">
 
-<LessonStage step="3" title="Quiz" subtitle="Close the chapter before moving on." />
-
-<SectionQuiz sectionId="vjepa" topic="vjepa" source={WORLD_MODELS_QUESTIONS} title="Checkpoint — V-JEPA" />
+<SectionQuiz lang="en" sectionId="vjepa" topic="vjepa" source={WORLD_MODELS_QUESTIONS} title="Checkpoint — V-JEPA" />
 
 </MobileStepScreen>
 </MobileStepScreens>

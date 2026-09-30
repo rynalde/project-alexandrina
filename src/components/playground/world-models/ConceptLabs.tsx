@@ -17,7 +17,8 @@ import {
   type FutureSpec,
   type Strategy,
 } from "@/lib/world-models-sim";
-import { CompleteButton, LabShell, Meter, Panel, Seg, Sparkline, WM, mulberry32 } from "./ui";
+import { useBeatGate } from "@/components/learning/Beats";
+import { LabShell, Meter, Panel, ROLE, Seg, Sparkline, WM, mulberry32, tint } from "./ui";
 
 /* ───────────────────────── ch00 · predict the next frame ───────────────────────── */
 
@@ -36,6 +37,7 @@ export function NextFrameGuess() {
   const [pick, setPick] = useState<string | null>(null);
   const chosen = GUESSES.find((guess) => guess.id === pick);
   const right = pick === "B";
+  useBeatGate(pick !== null);
 
   return (
     <LabShell icon={<CircleDot size={15} />} title="Where is the ball in frame 4?">
@@ -86,8 +88,8 @@ export function NextFrameGuess() {
             key={guess.id}
             type="button"
             onClick={() => setPick(guess.id)}
-            className={`min-h-9 rounded-md border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition ${
-              pick === guess.id ? "border-transparent bg-ink text-paper" : "border-border bg-background text-ink hover:border-rubric/40"
+            className={`min-h-9 rounded-md border px-3 py-1.5 kicker transition ${
+              pick === guess.id ? "border-rubric/60 bg-rubric/15 text-white" : "border-border bg-background text-ink hover:border-rubric/40"
             }`}
           >
             guess {guess.id}
@@ -99,13 +101,12 @@ export function NextFrameGuess() {
           <Panel label={right ? "correct" : "not quite"}>{chosen.verdict}</Panel>
           {right ? (
             <p className="mt-3 text-sm leading-relaxed text-ink">
-              That was the pretext task: frames 1–3 were the <b>context</b>, frame 4 the <b>target</b>.
-              A world model plays this game millions of times.
+              A world model plays this game millions of times, and to win it has to pick up the
+              same physics you just used.
             </p>
           ) : null}
         </div>
       ) : null}
-      <CompleteButton interactionId="wm-next-frame" />
     </LabShell>
   );
 }
@@ -144,16 +145,101 @@ function buildMask(mode: MaskMode, seed: number): boolean[][] {
   );
 }
 
+/* The clip: a ball bouncing left → right past a post that never moves (units = cells). */
+// ponytail: each frame puts the ball in a new cell, so "same cell next door" really means "unchanged".
+const BALL: Array<[number, number]> = [[0.5, 0.5], [1.5, 1.4], [1.5, 2.5], [2.5, 2.6], [2.5, 1.5], [3.5, 1.4]];
+const isPost = (row: number, col: number) => col === 3 && row >= 2;
+const cellContent = (frame: number, row: number, col: number) => {
+  const [x, y] = BALL[frame];
+  if (Math.floor(x) === col && Math.floor(y) === row) return "ball";
+  return isPost(row, col) ? "post" : "empty";
+};
+
+type HiddenKind = "copy" | "predict";
+
+/** A hidden patch is copyable when the same spot is visible in a neighbouring frame and shows the same thing there. */
+function classifyHidden(mask: boolean[][]): Array<Array<HiddenKind | null>> {
+  return mask.map((frame, t) =>
+    frame.map((hidden, cell) => {
+      if (!hidden) return null;
+      const row = Math.floor(cell / SIDE);
+      const col = cell % SIDE;
+      const copyable = [t - 1, t + 1].some(
+        (n) => n >= 0 && n < FRAMES && !mask[n][cell] && cellContent(n, row, col) === cellContent(t, row, col),
+      );
+      return copyable ? "copy" : "predict";
+    }),
+  );
+}
+
+const SHORTCUT: Record<MaskMode, string> = {
+  future: "Copying the last visible frame works for what stands still — the post and the background. The ball moved, so its new position has to be predicted.",
+  random: "Most hidden patches show exactly what the same spot shows one frame earlier or later. The model can score well by copying instead of understanding the scene.",
+  tube: "No hidden patch is visible at the same spot in a neighbouring frame. The only way to fill the hole is to model what moves through it — the ball.",
+};
+
+function MaskFrame({ frame, mask, kinds, peek }: { frame: number; mask: boolean[]; kinds: Array<HiddenKind | null>; peek: boolean }) {
+  const [bx, by] = BALL[frame];
+  return (
+    <svg viewBox="0 0 40 40" className="w-full rounded-md border border-white/10 bg-black" aria-hidden="true">
+      {[10, 20, 30].map((v) => (
+        <g key={v}>
+          <line x1={v} y1="0" x2={v} y2="40" stroke="rgba(255,255,255,0.06)" strokeWidth="0.4" />
+          <line x1="0" y1={v} x2="40" y2={v} stroke="rgba(255,255,255,0.06)" strokeWidth="0.4" />
+        </g>
+      ))}
+      <rect x="31" y="20.5" width="8" height="19" rx="1" fill="#52525b" />
+      <circle cx={bx * 10} cy={by * 10} r="3.4" fill="#ededed" />
+      {mask.map((hidden, cell) => {
+        if (!hidden) return null;
+        const x = (cell % SIDE) * 10;
+        const y = Math.floor(cell / SIDE) * 10;
+        const copy = kinds[cell] === "copy";
+        return (
+          <g key={cell}>
+            <rect
+              x={x + 0.4}
+              y={y + 0.4}
+              width="9.2"
+              height="9.2"
+              rx="1.2"
+              fill={peek ? tint(ROLE.target, 0.22) : "#2a2106"}
+              stroke={copy ? ROLE.loss : ROLE.target}
+              strokeWidth={copy ? 0.9 : 0.6}
+              className="transition-[fill] duration-300"
+            />
+            {!peek ? (
+              copy ? (
+                <text x={x + 5} y={y + 7.2} textAnchor="middle" fontSize="6" fontWeight="700" fill={ROLE.loss}>⧉</text>
+              ) : (
+                <text x={x + 5} y={y + 7.4} textAnchor="middle" fontSize="6.5" fontWeight="700" fill={ROLE.target}>?</text>
+              )
+            ) : null}
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
 export function MaskPlayground() {
   const [mode, setMode] = useState<MaskMode>("future");
   const [seed, setSeed] = useState(7);
+  const [peek, setPeek] = useState(false);
   const mask = useMemo(() => buildMask(mode, seed), [mode, seed]);
+  const kinds = useMemo(() => classifyHidden(mask), [mask]);
   const total = FRAMES * SIDE * SIDE;
   const hidden = mask.flat().filter(Boolean).length;
+  const copyable = kinds.flat().filter((kind) => kind === "copy").length;
   const info = MODE_INFO[mode];
 
   return (
     <LabShell icon={<Grid3x3 size={15} />} title="Same clip, different masks">
+      <p className="mb-4 text-[15px] leading-7 text-ink-soft">
+        A ball bounces past a post in 6 frames. The <span style={{ color: ROLE.target }}>mask</span>{" "}decides which
+        patches the model can&apos;t see. Pick a rule and look at <em>what</em>{" "}gets hidden — and whether the model
+        could just copy it from the next frame.
+      </p>
       <Seg
         label="mask rule"
         value={mode}
@@ -167,42 +253,58 @@ export function MaskPlayground() {
       <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-6">
         {mask.map((frame, frameIndex) => (
           <div key={frameIndex}>
-            <div className="grid grid-cols-4 gap-[2px] rounded border border-border bg-background p-[3px]">
-              {frame.map((isHidden, cellIndex) => (
-                <div
-                  key={cellIndex}
-                  className="aspect-square rounded-[2px] transition-colors duration-300"
-                  style={{ background: isHidden ? WM.rubric : WM.paperDark }}
-                />
-              ))}
-            </div>
-            <div className="mt-1 text-center font-mono text-[9px] uppercase tracking-widest text-ink-fade">
-              frame {frameIndex + 1}
-            </div>
+            <MaskFrame frame={frameIndex} mask={frame} kinds={kinds[frameIndex]} peek={peek} />
+            <div className="mt-1 text-center kicker text-ink-fade">frame {frameIndex + 1}</div>
           </div>
         ))}
       </div>
-      <div className="mt-3 flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+
+      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[12.5px] text-ink-soft">
         <span className="flex items-center gap-1.5">
-          <span className="size-2.5 rounded-sm" style={{ background: WM.paperDark, border: `1px solid ${WM.faint}` }} /> context (seen)
+          <span className="flex size-4 items-center justify-center rounded-[3px] border text-[10px] font-bold" style={{ borderColor: ROLE.target, color: ROLE.target, background: "#2a2106" }}>?</span>
+          hidden — must be predicted
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="size-2.5 rounded-sm" style={{ background: WM.rubric }} /> target (hidden)
+          <span className="flex size-4 items-center justify-center rounded-[3px] border text-[10px] font-bold" style={{ borderColor: ROLE.loss, color: ROLE.loss, background: "#2a2106" }}>⧉</span>
+          hidden, but the same spot is visible next door — copyable
         </span>
-        {mode === "random" ? (
-          <button type="button" onClick={() => setSeed((value) => value + 1)} className="ml-auto flex items-center gap-1 text-ink hover:text-rubric">
-            <Shuffle size={12} /> reshuffle
-          </button>
-        ) : null}
+        <span className="ml-auto flex items-center gap-2">
+          {mode === "random" ? (
+            <button type="button" onClick={() => setSeed((value) => value + 1)} className="flex items-center gap-1 rounded-md px-2 py-1 text-ink hover:bg-raised">
+              <Shuffle size={12} /> Reshuffle
+            </button>
+          ) : null}
+          <label className="flex items-center gap-1.5 text-ink">
+            <input type="checkbox" checked={peek} onChange={(event) => setPeek(event.target.checked)} className="accent-rubric" />
+            Peek under the mask
+          </label>
+        </span>
       </div>
-      <div className="mt-3 grid gap-2 sm:grid-cols-2">
-        <Meter label="context — what the model sees" value={(total - hidden) / total} tone="ink" />
-        <Meter label="target — what it must predict" value={hidden / total} />
+
+      <div className="mt-4 grid grid-cols-3 gap-2">
+        <div className="rounded-xl border border-white/10 bg-raised/60 px-3 py-2">
+          <div className="text-[12px] text-ink-fade">hidden</div>
+          <div className="font-mono text-[18px] font-semibold text-white">{Math.round((hidden / total) * 100)}%</div>
+        </div>
+        <div className="rounded-xl border px-3 py-2" style={{ borderColor: tint(ROLE.loss, 0.35), background: tint(ROLE.loss, 0.06) }}>
+          <div className="text-[12px] text-ink-fade">copyable shortcut</div>
+          <div className="font-mono text-[18px] font-semibold" style={{ color: ROLE.loss }}>
+            {copyable}<span className="text-[13px] text-ink-fade">/{hidden}</span>
+          </div>
+        </div>
+        <div className="rounded-xl border px-3 py-2" style={{ borderColor: tint(ROLE.target, 0.35), background: tint(ROLE.target, 0.06) }}>
+          <div className="text-[12px] text-ink-fade">must predict</div>
+          <div className="font-mono text-[18px] font-semibold" style={{ color: ROLE.target }}>
+            {hidden - copyable}<span className="text-[13px] text-ink-fade">/{hidden}</span>
+          </div>
+        </div>
       </div>
-      <div className="mt-3">
-        <Panel label={info.task}>{info.note}</Panel>
+
+      <div className="mt-3 rounded-xl border border-white/10 bg-black/40 p-3.5">
+        <div className="text-[14px] font-semibold text-white">{info.task}</div>
+        <p className="mt-1 text-[14.5px] leading-6 text-ink-soft">{SHORTCUT[mode]}</p>
+        <p className="mt-2 text-[13.5px] leading-6 text-ink-fade">{info.note}</p>
       </div>
-      <CompleteButton interactionId="wm-mask-playground" />
     </LabShell>
   );
 }
@@ -210,8 +312,8 @@ export function MaskPlayground() {
 /* ───────────────────────── ch02 · blur lab: average the possible futures, for real ───────────────────────── */
 
 const MAX_FUTURES = 200;
-const INK_RGB = [26, 21, 18];
-const PAPER_RGB = [245, 239, 227];
+const INK_RGB = [237, 237, 237];
+const PAPER_RGB = [9, 9, 11];
 const DEFAULT_SPEC: FutureSpec = { mode: "fork", value: 0.5, ahead: 6, leaves: false };
 
 function paint(canvas: HTMLCanvasElement | null, img: Float32Array | undefined) {
@@ -292,7 +394,7 @@ export function BlurLab() {
           ]}
         />
         <label className="block">
-          <span className="mb-1 flex justify-between font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+          <span className="mb-1 flex justify-between kicker text-ink-fade">
             <span>{fork ? "chance it goes up" : "spread of directions"}</span>
             <span className="text-ink">{fork ? `${Math.round(spec.value * 100)}% up` : `±${spec.value}°`}</span>
           </span>
@@ -307,7 +409,7 @@ export function BlurLab() {
           />
         </label>
         <label className="block">
-          <span className="mb-1 flex justify-between font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+          <span className="mb-1 flex justify-between kicker text-ink-fade">
             <span>how far ahead we predict</span>
             <span className="text-ink">{spec.ahead} frames</span>
           </span>
@@ -334,19 +436,19 @@ export function BlurLab() {
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <div className="rounded-lg border border-border bg-background p-2.5">
-          <div className="mb-1.5 font-mono text-[10px] uppercase tracking-widest text-ink-fade">one sampled future</div>
+          <div className="mb-1.5 kicker text-ink-fade">one sampled future</div>
           <canvas ref={lastCanvas} width={FUTURE_W} height={FUTURE_H} className="w-full rounded" style={{ aspectRatio: `${FUTURE_W} / ${FUTURE_H}` }} role="img" aria-label="One possible future frame" />
           <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Always sharp — reality picks one.</p>
         </div>
         <div className="rounded-lg border border-border bg-background p-2.5">
-          <div className="mb-1.5 font-mono text-[10px] uppercase tracking-widest text-rubric">pixel predictor&apos;s best guess</div>
+          <div className="mb-1.5 kicker text-rubric">pixel predictor&apos;s best guess</div>
           <canvas ref={meanCanvas} width={FUTURE_W} height={FUTURE_H} className="w-full rounded" style={{ aspectRatio: `${FUTURE_W} / ${FUTURE_H}` }} role="img" aria-label="Average of all sampled futures" />
           <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
             Mean of <b className="text-ink">{view.count}</b> futures = what minimises squared error.
           </p>
         </div>
         <div className="rounded-lg border border-border bg-background p-2.5 sm:col-span-2">
-          <div className="mb-1.5 font-mono text-[10px] uppercase tracking-widest" style={{ color: WM.olive }}>latent predictor&apos;s guess</div>
+          <div className="mb-1.5 kicker" style={{ color: WM.olive }}>latent predictor&apos;s guess</div>
           <div className="space-y-1.5 font-mono text-[11px] text-ink">
             <div className="flex justify-between"><span>object</span><span>ball ✓</span></div>
             <div className="flex justify-between"><span>distance</span><span>{spec.ahead * 5}px ✓</span></div>
@@ -380,17 +482,16 @@ export function BlurLab() {
             else if (view.count > 0 && view.count < MAX_FUTURES) setPlaying(true);
             else restart(spec);
           }}
-          className="flex min-h-9 items-center gap-1.5 rounded-md bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper"
+          className="flex min-h-9 items-center gap-1.5 rounded-md border border-b-3 chonk border-ledge bg-raised px-3 py-1.5 kicker text-ink hover:bg-[#232326]"
         >
           {playing ? <Pause size={12} /> : <Play size={12} />}{" "}
           {playing ? "pause" : view.count > 0 && view.count < MAX_FUTURES ? "continue sampling" : "sample the futures again"}
         </button>
-        <span className="font-mono text-[10px] uppercase tracking-widest text-ink-fade">{view.count} / {MAX_FUTURES} futures</span>
+        <span className="kicker text-ink-fade">{view.count} / {MAX_FUTURES} futures</span>
       </div>
       <p className="mt-2 text-xs leading-relaxed text-ink-fade">
         Real computation, toy world. Try: fork at 100% (certain) → sharp again. Leaves on → pixel loss jumps, latent uncertainty doesn&apos;t move.
       </p>
-      <CompleteButton interactionId="wm-blur-lab" />
     </LabShell>
   );
 }
@@ -513,7 +614,7 @@ export function CollapseLab() {
             ))}
           </svg>
           {collapsed ? (
-            <div className="absolute inset-x-3 bottom-3 rounded-md bg-rubric px-3 py-2 text-center font-mono text-[10px] uppercase tracking-widest text-paper animate-fade-in">
+            <div className="absolute inset-x-3 bottom-3 rounded-md bg-primary px-3 py-2 text-center kicker text-primary-foreground animate-fade-in">
               collapsed · loss ≈ 0 · every input → the same point
             </div>
           ) : null}
@@ -523,26 +624,26 @@ export function CollapseLab() {
             <button
               type="button"
               onClick={toggle}
-              className="flex min-h-9 items-center gap-1.5 rounded-md bg-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-paper"
+              className="flex min-h-9 items-center gap-1.5 rounded-md border border-b-3 chonk border-ledge bg-raised px-3 py-1.5 kicker text-ink hover:bg-[#232326]"
             >
               {playing ? <Pause size={12} /> : <Play size={12} />} {playing ? "pause" : view.step >= MAX_STEPS ? "train again" : view.step ? "continue" : "train"}
             </button>
-            <button type="button" onClick={() => reset(strategy, usePredictor)} className="flex min-h-9 items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-ink hover:text-rubric">
-              <RotateCcw size={12} /> reset
+            <button type="button" onClick={() => reset(strategy, usePredictor)} className="flex min-h-9 items-center gap-1 kicker text-ink hover:text-rubric">
+              <RotateCcw size={12} /> Reset
             </button>
-            <button type="button" onClick={() => reset(strategy, usePredictor, seed + 1)} className="flex min-h-9 items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-ink hover:text-rubric">
-              <Shuffle size={12} /> new seed
+            <button type="button" onClick={() => reset(strategy, usePredictor, seed + 1)} className="flex min-h-9 items-center gap-1 kicker text-ink hover:text-rubric">
+              <Shuffle size={12} /> New seed
             </button>
-            <label className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-ink">
+            <label className="flex items-center gap-1.5 kicker text-ink">
               <input type="checkbox" checked={fast} onChange={(event) => setFast(event.target.checked)} className="accent-rubric" /> fast
             </label>
           </div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-ink-fade">step {view.step} / {MAX_STEPS} · seed {seed}</div>
+          <div className="kicker text-ink-fade">step {view.step} / {MAX_STEPS} · seed {seed}</div>
           <Sparkline label="training loss" values={view.lossHist} min={0} display={Number.isFinite(view.loss) ? view.loss.toFixed(3) : "—"} />
           <Sparkline label="spread (collapse alarm)" values={view.spreadHist} min={0} max={1.6} color={WM.olive} display={view.spread.toFixed(3)} />
           <Meter label="probe accuracy (chance 33%)" value={view.probe} tone="ink" />
           <Meter label="dimensions in use (of 2)" value={Math.max(0, view.dims - 1)} display={view.dims ? view.dims.toFixed(2) : "—"} tone="olive" />
-          <div className="flex flex-wrap gap-2 font-mono text-[9px] uppercase tracking-widest text-ink-fade">
+          <div className="flex flex-wrap gap-2 kicker text-ink-fade">
             {["class A", "class B", "class C"].map((label, index) => (
               <span key={label} className="flex items-center gap-1">
                 <span className="size-2 rounded-full" style={{ background: CLASS_COLORS[index] }} /> {label}
@@ -559,7 +660,6 @@ export function CollapseLab() {
         view, like colour jitter), a 2×8 linear encoder, batches of 64 view pairs, plain gradient descent. The model never
         sees the colours — a defense makes them separate on their own.
       </p>
-      <CompleteButton interactionId="wm-collapse-lab" />
     </LabShell>
   );
 }

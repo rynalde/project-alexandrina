@@ -30,7 +30,7 @@ export const COURSES: Course[] = [
     ],
     sectionCount: 9,
     questionCount: 25,
-    accent: "#c7502e",
+    accent: "#4ade80",
   },
   {
     slug: "transformer",
@@ -51,7 +51,7 @@ export const COURSES: Course[] = [
     ],
     sectionCount: 9,
     questionCount: 25,
-    accent: "#c7502e",
+    accent: "#4ade80",
   },
   {
     slug: "perceptrons-geometria",
@@ -72,7 +72,7 @@ export const COURSES: Course[] = [
     ],
     sectionCount: 9,
     questionCount: 25,
-    accent: "#c7502e",
+    accent: "#4ade80",
   },
   {
     slug: "metricas-classificacao",
@@ -93,7 +93,7 @@ export const COURSES: Course[] = [
     ],
     sectionCount: 8,
     questionCount: 20,
-    accent: "#c7502e",
+    accent: "#4ade80",
   },
   {
     slug: "simagia",
@@ -117,7 +117,7 @@ export const COURSES: Course[] = [
     ],
     sectionCount: 11,
     questionCount: 25,
-    accent: "#c7502e",
+    accent: "#4ade80",
   },
   {
     slug: "rantia",
@@ -141,7 +141,7 @@ export const COURSES: Course[] = [
     ],
     sectionCount: 15,
     questionCount: 25,
-    accent: "#c7502e",
+    accent: "#4ade80",
   },
   {
     slug: "world-models",
@@ -164,6 +164,6 @@ export const COURSES: Course[] = [
     ],
     sectionCount: 11,
     questionCount: 36,
-    accent: "#c7502e",
+    accent: "#4ade80",
   },
 ];

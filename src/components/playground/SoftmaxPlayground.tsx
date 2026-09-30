@@ -47,7 +47,7 @@ export default function SoftmaxPlayground() {
     <div className="my-6 bg-card border border-border rounded-sm p-4 sm:p-6">
       <div className="flex items-center gap-2 mb-4">
         <Play size={14} className="text-rubric shrink-0" />
-        <span className="font-mono text-[10px] uppercase tracking-widest text-rubric">
+        <span className="kicker text-rubric">
           Calculadora — softmax
         </span>
       </div>
@@ -77,13 +77,13 @@ export default function SoftmaxPlayground() {
           onChange={(e) => setTemperature(Number(e.target.value))}
           className="flex-1 accent-rubric min-w-[100px]"
         />
-        <span className="font-serif text-xl text-ink w-12 text-center">
+        <span className="font-serif font-semibold text-xl text-ink w-12 text-center">
           {temperature.toFixed(1)}
         </span>
       </div>
 
       <div className="mt-5">
-        <div className="font-mono text-[10px] uppercase tracking-widest text-ink-fade mb-3">
+        <div className="kicker text-ink-fade mb-3">
           logits → probabilidades · soma = {sum.toFixed(4)}
         </div>
         <div className="space-y-1.5">
@@ -101,7 +101,7 @@ export default function SoftmaxPlayground() {
                   className="h-full transition-all duration-500"
                   style={{
                     width: `${(probs[i] ?? 0) * 100}%`,
-                    background: "#c7502e",
+                    background: "#4ade80",
                     opacity: 0.4 + (probs[i] ?? 0) * 0.6,
                   }}
                 />
@@ -116,41 +116,41 @@ export default function SoftmaxPlayground() {
 
       <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="bg-background border border-border rounded-sm p-3 text-center">
-          <div className="font-mono text-[9px] uppercase tracking-widest text-ink-fade">
+          <div className="kicker text-ink-fade">
             soma
           </div>
-          <div className="font-serif text-xl text-ink mt-1">
+          <div className="font-serif font-semibold text-xl text-ink mt-1">
             {sum.toFixed(3)}
           </div>
-          <div className="font-mono text-[10px] text-muted-foreground">
+          <div className="font-mono text-[11px] text-muted-foreground">
             sempre = 1
           </div>
         </div>
         <div className="bg-background border border-rubric rounded-sm p-3 text-center">
-          <div className="font-mono text-[9px] uppercase tracking-widest text-rubric">
+          <div className="kicker text-rubric">
             argmax
           </div>
-          <div className="font-serif text-xl text-rubric mt-1 truncate">
+          <div className="font-serif font-semibold text-xl text-rubric mt-1 truncate">
             {LABELS[argmax] || "?"}
           </div>
-          <div className="font-mono text-[10px] text-muted-foreground">
+          <div className="font-mono text-[11px] text-muted-foreground">
             predição greedy
           </div>
         </div>
         <div className="bg-background border border-border rounded-sm p-3 text-center">
-          <div className="font-mono text-[9px] uppercase tracking-widest text-ink-fade">
+          <div className="kicker text-ink-fade">
             entropia
           </div>
-          <div className="font-serif text-xl text-ink mt-1">
+          <div className="font-serif font-semibold text-xl text-ink mt-1">
             {entropy.toFixed(2)}
           </div>
-          <div className="font-mono text-[10px] text-muted-foreground">
+          <div className="font-mono text-[11px] text-muted-foreground">
             incerteza
           </div>
         </div>
       </div>
 
-      <p className="mt-5 font-serif italic text-[12px] sm:text-[13px] text-muted-foreground border-t border-border pt-3">
+      <p className="mt-5 font-serif text-[12px] sm:text-[13px] text-muted-foreground border-t border-border pt-3">
         Diminua a temperatura → distribuição fica <em>mais picuda</em>.
         Aumente → distribuição fica <em>mais uniforme</em>.{" "}
         <span className="text-rubric">Soma sempre 1</span>.

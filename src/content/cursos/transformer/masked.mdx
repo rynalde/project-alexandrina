@@ -42,9 +42,9 @@ scores' = scores + mask
 
 O efeito prático:
 
-- — A posição 0 (primeiro token) só pode atender à posição 0.
-- — A posição 1 atende às posições 0 e 1.
-- — A posição n atende a todas as posições ≤ n.
+- A posição 0 (primeiro token) só pode atender à posição 0.
+- A posição 1 atende às posições 0 e 1.
+- A posição n atende a todas as posições ≤ n.
 
 Isso garante que, durante o treino, a perda calculada na posição i só dependa das posições anteriores — exatamente como na inferência. O modelo aprende uma distribuição condicional <Kbd>{`P(y_t | y_1, ..., y_{t-1}, x)`}</Kbd> que vale tanto para treino quanto para geração.
 

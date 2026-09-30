@@ -58,26 +58,26 @@ const LEGEND: Record<
   PV: {
     label: "PV / TP",
     description: "dentro da elipse e classificado como dentro",
-    color: "#5c8c5c",
-    bg: "rgba(92,140,92,0.16)",
+    color: "#86efac",
+    bg: "rgba(134,239,172,0.16)",
   },
   PF: {
     label: "PF / FP",
     description: "fora da elipse, mas classificado como dentro",
-    color: "#c7502e",
-    bg: "rgba(199,80,46,0.17)",
+    color: "#4ade80",
+    bg: "rgba(74,222,128,0.17)",
   },
   NV: {
     label: "NV / TN",
     description: "fora da elipse e classificado como fora",
-    color: "rgba(26,21,18,0.32)",
-    bg: "rgba(26,21,18,0.08)",
+    color: "rgba(237,237,237,0.32)",
+    bg: "rgba(237,237,237,0.08)",
   },
   NF: {
     label: "NF / FN",
     description: "dentro da elipse, mas classificado como fora",
-    color: "#9d7a2f",
-    bg: "rgba(157,122,47,0.16)",
+    color: "#fbbf24",
+    bg: "rgba(251,191,36,0.16)",
   },
 };
 
@@ -188,7 +188,7 @@ export default function MetricsEllipseRectangleLab() {
       <div className="flex items-center justify-between gap-3 mb-4">
         <div className="flex min-w-0 items-start gap-2">
           <BarChart3 size={14} className="text-rubric shrink-0" />
-          <span className="min-w-0 font-mono text-[10px] uppercase tracking-widest text-rubric leading-relaxed break-words">
+          <span className="min-w-0 kicker text-rubric leading-relaxed break-words">
             simulador — elipse real vs retângulo previsto
           </span>
         </div>
@@ -206,7 +206,7 @@ export default function MetricsEllipseRectangleLab() {
         <div className="space-y-4">
           <div className="bg-background border border-border rounded-sm p-3 overflow-hidden">
             <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="w-full max-w-[620px] mx-auto block">
-              <rect x={PAD} y={PAD} width={PLOT_W} height={PLOT_H} fill="rgba(245,239,227,0.74)" />
+              <rect x={PAD} y={PAD} width={PLOT_W} height={PLOT_H} fill="rgba(0,0,0,0.74)" />
 
               {Array.from({ length: 10 }, (_, idx) => {
                 const x = PAD + (idx / 9) * PLOT_W;
@@ -217,7 +217,7 @@ export default function MetricsEllipseRectangleLab() {
                     y1={PAD}
                     x2={x}
                     y2={HEIGHT - PAD}
-                    stroke="rgba(26,21,18,0.07)"
+                    stroke="rgba(237,237,237,0.07)"
                   />
                 );
               })}
@@ -230,7 +230,7 @@ export default function MetricsEllipseRectangleLab() {
                     y1={y}
                     x2={WIDTH - PAD}
                     y2={y}
-                    stroke="rgba(26,21,18,0.07)"
+                    stroke="rgba(237,237,237,0.07)"
                   />
                 );
               })}
@@ -240,8 +240,8 @@ export default function MetricsEllipseRectangleLab() {
                 cy={ellipseCenter.y}
                 rx={(ellipseRx / (EXTENT_X * 2)) * PLOT_W}
                 ry={(ellipseRy / (EXTENT_Y * 2)) * PLOT_H}
-                fill="rgba(92,140,92,0.08)"
-                stroke="#5c8c5c"
+                fill="rgba(134,239,172,0.08)"
+                stroke="#86efac"
                 strokeWidth={2}
                 initial={false}
                 animate={{ opacity: 1 }}
@@ -252,8 +252,8 @@ export default function MetricsEllipseRectangleLab() {
                 y={rectSvg.top}
                 width={rectSvg.right - rectSvg.left}
                 height={rectSvg.bottom - rectSvg.top}
-                fill="rgba(199,80,46,0.09)"
-                stroke="#c7502e"
+                fill="rgba(74,222,128,0.09)"
+                stroke="#4ade80"
                 strokeWidth={2}
                 strokeDasharray="7 5"
               />
@@ -281,12 +281,12 @@ export default function MetricsEllipseRectangleLab() {
                 width={86}
                 height={18}
                 rx={2}
-                fill="rgba(245,239,227,0.82)"
+                fill="rgba(0,0,0,0.82)"
               />
               <text
                 x={ellipseCenter.x - 35}
                 y={ellipseCenter.y - 70}
-                className="fill-ink font-mono text-[10px]"
+                className="fill-ink font-mono text-[11px]"
               >
                 elipse real
               </text>
@@ -296,12 +296,12 @@ export default function MetricsEllipseRectangleLab() {
                 width={116}
                 height={18}
                 rx={2}
-                fill="rgba(245,239,227,0.86)"
+                fill="rgba(0,0,0,0.86)"
               />
               <text
                 x={Math.max(PAD + 8, rectSvg.left + 5)}
                 y={Math.max(PAD + 17, rectSvg.top - 7)}
-                className="fill-rubric font-mono text-[10px]"
+                className="fill-rubric font-mono text-[11px]"
               >
                 retângulo previsto
               </text>
@@ -316,10 +316,10 @@ export default function MetricsEllipseRectangleLab() {
                 animate={{ backgroundColor: LEGEND[key].bg }}
                 transition={{ duration: 0.25 }}
               >
-                <div className="font-mono text-[10px] uppercase tracking-widest" style={{ color: LEGEND[key].color }}>
+                <div className="kicker" style={{ color: LEGEND[key].color }}>
                   {LEGEND[key].label}
                 </div>
-                <div className="font-serif text-3xl text-ink mt-1">{classified.counts[key]}</div>
+                <div className="font-serif font-semibold text-3xl text-ink mt-1">{classified.counts[key]}</div>
                 <p className="font-sans text-[12px] leading-snug text-muted-foreground mt-1">
                   {LEGEND[key].description}
                 </p>
@@ -335,7 +335,7 @@ export default function MetricsEllipseRectangleLab() {
                 key={key}
                 type="button"
                 onClick={() => applyPreset(key)}
-                className={`min-h-10 rounded-sm border px-3 py-2 font-mono text-[10px] uppercase tracking-widest transition ${
+                className={`min-h-10 rounded-sm border px-3 py-2 kicker transition ${
                   activePreset === key
                     ? "border-rubric bg-rubric/10 text-rubric"
                     : "border-border bg-background text-ink-fade hover:text-ink"
@@ -354,10 +354,10 @@ export default function MetricsEllipseRectangleLab() {
               exit={{ opacity: 0, y: -6 }}
               className="bg-background border border-border rounded-sm p-3"
             >
-              <div className="font-mono text-[9px] uppercase tracking-widest text-ink-fade mb-1">
+              <div className="kicker text-ink-fade mb-1">
                 leitura
               </div>
-              <p className="font-serif italic text-[13px] text-muted-foreground leading-relaxed">
+              <p className="font-serif text-[13px] text-muted-foreground leading-relaxed">
                 {PRESETS[activePreset].note}
               </p>
             </motion.div>
@@ -377,7 +377,7 @@ export default function MetricsEllipseRectangleLab() {
           </div>
 
           <div className="bg-background border border-border rounded-sm p-3">
-            <div className="font-mono text-[9px] uppercase tracking-widest text-ink-fade mb-2">
+            <div className="kicker text-ink-fade mb-2">
               fórmulas calculadas com mathjs
             </div>
             <div className="space-y-1.5 font-mono text-[11px] text-muted-foreground">
@@ -409,17 +409,17 @@ function MetricBars({
 
   return (
     <div className="bg-background border border-border rounded-sm p-3">
-      <div className="font-mono text-[9px] uppercase tracking-widest text-ink-fade mb-3">
+      <div className="kicker text-ink-fade mb-3">
         métricas
       </div>
       <div className="space-y-3">
         {metrics.map((item) => (
           <div key={item.label}>
             <div className="flex items-center justify-between gap-3 mb-1">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-ink">
+              <span className="kicker text-ink">
                 {item.label}
               </span>
-              <span className="font-serif text-lg text-rubric">{percent(item.value)}</span>
+              <span className="font-serif font-semibold text-lg text-rubric">{percent(item.value)}</span>
             </div>
             <div className="h-3 overflow-hidden rounded-sm border border-border bg-card">
               <motion.div
@@ -453,7 +453,7 @@ function Slider({
 }) {
   return (
     <label className="block">
-      <span className="flex justify-between font-mono text-[10px] uppercase tracking-widest text-ink-fade mb-1">
+      <span className="flex justify-between kicker text-ink-fade mb-1">
         <span>{label}</span>
         <span>{value.toFixed(1)}</span>
       </span>

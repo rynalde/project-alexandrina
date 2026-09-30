@@ -43,14 +43,14 @@ Protocolo lightweight publish-subscribe usando broker e tópicos hierárquicos.
 
 ### MQTT QoS
 
-- — <Highlight>QoS 0</Highlight> = at most once (fire and forget).
-- — <Highlight>QoS 1</Highlight> = at least once (pode duplicar).
-- — <Highlight>QoS 2</Highlight> = exactly once (garantia completa).
+- <Highlight>QoS 0</Highlight> = at most once (fire and forget).
+- <Highlight>QoS 1</Highlight> = at least once (pode duplicar).
+- <Highlight>QoS 2</Highlight> = exactly once (garantia completa).
 
 ### Wildcards MQTT
 
-- — <Kbd>+</Kbd> = match de <Highlight>exatamente um nível</Highlight>.
-- — <Kbd>#</Kbd> = match de <Highlight>múltiplos níveis</Highlight> a partir da sua posição.
+- <Kbd>+</Kbd> = match de <Highlight>exatamente um nível</Highlight>.
+- <Kbd>#</Kbd> = match de <Highlight>múltiplos níveis</Highlight> a partir da sua posição.
 
 Exemplo: `devices/+/battery` match `devices/sensor1/battery` mas NÃO `devices/sensor1/battery/level`.
 

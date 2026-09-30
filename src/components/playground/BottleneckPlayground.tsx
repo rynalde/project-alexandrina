@@ -18,14 +18,14 @@ export default function BottleneckPlayground() {
       : "crítico";
 
   const statusColor =
-    seqLen > 10 ? "text-rubric" : "text-[#5c8c5c]";
-  const barColor = seqLen > 10 ? "#c7502e" : "#5c8c5c";
+    seqLen > 10 ? "text-rubric" : "text-[#86efac]";
+  const barColor = seqLen > 10 ? "#4ade80" : "#86efac";
 
   return (
     <div className="my-6 bg-card border border-border rounded-sm p-4 sm:p-6">
       <div className="flex items-center gap-2 mb-4">
         <Play size={14} className="text-rubric shrink-0" />
-        <span className="font-mono text-[10px] uppercase tracking-widest text-rubric">
+        <span className="kicker text-rubric">
           Visualização — gargalo do vetor único
         </span>
       </div>
@@ -42,7 +42,7 @@ export default function BottleneckPlayground() {
           onChange={(e) => setSeqLen(Number(e.target.value))}
           className="flex-1 accent-rubric min-w-[120px]"
         />
-        <span className="font-serif text-2xl text-ink w-8 text-center">
+        <span className="font-serif font-semibold text-2xl text-ink w-8 text-center">
           {seqLen}
         </span>
       </div>
@@ -50,7 +50,7 @@ export default function BottleneckPlayground() {
       <div className="bg-background border border-border rounded-sm p-4">
         <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] gap-4 items-center">
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-widest text-ink-fade mb-2">
+            <div className="kicker text-ink-fade mb-2">
               entrada — {seqLen} tokens
             </div>
             <div className="flex flex-wrap gap-1">
@@ -59,12 +59,12 @@ export default function BottleneckPlayground() {
                   key={i}
                   className="w-6 h-6 border border-border rounded-sm"
                   style={{
-                    background: `rgba(199, 80, 46, ${0.3 + (i / seqLen) * 0.5})`,
+                    background: `rgba(74,222,128,${0.3 + (i / seqLen) * 0.5})`,
                   }}
                 />
               ))}
             </div>
-            <div className="font-mono text-[10px] text-ink-fade mt-2">
+            <div className="font-mono text-[11px] text-ink-fade mt-2">
               {seqLen} × dim_embedding
             </div>
           </div>
@@ -77,8 +77,8 @@ export default function BottleneckPlayground() {
             >
               <path
                 d="M 5 5 L 75 5 L 50 30 L 50 55 L 30 55 L 30 30 Z"
-                fill="rgba(199,80,46,0.15)"
-                stroke="#c7502e"
+                fill="rgba(74,222,128,0.15)"
+                stroke="#4ade80"
                 strokeWidth="1.5"
               />
               <text
@@ -87,7 +87,7 @@ export default function BottleneckPlayground() {
                 textAnchor="middle"
                 fontFamily="JetBrains Mono, monospace"
                 fontSize="8"
-                fill="#c7502e"
+                fill="#4ade80"
               >
                 comprime
               </text>
@@ -95,7 +95,7 @@ export default function BottleneckPlayground() {
           </div>
 
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-widest text-ink-fade mb-2">
+            <div className="kicker text-ink-fade mb-2">
               context — {VECTOR_DIM} dim fixas
             </div>
             <div className="flex flex-wrap gap-1">
@@ -104,23 +104,23 @@ export default function BottleneckPlayground() {
                   key={i}
                   className="w-6 h-6 border border-border rounded-sm"
                   style={{
-                    background: `rgba(199, 80, 46, ${0.4 + ((i * 0.1) % 0.4)})`,
+                    background: `rgba(74,222,128,${0.4 + ((i * 0.1) % 0.4)})`,
                   }}
                 />
               ))}
             </div>
-            <div className="font-mono text-[10px] text-ink-fade mt-2">
+            <div className="font-mono text-[11px] text-ink-fade mt-2">
               {VECTOR_DIM} × 1 (sempre)
             </div>
           </div>
         </div>
 
         <div className="mt-5 bg-card rounded-sm p-3 border border-border">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-rubric mb-1">
+          <div className="kicker text-rubric mb-1">
             taxa de compressão
           </div>
           <div className="flex items-center gap-3">
-            <div className="font-serif text-2xl sm:text-3xl text-ink">
+            <div className="font-serif font-semibold text-2xl sm:text-3xl text-ink">
               {seqLen} → {VECTOR_DIM}
             </div>
             <div className="flex-1 h-3 bg-background border border-border rounded-sm overflow-hidden">
@@ -139,7 +139,7 @@ export default function BottleneckPlayground() {
         </div>
       </div>
 
-      <p className="mt-5 font-serif italic text-[12px] sm:text-[13px] text-muted-foreground border-t border-border pt-3">
+      <p className="mt-5 font-serif text-[12px] sm:text-[13px] text-muted-foreground border-t border-border pt-3">
         A capacidade do context vector{" "}
         <span className="text-rubric">não cresce</span> com a entrada. Quanto
         maior a sequência, mais informação é forçada a caber no mesmo número de

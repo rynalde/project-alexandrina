@@ -18,9 +18,9 @@ A solução é simples e elegante: <Highlight>projetar Q, K e V em h subespaços
 
 Concretamente:
 
-- — Para cada cabeça i, projete <Kbd>Q_i = Q · W_Q^i</Kbd>, <Kbd>K_i = K · W_K^i</Kbd>, <Kbd>V_i = V · W_V^i</Kbd>.
-- — Calcule <Kbd>head_i = Attention(Q_i, K_i, V_i)</Kbd>.
-- — Concatene todas as h cabeças e aplique uma projeção final: <Kbd>MultiHead = Concat(head_1, ..., head_h) · W_O</Kbd>.
+- Para cada cabeça i, projete <Kbd>Q_i = Q · W_Q^i</Kbd>, <Kbd>K_i = K · W_K^i</Kbd>, <Kbd>V_i = V · W_V^i</Kbd>.
+- Calcule <Kbd>head_i = Attention(Q_i, K_i, V_i)</Kbd>.
+- Concatene todas as h cabeças e aplique uma projeção final: <Kbd>MultiHead = Concat(head_1, ..., head_h) · W_O</Kbd>.
 
 </Body>
 

@@ -14,10 +14,10 @@ Quarto grande tema. Aqui a tarefa não é mais classificar texto ou etiquetar to
 
 Os ingredientes principais:
 
-- — **Encoder** lê a entrada e produz uma representação interna.
-- — **Decoder** consome essa representação e gera a saída, token por token (autoregressivamente).
-- — **Atenção** permite que o decoder consulte partes relevantes da entrada a cada passo, em vez de depender de um único vetor fixo.
-- — **Softmax** transforma os scores em distribuições de probabilidade sobre o vocabulário a cada predição.
+- **Encoder** lê a entrada e produz uma representação interna.
+- **Decoder** consome essa representação e gera a saída, token por token (autoregressivamente).
+- **Atenção** permite que o decoder consulte partes relevantes da entrada a cada passo, em vez de depender de um único vetor fixo.
+- **Softmax** transforma os scores em distribuições de probabilidade sobre o vocabulário a cada predição.
 
 O caminho histórico é interessante: Seq2Seq (Sutskever, 2014) → Atenção (Bahdanau, 2014/2015) → Transformer (Vaswani, 2017). Este caderno cobre os dois primeiros — base essencial para entender o terceiro.
 

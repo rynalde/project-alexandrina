@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { Check, Eye, Lightbulb, X } from "lucide-react";
+import { Eye, Lightbulb, RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ChoiceLetter, choiceClass, Feedback, type ChoiceState } from "@/components/learning/Choice";
+import { useBeatGate } from "@/components/learning/Beats";
 
 /**
  * Micro-interactions: small, inline, low-friction checks that sit inside the
@@ -13,55 +16,84 @@ export function QuickCheck({
   options,
   correct,
   why,
+  hint = "One of the other options fits better. Look at them again.",
 }: {
   q: string;
   options: string[];
   correct: number;
   why: string;
+  /** shown after the first miss; the answer and `why` come after the second */
+  hint?: string;
 }) {
   const [picked, setPicked] = useState<number | null>(null);
-  const answered = picked !== null;
-  const right = picked === correct;
+  const [checked, setChecked] = useState(false);
+  // options already tried and missed stay crossed out, Brilliant-style
+  const [crossed, setCrossed] = useState<number[]>([]);
+  const right = checked && picked === correct;
+  const revealed = right || crossed.length >= 2;
+  useBeatGate(revealed);
+
+  const check = () => {
+    if (picked === null) return;
+    setChecked(true);
+    if (picked !== correct) setCrossed((items) => [...items, picked]);
+  };
+
+  const stateOf = (index: number): ChoiceState => {
+    if (checked && index === picked) return right ? "correct" : "wrong";
+    if (revealed && index === correct) return "missed";
+    if (checked || crossed.includes(index)) return "dim";
+    return picked === index ? "selected" : "idle";
+  };
 
   return (
-    <div className="my-5 rounded-lg border border-dashed border-rubric/40 bg-rubric/[0.04] p-3.5">
-      <div className="mb-2 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-rubric">
-        <Lightbulb size={12} /> quick check
+    <div className="my-6 rounded-xl border border-practice/35 bg-practice/[0.06] p-4">
+      <div className="mb-2 flex items-center gap-2 kicker text-practice">
+        <Lightbulb size={13} /> Quick check
       </div>
-      <div className="mb-3 text-[15px] leading-snug text-ink">{q}</div>
-      <div className="flex flex-wrap gap-1.5">
-        {options.map((option, index) => {
-          const isPicked = picked === index;
-          const isCorrect = index === correct;
-          let tone = "border-border bg-background text-ink hover:border-rubric/40";
-          if (answered && isCorrect) tone = "border-transparent bg-ink text-paper";
-          else if (answered && isPicked) tone = "border-rubric bg-background text-rubric line-through";
-          return (
-            <button
-              key={option}
-              type="button"
-              disabled={answered && right}
-              onClick={() => setPicked(index)}
-              className={`min-h-9 rounded-md border px-3 py-1.5 text-left text-sm transition ${tone}`}
-            >
-              {option}
-            </button>
-          );
-        })}
+      <div className="mb-3 text-[16px] font-medium leading-snug text-ink">{q}</div>
+      <div className="grid gap-2">
+        {options.map((option, index) => (
+          <button
+            key={option}
+            type="button"
+            disabled={checked || crossed.includes(index)}
+            aria-pressed={picked === index}
+            onClick={() => setPicked(index)}
+            className={choiceClass(stateOf(index), crossed.includes(index) && index !== picked ? "line-through" : "")}
+          >
+            <ChoiceLetter index={index} />
+            <span className="flex-1 pt-0.5">{option}</span>
+          </button>
+        ))}
       </div>
-      {answered ? (
-        <div
-          className={`mt-3 flex items-start gap-2 text-sm leading-relaxed ${
-            right ? "text-ink" : "text-rubric"
-          } animate-fade-in`}
+      {checked ? (
+        <Feedback
+          ok={right}
+          title={right ? "Correct!" : "Not quite"}
+          action={
+            revealed ? null : (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setPicked(null);
+                  setChecked(false);
+                }}
+                className="h-10 px-4"
+              >
+                <RotateCcw size={15} />
+                Try again
+              </Button>
+            )
+          }
         >
-          {right ? <Check size={15} className="mt-0.5 shrink-0" /> : <X size={15} className="mt-0.5 shrink-0" />}
-          <span>
-            {right ? "Right. " : "Not quite — try another. "}
-            {right ? why : null}
-          </span>
-        </div>
-      ) : null}
+          {revealed ? why : hint}
+        </Feedback>
+      ) : (
+        <Button onClick={check} disabled={picked === null} className="mt-3 h-11 px-6 text-[15px]">
+          Check
+        </Button>
+      )}
     </div>
   );
 }
@@ -74,24 +106,22 @@ export function PredictReveal({
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  useBeatGate(open);
   return (
-    <div className="my-5 rounded-lg border border-border bg-background p-3.5">
-      <div className="mb-2 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-ink-fade">
-        <Eye size={12} /> think first
+    <div className="my-6 rounded-xl border border-info/30 bg-info/[0.05] p-4">
+      <div className="mb-2 flex items-center gap-2 kicker text-info">
+        <Eye size={12} /> Think first
       </div>
-      <div className="text-[15px] italic leading-snug text-ink">{prompt}</div>
+      <div className="text-[16px] font-medium leading-snug text-ink">{prompt}</div>
       {open ? (
-        <div className="mt-3 border-l-2 border-rubric pl-3 text-sm leading-relaxed text-ink animate-fade-in">
+        <div className="mt-3 rounded-lg border-l-4 border-info bg-info/10 py-2 pl-3 pr-2 text-[15px] leading-7 text-ink animate-rise">
           {children}
         </div>
       ) : (
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className="mt-3 min-h-9 rounded-md border border-border bg-card px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-ink transition hover:border-rubric/40"
-        >
+        <Button variant="outline" onClick={() => setOpen(true)} className="mt-3 h-10 px-4">
+          <Eye size={15} />
           I have a guess — reveal
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -112,6 +142,7 @@ export function SortBuckets({
 
   const remaining = items.filter((item) => placed[item.label] === undefined);
   const done = remaining.length === 0;
+  useBeatGate(done);
 
   const drop = (bucket: 0 | 1) => {
     if (!selected) return;
@@ -127,13 +158,13 @@ export function SortBuckets({
   };
 
   return (
-    <div className="my-5 rounded-lg border border-dashed border-rubric/40 bg-rubric/[0.04] p-3.5">
-      <div className="mb-1 font-mono text-[10px] uppercase tracking-widest text-rubric">sort it</div>
-      <div className="mb-3 text-[15px] leading-snug text-ink">{title}</div>
+    <div className="my-6 rounded-xl border border-practice/35 bg-practice/[0.06] p-4">
+      <div className="mb-1 kicker text-practice">sort it</div>
+      <div className="mb-3 text-[16px] font-medium leading-snug text-ink">{title}</div>
 
       {!done ? (
         <>
-          <div className="mb-1 font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+          <div className="mb-1 kicker text-ink-fade">
             1 · tap an item
           </div>
           <div className="mb-3 flex flex-wrap gap-1.5">
@@ -142,17 +173,17 @@ export function SortBuckets({
                 key={item.label}
                 type="button"
                 onClick={() => setSelected(item.label)}
-                className={`min-h-9 rounded-md border px-3 py-1.5 text-sm transition ${
+                className={`min-h-10 rounded-lg border border-b-3 chonk px-3 py-1.5 text-sm ${
                   selected === item.label
-                    ? "border-transparent bg-ink text-paper"
-                    : "border-border bg-background text-ink hover:border-rubric/40"
+                    ? "border-rubric/60 bg-rubric/15 text-white"
+                    : "border-ledge bg-raised text-ink hover:border-rubric/70"
                 }`}
               >
                 {item.label}
               </button>
             ))}
           </div>
-          <div className="mb-1 font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+          <div className="mb-1 kicker text-ink-fade">
             2 · tap where it belongs
           </div>
         </>
@@ -165,16 +196,16 @@ export function SortBuckets({
             type="button"
             disabled={!selected}
             onClick={() => drop(index as 0 | 1)}
-            className={`min-h-20 rounded-lg border p-2.5 text-left transition ${
-              selected ? "border-rubric/50 bg-card hover:bg-rubric/5" : "border-border bg-background"
+            className={`min-h-20 rounded-xl border border-b-3 p-3 text-left transition ${
+              selected ? "border-rubric/70 bg-card hover:bg-rubric/10" : "border-ledge bg-paper"
             }`}
           >
-            <div className="mb-1.5 font-mono text-[10px] uppercase tracking-widest text-ink">{name}</div>
+            <div className="mb-1.5 kicker text-ink">{name}</div>
             <div className="flex flex-wrap gap-1">
               {items
                 .filter((item) => placed[item.label] === index)
                 .map((item) => (
-                  <span key={item.label} className="rounded bg-ink/5 px-2 py-0.5 text-xs text-ink">
+                  <span key={item.label} className="rounded-md bg-success/15 px-2 py-0.5 text-xs text-ink animate-pop">
                     {item.label}
                   </span>
                 ))}
@@ -184,12 +215,12 @@ export function SortBuckets({
       </div>
 
       {lastWhy ? (
-        <div className={`mt-3 text-sm leading-relaxed animate-fade-in ${lastWhy.ok ? "text-ink" : "text-rubric"}`}>
+        <div key={lastWhy.text} className={`mt-3 text-[15px] leading-relaxed ${lastWhy.ok ? "text-success animate-fade-in" : "text-danger animate-shake"}`}>
           {lastWhy.text}
         </div>
       ) : null}
       {done ? (
-        <div className="mt-2 font-mono text-[10px] uppercase tracking-widest text-rubric">all sorted ✓</div>
+        <div className="mt-2 kicker text-success">all sorted ✓</div>
       ) : null}
     </div>
   );

@@ -28,7 +28,7 @@ export default function PositionalEncoding() {
     <div className="my-6 bg-card border border-border rounded-sm p-4 sm:p-6">
       <div className="flex items-center gap-2 mb-4 flex-wrap">
         <Play size={14} className="text-rubric shrink-0" />
-        <span className="font-mono text-[10px] uppercase tracking-widest text-rubric flex-1">
+        <span className="kicker text-rubric flex-1">
           Positional Encoding — sinusoidal (Vaswani 2017)
         </span>
       </div>
@@ -36,7 +36,7 @@ export default function PositionalEncoding() {
       {/* Position slider */}
       <div className="bg-background border border-border rounded-sm p-3 mb-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+          <span className="kicker text-ink-fade">
             posição na sequência
           </span>
           <span className="font-mono text-[12px] text-rubric">pos = {pos}</span>
@@ -53,7 +53,7 @@ export default function PositionalEncoding() {
 
       {/* PE vector for selected position */}
       <div className="bg-background border border-border rounded-sm p-3 mb-4 overflow-x-auto">
-        <div className="font-mono text-[10px] uppercase tracking-widest text-ink-fade mb-2">
+        <div className="kicker text-ink-fade mb-2">
           PE(pos={pos}) ∈ R^{D_MODEL}
         </div>
         <div className="flex gap-1">
@@ -62,20 +62,20 @@ export default function PositionalEncoding() {
             return (
               <div
                 key={dim}
-                className="w-7 h-10 border border-border rounded-sm flex flex-col items-center justify-center font-mono text-[9px] shrink-0"
+                className="w-7 h-10 border border-border rounded-sm flex flex-col items-center justify-center font-mono text-[11px] shrink-0"
                 style={{
-                  background: `rgba(199, 80, 46, ${norm})`,
-                  color: norm > 0.55 ? "#f5efe3" : "#1a1512",
+                  background: `rgba(74,222,128,${norm})`,
+                  color: norm > 0.55 ? "#000000" : "#ededed",
                 }}
                 title={`dim=${dim} v=${v.toFixed(2)}`}
               >
-                <div className="text-[8px] opacity-60">{dim}</div>
+                <div className="text-[11px] opacity-60">{dim}</div>
                 <div>{v.toFixed(1)}</div>
               </div>
             );
           })}
         </div>
-        <p className="font-serif italic text-[11px] text-muted-foreground mt-3">
+        <p className="font-serif text-[11px] text-muted-foreground mt-3">
           Cada dimensão usa uma frequência diferente. As primeiras dimensões
           oscilam rápido (alta frequência), as últimas oscilam devagar — isso
           permite ao modelo distinguir posições próximas E posições muito
@@ -85,7 +85,7 @@ export default function PositionalEncoding() {
 
       {/* Full PE matrix as heatmap */}
       <div className="bg-background border border-border rounded-sm p-3 overflow-x-auto">
-        <div className="font-mono text-[10px] uppercase tracking-widest text-ink-fade mb-2">
+        <div className="kicker text-ink-fade mb-2">
           matriz PE inteira (linhas = posições, colunas = dimensões)
         </div>
         <div className="inline-block">
@@ -94,7 +94,7 @@ export default function PositionalEncoding() {
             {Array.from({ length: D_MODEL }).map((_, dim) => (
               <div
                 key={dim}
-                className="w-5 font-mono text-[8px] text-muted-foreground text-center"
+                className="w-5 font-mono text-[11px] text-muted-foreground text-center"
               >
                 {dim}
               </div>
@@ -103,7 +103,7 @@ export default function PositionalEncoding() {
           {MATRIX.map((r, p) => (
             <div key={p} className="flex">
               <div
-                className={`w-10 font-mono text-[9px] pr-2 flex items-center justify-end ${
+                className={`w-10 font-mono text-[11px] pr-2 flex items-center justify-end ${
                   p === pos ? "text-rubric font-semibold" : "text-ink-fade"
                 }`}
               >
@@ -116,9 +116,9 @@ export default function PositionalEncoding() {
                     key={dim}
                     className="w-5 h-4 border border-border/50"
                     style={{
-                      background: `rgba(199, 80, 46, ${norm})`,
+                      background: `rgba(74,222,128,${norm})`,
                       outline:
-                        p === pos ? "1px solid rgba(199,80,46,0.6)" : undefined,
+                        p === pos ? "1px solid rgba(74,222,128,0.6)" : undefined,
                     }}
                   />
                 );
@@ -130,7 +130,7 @@ export default function PositionalEncoding() {
 
       {/* Embedding + PE addition diagram */}
       <div className="mt-5 bg-background border border-border rounded-sm p-3 sm:p-4">
-        <div className="font-mono text-[10px] uppercase tracking-widest text-rubric mb-2">
+        <div className="kicker text-rubric mb-2">
           como entra no modelo
         </div>
         <div className="flex items-center gap-2 flex-wrap font-mono text-[11px]">
@@ -142,11 +142,11 @@ export default function PositionalEncoding() {
             PE(posição)
           </div>
           <span className="text-ink-fade">=</span>
-          <div className="bg-rubric text-paper rounded-sm px-2 py-1">
+          <div className="bg-rubric/15 text-white rounded-sm px-2 py-1">
             entrada do bloco
           </div>
         </div>
-        <p className="font-serif italic text-[11px] text-muted-foreground mt-3">
+        <p className="font-serif text-[11px] text-muted-foreground mt-3">
           PE não substitui o embedding. É somado a ele, dimensão por dimensão.
           Sem isso, o Transformer veria &ldquo;o gato comeu&rdquo; e &ldquo;comeu
           gato o&rdquo; como conjuntos idênticos.

@@ -64,7 +64,7 @@ export default function WordAlignmentDemo() {
     <div className="my-6 bg-card border border-border rounded-sm p-4 sm:p-6">
       <div className="flex items-center gap-2 mb-4 flex-wrap">
         <Play size={14} className="text-rubric shrink-0" />
-        <span className="font-mono text-[10px] uppercase tracking-widest text-rubric flex-1">
+        <span className="kicker text-rubric flex-1">
           Visualização — word alignment
         </span>
         <div className="flex gap-1 flex-wrap">
@@ -72,9 +72,9 @@ export default function WordAlignmentDemo() {
             <button
               key={i}
               onClick={() => setIdx(i)}
-              className={`px-2.5 py-1 font-mono text-[10px] rounded-sm transition border ${
+              className={`px-2.5 py-1 font-mono text-[11px] rounded-sm transition border ${
                 idx === i
-                  ? "bg-ink text-paper border-transparent"
+                  ? "border-rubric/60 bg-rubric/15 text-white"
                   : "bg-background border-border text-muted-foreground"
               }`}
             >
@@ -99,7 +99,7 @@ export default function WordAlignmentDemo() {
               y1={SOURCE_Y + 28}
               x2={20 + tIdx * TOKEN_W + TOKEN_W / 2}
               y2={TARGET_Y}
-              stroke="#c7502e"
+              stroke="#4ade80"
               strokeWidth="1.5"
               strokeOpacity="0.5"
               className="animate-fade-in"
@@ -119,8 +119,8 @@ export default function WordAlignmentDemo() {
                 width={TOKEN_W - 8}
                 height="28"
                 rx="4"
-                fill="#ede4d0"
-                stroke="rgba(26,21,18,0.3)"
+                fill="#0f0f11"
+                stroke="rgba(237,237,237,0.3)"
                 strokeWidth="1"
               />
               <text
@@ -129,7 +129,7 @@ export default function WordAlignmentDemo() {
                 textAnchor="middle"
                 fontFamily="JetBrains Mono, monospace"
                 fontSize="11"
-                fill="#1a1512"
+                fill="#ededed"
               >
                 {tok}
               </text>
@@ -150,8 +150,8 @@ export default function WordAlignmentDemo() {
                 width={TOKEN_W - 8}
                 height="28"
                 rx="4"
-                fill="rgba(199,80,46,0.15)"
-                stroke="#c7502e"
+                fill="rgba(74,222,128,0.15)"
+                stroke="#4ade80"
                 strokeWidth="1"
               />
               <text
@@ -160,7 +160,7 @@ export default function WordAlignmentDemo() {
                 textAnchor="middle"
                 fontFamily="JetBrains Mono, monospace"
                 fontSize="11"
-                fill="#1a1512"
+                fill="#ededed"
               >
                 {tok}
               </text>
@@ -172,7 +172,7 @@ export default function WordAlignmentDemo() {
             y={SOURCE_Y + 18}
             fontFamily="JetBrains Mono, monospace"
             fontSize="9"
-            fill="rgba(26,21,18,0.4)"
+            fill="rgba(237,237,237,0.4)"
             textAnchor="end"
           >
             EN
@@ -182,7 +182,7 @@ export default function WordAlignmentDemo() {
             y={TARGET_Y + 18}
             fontFamily="JetBrains Mono, monospace"
             fontSize="9"
-            fill="rgba(26,21,18,0.4)"
+            fill="rgba(237,237,237,0.4)"
             textAnchor="end"
           >
             PT
@@ -190,7 +190,7 @@ export default function WordAlignmentDemo() {
         </svg>
       </div>
 
-      <p className="mt-5 font-serif italic text-[12px] sm:text-[13px] text-muted-foreground border-t border-border pt-3">
+      <p className="mt-5 font-serif text-[12px] sm:text-[13px] text-muted-foreground border-t border-border pt-3">
         Alinhamento{" "}
         <span className="bg-rubric/15 px-1">raramente é 1-para-1</span>.
         Tradução automática neural com atenção{" "}

@@ -61,10 +61,10 @@ export default function PerceptronDrillDeck() {
     <div className="my-6 bg-card border border-border rounded-sm p-4 sm:p-6">
       <div className="flex items-center justify-between gap-3 mb-4">
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">
+          <div className="kicker text-rubric">
             treino diário — carta {idx + 1}/{DRILLS.length}
           </div>
-          <h3 className="font-serif text-xl sm:text-2xl italic text-ink mt-1">{drill.title}</h3>
+          <h3 className="font-serif font-semibold text-xl sm:text-2xl text-ink mt-1">{drill.title}</h3>
         </div>
         <button
           type="button"
@@ -77,7 +77,7 @@ export default function PerceptronDrillDeck() {
       </div>
 
       <div className="bg-background border border-border rounded-sm p-4 sm:p-5">
-        <div className="font-mono text-[9px] uppercase tracking-widest text-ink-fade mb-2">
+        <div className="kicker text-ink-fade mb-2">
           enunciado
         </div>
         <p className="font-sans text-sm sm:text-[15px] leading-relaxed text-ink">
@@ -87,10 +87,10 @@ export default function PerceptronDrillDeck() {
 
       {revealed && (
         <div className="mt-3 border-l-2 border-rubric pl-4 animate-slide-in">
-          <div className="font-mono text-[9px] uppercase tracking-widest text-rubric mb-1">
+          <div className="kicker text-rubric mb-1">
             resolução
           </div>
-          <p className="font-serif italic text-[13px] sm:text-[14px] leading-relaxed text-muted-foreground">
+          <p className="font-serif text-[13px] sm:text-[14px] leading-relaxed text-muted-foreground">
             {drill.answer}
           </p>
         </div>
@@ -101,7 +101,7 @@ export default function PerceptronDrillDeck() {
           type="button"
           onClick={() => setRevealed(true)}
           disabled={revealed}
-          className="min-h-11 flex-1 rounded-sm border border-rubric/40 bg-background px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-rubric hover:bg-rubric/10 transition disabled:opacity-50"
+          className="min-h-11 flex-1 rounded-sm border border-rubric/40 bg-background px-3 py-2 kicker text-rubric hover:bg-rubric/10 transition disabled:opacity-50"
         >
           <Eye size={14} className="inline mr-2" />
           mostrar resolução
@@ -109,7 +109,7 @@ export default function PerceptronDrillDeck() {
         <button
           type="button"
           onClick={next}
-          className="min-h-11 flex-1 rounded-sm border border-border bg-background px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-ink-fade hover:text-ink transition"
+          className="min-h-11 flex-1 rounded-sm border border-border bg-background px-3 py-2 kicker text-ink-fade hover:text-ink transition"
         >
           próxima carta
           <ArrowRight size={14} className="inline ml-2" />

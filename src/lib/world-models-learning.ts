@@ -25,8 +25,8 @@ export const WORLD_MODELS_LEARNING_CONFIG: LearningCourseConfig = {
       quizTopic: "overview",
       interaction: {
         id: "wm-two-tracks",
-        title: "Classifier path vs world model path",
-        kind: "flow",
+        title: "Classifier or world model?",
+        kind: "drill",
       },
     },
     ingredients: {

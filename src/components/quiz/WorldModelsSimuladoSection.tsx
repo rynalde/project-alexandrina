@@ -7,22 +7,18 @@ import {
 
 export default function WorldModelsSimuladoSection() {
   return (
-    <div>
+    <Simulado questions={WORLD_MODELS_QUESTIONS} topicLabels={WORLD_MODELS_TOPIC_LABELS}>
       <SectionHeader
         num="∞"
         title="Final Simulation"
         subtitle="exam-style questions, growing as chapters land"
         vol="vol. x"
       />
-      <p className="font-sans text-sm sm:text-[15px] leading-[1.75] text-ink mb-2 max-w-[68ch]">
-        Cumulative simulation for vol. x. Answer everything and click{" "}
-        <em>Submeter</em> to see the score, the per-topic breakdown and the
-        explanation for each item.
+      <p className="font-sans text-sm sm:text-[15px] leading-[1.75] text-ink max-w-[68ch]">
+        Cumulative simulation for vol. x, one question per screen. Nothing is
+        marked until you <em>Submit</em> at the end; then you get the score, the
+        per-topic breakdown, and a review of every answer with its explanation.
       </p>
-      <Simulado
-        questions={WORLD_MODELS_QUESTIONS}
-        topicLabels={WORLD_MODELS_TOPIC_LABELS}
-      />
-    </div>
+    </Simulado>
   );
 }

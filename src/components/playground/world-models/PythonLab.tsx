@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef, useState, type ReactNode } from "react";
 import { Check, Copy, Download, FlaskConical, Terminal } from "lucide-react";
-import { CompleteButton, LabShell } from "./ui";
+import { LabShell } from "./ui";
 
 /**
  * Building blocks for chapter 08's Python lab. The code lives in lab.mdx as ```python blocks;
@@ -27,26 +27,26 @@ export function LabCell({ step, title, children }: { step: string; title: string
   };
 
   return (
-    <div className="my-5 overflow-hidden rounded-lg border border-border bg-card shadow-[0_12px_30px_rgba(26,21,18,0.05)]">
+    <div className="my-5 overflow-hidden rounded-xl border border-border bg-card">
       <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="flex shrink-0 items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-rubric">
-            <Terminal size={12} /> step {step}
+          <span className="flex shrink-0 items-center gap-1 kicker text-rubric">
+            <Terminal size={12} /> Step {step}
           </span>
-          <span className="truncate font-serif text-[15px] italic text-ink">{title}</span>
+          <span className="truncate font-serif text-[15px] text-ink">{title}</span>
         </div>
         <button
           type="button"
           onClick={copy}
           aria-label={`Copy the code of step ${step}`}
-          className="flex min-h-8 shrink-0 items-center gap-1 rounded-md border border-border bg-background px-2 font-mono text-[10px] uppercase tracking-widest text-ink transition hover:border-rubric/40"
+          className="flex min-h-8 shrink-0 items-center gap-1 rounded-md border border-border bg-background px-2 kicker text-ink transition hover:border-rubric/40"
         >
           {copied ? <Check size={12} /> : <Copy size={12} />} {copied ? "copied" : "copy"}
         </button>
       </div>
       <div
         ref={box}
-        className="max-h-[560px] overflow-auto bg-ink text-paper [&_code]:font-mono [&_code]:text-[12px] [&_code]:leading-relaxed [&_pre]:m-0 [&_pre]:w-max [&_pre]:min-w-full [&_pre]:p-3.5"
+        className="max-h-[560px] overflow-auto bg-chrome text-ink [&_code]:font-mono [&_code]:text-[12px] [&_code]:leading-relaxed [&_pre]:m-0 [&_pre]:w-max [&_pre]:min-w-full [&_pre]:p-3.5"
       >
         {children}
       </div>
@@ -57,7 +57,7 @@ export function LabCell({ step, title, children }: { step: string; title: string
 export function LabOutput({ children, label = "what our run printed" }: { children: ReactNode; label?: string }) {
   return (
     <div className="my-4 rounded-lg border border-dashed border-rubric/40 bg-rubric/[0.04] p-3">
-      <div className="mb-1.5 font-mono text-[10px] uppercase tracking-widest text-rubric">{label}</div>
+      <div className="mb-1.5 kicker text-rubric">{label}</div>
       <div className="overflow-x-auto [&_code]:font-mono [&_code]:text-[11.5px] [&_code]:leading-relaxed [&_code]:text-ink [&_pre]:m-0">{children}</div>
     </div>
   );
@@ -120,7 +120,9 @@ export function LabFinish({ items }: { items: string[] }) {
           </li>
         ))}
       </ul>
-      <CompleteButton interactionId="wm-python-lab" />
     </LabShell>
   );
 }
+
+/** A figure stays on the screen of the output it illustrates (see Beats). */
+LabFigure.aside = true;

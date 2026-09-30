@@ -17,22 +17,22 @@ Atenção e FFN são as estrelas. Mas o que efetivamente <Highlight>permite empi
 
 <div className="my-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
   <div className="bg-card border border-border rounded-sm p-4">
-    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric mb-2">
+    <div className="font-mono text-[11px] uppercase tracking-widest text-rubric mb-2">
       conexão residual
     </div>
     <div className="font-mono text-[12px] bg-background border border-border rounded-sm p-2 mb-2">
       output = sublayer(input) + input
     </div>
-    <p className="font-serif italic text-[12px] text-muted-foreground">A entrada é somada à saída de cada sublayer. Isso cria um "atalho" pelo qual o gradiente flui mesmo se o sublayer pouco aprender — herdado dos ResNets (He et al., 2015).</p>
+    <p className="font-serif text-[12px] text-muted-foreground">A entrada é somada à saída de cada sublayer. Isso cria um "atalho" pelo qual o gradiente flui mesmo se o sublayer pouco aprender — herdado dos ResNets (He et al., 2015).</p>
   </div>
   <div className="bg-card border border-border rounded-sm p-4">
-    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric mb-2">
+    <div className="font-mono text-[11px] uppercase tracking-widest text-rubric mb-2">
       layer normalization
     </div>
     <div className="font-mono text-[12px] bg-background border border-border rounded-sm p-2 mb-2">
       LayerNorm(x) = γ · (x - μ)/σ + β
     </div>
-    <p className="font-serif italic text-[12px] text-muted-foreground">Centra e escala as ativações <em>por amostra</em> (não por batch, como BatchNorm). Estabiliza distribuições internas, acelera a convergência, é insensível a tamanho de batch.</p>
+    <p className="font-serif text-[12px] text-muted-foreground">Centra e escala as ativações <em>por amostra</em> (não por batch, como BatchNorm). Estabiliza distribuições internas, acelera a convergência, é insensível a tamanho de batch.</p>
   </div>
 </div>
 

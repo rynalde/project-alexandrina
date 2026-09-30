@@ -9,3 +9,6 @@ interface Props {
 export default function PerceptronQuizBlock({ topic, title }: Props) {
   return <QuizBlock topic={topic} title={title} source={PERCEPTRON_QUESTIONS} />;
 }
+
+/** A quiz always gets a screen of its own (see Beats). */
+PerceptronQuizBlock.screen = true;

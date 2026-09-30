@@ -28,12 +28,12 @@ ROS2 é uma das **áreas mais fortes de exame**. Organiza software robótico com
 
 ### Conceitos fundamentais
 
-- — <Highlight>Nó (Node)</Highlight>: unidade executável que realiza uma tarefa. Exemplo: nó de câmara publica imagens.
-- — <Highlight>Tópico (Topic)</Highlight>: canal nomeado para mensagens publish-subscribe. Exemplo: `/cmd_vel` transporta comandos de velocidade.
-- — <Highlight>Publisher</Highlight>: nó que envia mensagens para um tópico.
-- — <Highlight>Subscriber</Highlight>: nó que recebe mensagens de um tópico.
-- — **Serviço**: comunicação request-reply síncrona.
-- — **Ação**: comunicação goal-feedback-result para tarefas longas.
+- <Highlight>Nó (Node)</Highlight>: unidade executável que realiza uma tarefa. Exemplo: nó de câmara publica imagens.
+- <Highlight>Tópico (Topic)</Highlight>: canal nomeado para mensagens publish-subscribe. Exemplo: `/cmd_vel` transporta comandos de velocidade.
+- <Highlight>Publisher</Highlight>: nó que envia mensagens para um tópico.
+- <Highlight>Subscriber</Highlight>: nó que recebe mensagens de um tópico.
+- **Serviço**: comunicação request-reply síncrona.
+- **Ação**: comunicação goal-feedback-result para tarefas longas.
 
 ### DDS e QoS
 
@@ -42,32 +42,32 @@ ROS2 usa <Highlight>DDS (Data Distribution Service)</Highlight> para discovery e
 ### Comandos ROS2 essenciais
 
 <div className="grid gap-2">
-  <div className="rounded-lg border border-border bg-card p-3">
-    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">Listar nós</div>
+  <div className="rounded-xl border border-b-3 border-border bg-card p-3">
+    <div className="font-mono text-[11px] uppercase tracking-widest text-rubric">Listar nós</div>
     <div className="mt-2"><Kbd>ros2 node list</Kbd></div>
   </div>
-  <div className="rounded-lg border border-border bg-card p-3">
-    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">Listar tópicos</div>
+  <div className="rounded-xl border border-b-3 border-border bg-card p-3">
+    <div className="font-mono text-[11px] uppercase tracking-widest text-rubric">Listar tópicos</div>
     <div className="mt-2"><Kbd>ros2 topic list</Kbd></div>
   </div>
-  <div className="rounded-lg border border-border bg-card p-3">
-    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">Info de tópico</div>
+  <div className="rounded-xl border border-b-3 border-border bg-card p-3">
+    <div className="font-mono text-[11px] uppercase tracking-widest text-rubric">Info de tópico</div>
     <div className="mt-2"><Kbd>ros2 topic info /topic_name</Kbd></div>
   </div>
-  <div className="rounded-lg border border-border bg-card p-3">
-    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">Echo de tópico</div>
+  <div className="rounded-xl border border-b-3 border-border bg-card p-3">
+    <div className="font-mono text-[11px] uppercase tracking-widest text-rubric">Echo de tópico</div>
     <div className="mt-2"><Kbd>ros2 topic echo /topic_name</Kbd></div>
   </div>
-  <div className="rounded-lg border border-border bg-card p-3">
-    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">Frequência</div>
+  <div className="rounded-xl border border-b-3 border-border bg-card p-3">
+    <div className="font-mono text-[11px] uppercase tracking-widest text-rubric">Frequência</div>
     <div className="mt-2"><Kbd>ros2 topic hz /topic_name</Kbd></div>
   </div>
-  <div className="rounded-lg border border-border bg-card p-3">
-    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">Listar pacotes</div>
+  <div className="rounded-xl border border-b-3 border-border bg-card p-3">
+    <div className="font-mono text-[11px] uppercase tracking-widest text-rubric">Listar pacotes</div>
     <div className="mt-2"><Kbd>ros2 pkg list</Kbd></div>
   </div>
-  <div className="rounded-lg border border-border bg-card p-3">
-    <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">Executar nó</div>
+  <div className="rounded-xl border border-b-3 border-border bg-card p-3">
+    <div className="font-mono text-[11px] uppercase tracking-widest text-rubric">Executar nó</div>
     <div className="mt-2"><Kbd>ros2 run demo_nodes_cpp talker</Kbd></div>
   </div>
 </div>

@@ -1,10 +1,14 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import type { ReactNode } from "react";
+import Link from "next/link";
+import { motion } from "motion/react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import Sidebar from "./Sidebar";
 import type { Section } from "@/lib/data";
+import { useUiText } from "@/lib/ui-text";
 
 interface Props {
   sections: Section[];
@@ -18,6 +22,8 @@ interface Props {
   onOpenChange: (open: boolean) => void;
   vol?: string;
   courseTitle?: string;
+  steps?: ReactNode;
+  lessonProgress?: number;
 }
 
 export default function MobileHeader({
@@ -32,34 +38,59 @@ export default function MobileHeader({
   onOpenChange,
   vol,
   courseTitle,
+  steps,
+  lessonProgress = 0,
 }: Props) {
+  const t = useUiText();
   return (
     <>
-      <header className="md:hidden sticky top-0 z-30 bg-background border-b border-border px-4 py-3 flex items-center gap-3">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="-ml-2"
-          onClick={() => onOpenChange(true)}
-        >
-          <Menu size={20} className="text-ink" />
-        </Button>
-        <div className="flex-1 min-w-0">
-          <div className="font-mono text-[9px] uppercase tracking-[0.25em] text-rubric truncate">
-            cap. {current.num}
-          </div>
-          <div className="font-serif text-base italic text-ink truncate leading-tight">
-            {current.title}
-          </div>
+      {/* One row, Duolingo-style: menu · step tabs (or chapter title) · close */}
+      <header className="sticky top-0 z-30 border-b border-ledge bg-chrome px-2 py-2 lg:hidden">
+        <div className="flex items-center gap-1.5">
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={t.openChapters}
+            onClick={() => onOpenChange(true)}
+          >
+            <Menu size={20} className="text-ink" />
+          </Button>
+          {steps ? (
+            <div className="min-w-0 flex-1">{steps}</div>
+          ) : (
+            <>
+              <div className="min-w-0 flex-1">
+                <div className="truncate kicker text-rubric">
+                  {t.chapterShort} {current.num}
+                </div>
+                <div className="truncate text-[15px] font-semibold leading-tight text-ink">
+                  {current.title}
+                </div>
+              </div>
+              <span className="shrink-0 font-mono text-[12px] text-ink-soft">
+                {currentIdx + 1}/{total}
+              </span>
+            </>
+          )}
+          <Link
+            href="/"
+            aria-label={t.exitToCourses}
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg text-ink-soft hover:bg-raised hover:text-ink"
+          >
+            <X size={18} />
+          </Link>
         </div>
-        <div className="font-mono text-[10px] text-ink-fade shrink-0">
-          {currentIdx + 1}/{total}
-        </div>
+        <motion.span
+          aria-hidden="true"
+          className="absolute inset-x-0 -bottom-px h-0.5 origin-left bg-primary"
+          initial={false}
+          animate={{ scaleX: lessonProgress }}
+        />
       </header>
 
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="left" className="p-0 w-[85vw] max-w-[300px] bg-card">
-          <SheetTitle className="sr-only">Navegação</SheetTitle>
+        <SheetContent side="left" className="w-[85vw] max-w-[320px] border-ledge bg-chrome p-0">
+          <SheetTitle className="sr-only">{t.navigation}</SheetTitle>
           <Sidebar
             sections={sections}
             active={active}
@@ -70,6 +101,7 @@ export default function MobileHeader({
             }}
             vol={vol}
             courseTitle={courseTitle}
+            layoutId="chapter-active-drawer"
           />
         </SheetContent>
       </Sheet>

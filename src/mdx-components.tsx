@@ -6,6 +6,7 @@ import SectionHeader from "@/components/shared/SectionHeader";
 import Highlight from "@/components/shared/Highlight";
 import Body from "@/components/shared/Body";
 import Kbd from "@/components/shared/Kbd";
+import { MdxLesson } from "@/components/learning/Beats";
 import {
   ConceptFlow,
   ExamTrap,
@@ -56,6 +57,12 @@ import {
   TubeMaskLab,
 } from "@/components/playground/world-models/JepaLabs";
 import {
+  CollapseFigure,
+  IngredientsFigure,
+  PixelVsLatentFigure,
+  VJepaFigure,
+} from "@/components/playground/world-models/Figures";
+import {
   LabCell,
   LabDownloads,
   LabFigure,
@@ -70,6 +77,7 @@ function ExternalAwareLink(props: ComponentPropsWithoutRef<"a">) {
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
+    wrapper: MdxLesson,
     a: ExternalAwareLink,
     Marginalia,
     Callout,
@@ -116,6 +124,10 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     SurpriseLab,
     TokenCounter,
     TubeMaskLab,
+    CollapseFigure,
+    IngredientsFigure,
+    PixelVsLatentFigure,
+    VJepaFigure,
     LabCell,
     LabDownloads,
     LabFigure,

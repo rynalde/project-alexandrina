@@ -171,7 +171,7 @@ export default function PerceptronRegionPlayground({
     <div className="my-6 bg-card border border-border rounded-sm p-4 sm:p-6">
       <div className="flex items-center gap-2 mb-4">
         <Shapes size={14} className="text-rubric shrink-0" />
-        <span className="font-mono text-[10px] uppercase tracking-widest text-rubric">
+        <span className="kicker text-rubric">
           simulador — regiões por composição
         </span>
       </div>
@@ -185,7 +185,7 @@ export default function PerceptronRegionPlayground({
               setMode(key);
               setStrategy("correct");
             }}
-            className={`min-h-10 rounded-sm border px-3 py-2 font-mono text-[10px] uppercase tracking-widest transition ${
+            className={`min-h-10 rounded-sm border px-3 py-2 kicker transition ${
               mode === key
                 ? "border-rubric bg-rubric/10 text-rubric"
                 : "border-border bg-background text-ink-fade hover:text-ink"
@@ -201,7 +201,7 @@ export default function PerceptronRegionPlayground({
           <button
             type="button"
             onClick={() => setStrategy("correct")}
-            className={`min-h-11 rounded-sm border px-3 py-2 font-mono text-[10px] uppercase tracking-widest transition ${
+            className={`min-h-11 rounded-sm border px-3 py-2 kicker transition ${
               strategy === "correct"
                 ? "border-rubric bg-rubric/10 text-rubric"
                 : "border-border bg-background text-ink-fade hover:text-ink"
@@ -212,7 +212,7 @@ export default function PerceptronRegionPlayground({
           <button
             type="button"
             onClick={() => setStrategy("global-and")}
-            className={`min-h-11 rounded-sm border px-3 py-2 font-mono text-[10px] uppercase tracking-widest transition ${
+            className={`min-h-11 rounded-sm border px-3 py-2 kicker transition ${
               strategy === "global-and"
                 ? "border-rubric bg-rubric/10 text-rubric"
                 : "border-border bg-background text-ink-fade hover:text-ink"
@@ -226,7 +226,7 @@ export default function PerceptronRegionPlayground({
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_240px]">
         <div className="bg-background border border-border rounded-sm p-3 overflow-hidden">
           <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="w-full max-w-[560px] mx-auto block">
-            <rect x={PAD} y={PAD} width={PLOT_W} height={PLOT_H} fill="rgba(245,239,227,0.75)" />
+            <rect x={PAD} y={PAD} width={PLOT_W} height={PLOT_H} fill="rgba(0,0,0,0.75)" />
             {Array.from({ length: 9 }, (_, i) => {
               const v = -EXTENT + i;
               const sx = toSvg({ x: v, y: -EXTENT });
@@ -235,8 +235,8 @@ export default function PerceptronRegionPlayground({
               const ey = toSvg({ x: EXTENT, y: v });
               return (
                 <g key={v}>
-                  <line x1={sx.x} y1={sx.y} x2={ex.x} y2={ex.y} stroke="rgba(26,21,18,0.08)" />
-                  <line x1={sy.x} y1={sy.y} x2={ey.x} y2={ey.y} stroke="rgba(26,21,18,0.08)" />
+                  <line x1={sx.x} y1={sx.y} x2={ex.x} y2={ex.y} stroke="rgba(237,237,237,0.08)" />
+                  <line x1={sy.x} y1={sy.y} x2={ey.x} y2={ey.y} stroke="rgba(237,237,237,0.08)" />
                 </g>
               );
             })}
@@ -250,7 +250,7 @@ export default function PerceptronRegionPlayground({
                   cx={svg.x}
                   cy={svg.y}
                   r={1.65}
-                  fill={inside ? "#c7502e" : "rgba(26,21,18,0.16)"}
+                  fill={inside ? "#4ade80" : "rgba(237,237,237,0.16)"}
                   opacity={inside ? 0.8 : 0.42}
                 />
               );
@@ -266,7 +266,7 @@ export default function PerceptronRegionPlayground({
                   y1={segment[0].y}
                   x2={segment[1].x}
                   y2={segment[1].y}
-                  stroke={mode === "union" && idx >= ellipseA.length ? "rgba(26,21,18,0.52)" : "#1a1512"}
+                  stroke={mode === "union" && idx >= ellipseA.length ? "rgba(237,237,237,0.52)" : "#ededed"}
                   strokeWidth={mode === "ellipse" || mode === "union" ? 1 : 1.8}
                   strokeDasharray={mode === "ellipse" || mode === "union" ? "4 4" : undefined}
                 />
@@ -277,10 +277,10 @@ export default function PerceptronRegionPlayground({
 
         <div className="space-y-4">
           <div className="bg-background border border-border rounded-sm p-3">
-            <div className="font-mono text-[9px] uppercase tracking-widest text-rubric">
+            <div className="kicker text-rubric">
               {modeMeta.title}
             </div>
-            <p className="font-serif italic text-[13px] text-muted-foreground leading-relaxed mt-2">
+            <p className="font-serif text-[13px] text-muted-foreground leading-relaxed mt-2">
               {modeMeta.summary}
             </p>
             <div className="font-mono text-[11px] text-ink mt-3">
@@ -289,7 +289,7 @@ export default function PerceptronRegionPlayground({
           </div>
 
           <div className="bg-background border border-border rounded-sm p-3">
-            <div className="font-mono text-[9px] uppercase tracking-widest text-ink-fade mb-2">
+            <div className="kicker text-ink-fade mb-2">
               rede lógica
             </div>
             {mode === "union" ? (
@@ -313,17 +313,17 @@ export default function PerceptronRegionPlayground({
           </div>
 
           <div className="bg-background border border-border rounded-sm p-3">
-            <div className="font-mono text-[9px] uppercase tracking-widest text-ink-fade mb-2">
+            <div className="kicker text-ink-fade mb-2">
               restrições
             </div>
             <div className="space-y-1.5 max-h-32 overflow-auto custom-scrollbar pr-1">
               {(mode === "union" ? ellipseA.slice(0, 4) : constraints.slice(0, 5)).map((constraint, idx) => (
-                <div key={`${constraint.label}-${idx}`} className="font-mono text-[10px] text-muted-foreground leading-relaxed">
+                <div key={`${constraint.label}-${idx}`} className="font-mono text-[11px] text-muted-foreground leading-relaxed">
                   {constraint.label}: {formatConstraint(constraint)}
                 </div>
               ))}
               {(mode === "ellipse" || mode === "union") && (
-                <div className="font-serif italic text-[12px] text-ink-fade">
+                <div className="font-serif text-[12px] text-ink-fade">
                   mostrando amostra; as tangentes restantes seguem o mesmo padrão.
                 </div>
               )}

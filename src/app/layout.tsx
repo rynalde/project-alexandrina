@@ -1,17 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Manrope, JetBrains_Mono } from "next/font/google";
+import { Rubik, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import MotionProvider from "@/components/layout/MotionProvider";
 
-const fraunces = Fraunces({
+const rubik = Rubik({
   subsets: ["latin"],
-  variable: "--font-fraunces",
-  display: "swap",
-  axes: ["SOFT", "WONK", "opsz"],
-});
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  variable: "--font-manrope",
+  variable: "--font-rubik",
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -31,6 +26,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
+  themeColor: "#000000",
 };
 
 export default function RootLayout({
@@ -39,10 +35,10 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${fraunces.variable} ${manrope.variable} ${jetbrainsMono.variable} bg-background`}
+      className={`dark ${rubik.variable} ${jetbrainsMono.variable} bg-background`}
     >
       <body className="font-sans text-foreground antialiased min-h-full">
-        {children}
+        <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
   );

@@ -66,7 +66,7 @@ export default function TransformerArchitecture() {
     <div className="my-6 bg-card border border-border rounded-sm p-4 sm:p-6">
       <div className="flex items-center gap-2 mb-4 flex-wrap">
         <Play size={14} className="text-rubric shrink-0" />
-        <span className="font-mono text-[10px] uppercase tracking-widest text-rubric flex-1">
+        <span className="kicker text-rubric flex-1">
           Arquitetura Transformer — fluxo geral
         </span>
       </div>
@@ -76,7 +76,7 @@ export default function TransformerArchitecture() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Encoder column */}
           <div className="border border-border rounded-sm p-3 bg-card/40">
-            <div className="font-mono text-[9px] uppercase tracking-widest text-rubric mb-3 text-center">
+            <div className="kicker text-rubric mb-3 text-center">
               encoder (× N)
             </div>
             <div className="space-y-2">
@@ -108,7 +108,7 @@ export default function TransformerArchitecture() {
 
           {/* Decoder column */}
           <div className="border border-border rounded-sm p-3 bg-card/40">
-            <div className="font-mono text-[9px] uppercase tracking-widest text-rubric mb-3 text-center">
+            <div className="kicker text-rubric mb-3 text-center">
               decoder (× N)
             </div>
             <div className="space-y-2">
@@ -148,7 +148,7 @@ export default function TransformerArchitecture() {
 
       {/* Description */}
       <div className="mt-4 bg-background border border-border rounded-sm p-3 sm:p-4">
-        <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">
+        <div className="kicker text-rubric">
           {stage.label}
         </div>
         <div className="font-sans text-[12px] sm:text-[13px] text-ink mt-1 leading-relaxed">
@@ -164,7 +164,7 @@ export default function TransformerArchitecture() {
             onClick={() => setActive(s.id)}
             className={`w-7 h-7 font-mono text-[11px] rounded-sm transition border ${
               active === s.id
-                ? "bg-ink text-paper border-transparent"
+                ? "border-rubric/60 bg-rubric/15 text-white"
                 : "bg-background border-border text-muted-foreground hover:border-rubric/30"
             }`}
           >
@@ -173,7 +173,7 @@ export default function TransformerArchitecture() {
         ))}
       </div>
 
-      <p className="mt-5 font-serif italic text-[12px] sm:text-[13px] text-muted-foreground border-t border-border pt-3">
+      <p className="mt-5 font-serif text-[12px] sm:text-[13px] text-muted-foreground border-t border-border pt-3">
         Note as três caixas de atenção: <span className="bg-rubric/15 px-1">self-attention no encoder</span>,
         <span className="bg-rubric/15 px-1 ml-1">masked self-attention no decoder</span> e
         <span className="bg-rubric/15 px-1 ml-1">encoder-decoder attention</span>. Cada uma com seu papel.
@@ -196,7 +196,7 @@ function Block({
   let cls =
     "w-full text-left px-3 py-2 rounded-sm font-mono text-[11px] transition border ";
   if (active) {
-    cls += "bg-ink text-paper border-transparent";
+    cls += "border-rubric/60 bg-rubric/15 text-white";
   } else if (rubric) {
     cls += "bg-rubric/10 border-rubric/30 text-ink hover:bg-rubric/15";
   } else {
@@ -211,7 +211,7 @@ function Block({
 
 function SubBlock({ label }: { label: string }) {
   return (
-    <div className="text-center font-mono text-[9px] uppercase tracking-widest text-ink-fade py-0.5">
+    <div className="text-center kicker text-ink-fade py-0.5">
       ↓ {label} ↓
     </div>
   );

@@ -1,21 +1,38 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Button } from "@/components/ui/button";
-import { useLearningProgress } from "@/components/learning/LearningProgressProvider";
 
 export { mulberry32 } from "@/lib/world-models-sim";
 
 /** Palette shared by every World Models interaction (matches globals.css). */
 export const WM = {
-  ink: "#1a1512",
-  rubric: "#c7502e",
-  paper: "#f5efe3",
-  paperDark: "#ede4d0",
-  olive: "#5f6f52",
-  fade: "rgba(26,21,18,0.45)",
-  faint: "rgba(26,21,18,0.12)",
+  ink: "#ededed",
+  rubric: "#4ade80",
+  paper: "#000000",
+  paperDark: "#0f0f11",
+  olive: "#fbbf24",
+  fade: "rgba(237,237,237,0.45)",
+  faint: "rgba(237,237,237,0.12)",
 } as const;
+
+/**
+ * Role colours shared by every World Models figure, so a colour always means the same thing:
+ * blue = what the model sees, amber = what it must predict, green = trained encoder,
+ * violet = predictor, slate = EMA / no-gradient side, rose = the loss.
+ */
+export const ROLE = {
+  context: "#7dd3fc",
+  target: "#fcd34d",
+  encoder: "#4ade80",
+  predictor: "#c4b5fd",
+  frozen: "#94a3b8",
+  loss: "#fb7185",
+} as const;
+export type Role = keyof typeof ROLE;
+
+/** `#rrggbb` + alpha → `#rrggbbaa`. */
+export const tint = (hex: string, alpha: number) =>
+  `${hex}${Math.round(Math.max(0, Math.min(1, alpha)) * 255).toString(16).padStart(2, "0")}`;
 
 export function LabShell({
   icon,
@@ -29,38 +46,22 @@ export function LabShell({
   children: ReactNode;
 }) {
   return (
-    <div className="my-6 rounded-lg border border-border bg-card p-4 shadow-[0_12px_30px_rgba(26,21,18,0.05)] sm:p-5">
+    <div className="my-6 rounded-xl border border-border bg-card p-4 sm:p-5">
       <div className="mb-4 flex items-start gap-3">
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-md border border-rubric/20 bg-rubric/10 text-rubric">
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-rubric/10 text-rubric">
           {icon}
         </span>
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">
+          <div className="kicker text-rubric">
             {kicker}
           </div>
-          <div className="font-serif text-lg italic leading-tight text-ink">
+          <div className="font-serif font-semibold text-lg leading-tight text-ink">
             {title}
           </div>
         </div>
       </div>
       {children}
     </div>
-  );
-}
-
-export function CompleteButton({ interactionId }: { interactionId: string }) {
-  const learning = useLearningProgress();
-  const done = learning?.progress.completedInteractions.includes(interactionId);
-  return (
-    <Button
-      type="button"
-      size="sm"
-      variant={done ? "outline" : "default"}
-      className="mt-4 h-10"
-      onClick={() => learning?.markInteractionComplete(interactionId)}
-    >
-      {done ? "interaction done" : "mark as done"}
-    </Button>
   );
 }
 
@@ -78,7 +79,7 @@ export function Seg<T extends string | number>({
   return (
     <div>
       {label ? (
-        <div className="mb-1 font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+        <div className="mb-1 kicker text-ink-fade">
           {label}
         </div>
       ) : null}
@@ -89,10 +90,10 @@ export function Seg<T extends string | number>({
             type="button"
             aria-pressed={value === option.value}
             onClick={() => onChange(option.value)}
-            className={`min-h-9 rounded-md border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition ${
+            className={`min-h-9 rounded-lg border border-b-3 chonk px-3 py-1.5 kicker ${
               value === option.value
-                ? "border-transparent bg-ink text-paper"
-                : "border-border bg-background text-ink hover:border-rubric/40"
+                ? "border-rubric/60 bg-rubric/15 text-white"
+                : "border-ledge bg-raised text-ink hover:border-rubric/70"
             }`}
           >
             {option.label}
@@ -118,7 +119,7 @@ export function Meter({
   const pct = Math.max(0, Math.min(1, value)) * 100;
   return (
     <div>
-      <div className="mb-1 flex justify-between font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+      <div className="mb-1 flex justify-between kicker text-ink-fade">
         <span>{label}</span>
         <span className="text-ink">{display ?? `${Math.round(pct)}%`}</span>
       </div>
@@ -135,7 +136,7 @@ export function Meter({
 export function Panel({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="rounded-lg border border-border bg-background p-3">
-      <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">{label}</div>
+      <div className="kicker text-rubric">{label}</div>
       <div className="mt-1 text-sm leading-relaxed text-muted-foreground">{children}</div>
     </div>
   );
@@ -165,7 +166,7 @@ export function Sparkline({
     .join(" ");
   return (
     <div>
-      <div className="mb-1 flex justify-between font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+      <div className="mb-1 flex justify-between kicker text-ink-fade">
         <span>{label}</span>
         <span className="text-ink">{display ?? (values.length ? values[values.length - 1].toFixed(3) : "—")}</span>
       </div>

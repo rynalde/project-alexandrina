@@ -57,7 +57,7 @@ export function Ros2GraphSimulation() {
   const current = nodes.find((node) => node.id === active) ?? nodes[0];
 
   return (
-    <div className="my-6 rounded-lg border border-border bg-card p-4 shadow-[0_12px_30px_rgba(26,21,18,0.05)] sm:p-5">
+    <div className="my-6 rounded-xl border border-border bg-card p-4 sm:p-5">
       <LabTitle icon={<Network size={15} />} title="simulador — grafo ROS2" />
       <svg viewBox="0 0 100 62" className="w-full rounded-lg border border-border bg-background">
         <line x1="24" y1="35" x2="41" y2="35" className="stroke-rubric animate-flow" strokeWidth="1.4" />
@@ -69,8 +69,8 @@ export function Ros2GraphSimulation() {
                 cx={node.x}
                 cy={node.y}
                 r="8"
-                fill={active === node.id ? "#1a1512" : "#ede4d0"}
-                stroke="#c7502e"
+                fill={active === node.id ? "#ededed" : "#0f0f11"}
+                stroke="#4ade80"
                 strokeWidth="1"
               />
             </button>
@@ -81,7 +81,7 @@ export function Ros2GraphSimulation() {
         ))}
       </svg>
       <div className="mt-3 rounded-lg border border-border bg-background p-3">
-        <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">
+        <div className="kicker text-rubric">
           {current.label}
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -167,7 +167,7 @@ export function MqttBridgeLab() {
   ];
 
   return (
-    <div className="my-6 rounded-lg border border-border bg-card p-4 shadow-[0_12px_30px_rgba(26,21,18,0.05)] sm:p-5">
+    <div className="my-6 rounded-xl border border-border bg-card p-4 sm:p-5">
       <LabTitle icon={<Wifi size={15} />} title="simulador — bridge ROS2-MQTT" />
       <div className="grid gap-4 sm:grid-cols-[1fr_220px]">
         <div className="rounded-lg border border-border bg-background p-4">
@@ -195,7 +195,7 @@ export function MqttBridgeLab() {
             publicar todos os tópicos
           </label>
           <div>
-            <div className="mb-2 font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+            <div className="mb-2 kicker text-ink-fade">
               QoS MQTT
             </div>
             <div className="grid gap-2">
@@ -210,7 +210,7 @@ export function MqttBridgeLab() {
                   onClick={() => setQos(value)}
                   className={`min-h-11 rounded-lg border px-3 py-2 text-left text-sm transition ${
                     qos === value
-                      ? "border-transparent bg-ink text-paper"
+                      ? "border-rubric/60 bg-rubric/15 text-white"
                       : "border-border bg-background text-ink hover:border-rubric/30"
                   }`}
                 >
@@ -258,7 +258,7 @@ export function ElectronicsLab() {
   const adc = Math.round((voltage / 10) * 1023);
 
   return (
-    <div className="my-6 rounded-lg border border-border bg-card p-4 shadow-[0_12px_30px_rgba(26,21,18,0.05)] sm:p-5">
+    <div className="my-6 rounded-xl border border-border bg-card p-4 sm:p-5">
       <LabTitle icon={<Zap size={15} />} title="laboratório — sensores e eletrónica" />
       <div className="grid gap-4 sm:grid-cols-2">
         <Slider label="tensão (V)" value={voltage} min={1} max={10} onChange={setVoltage} />
@@ -344,7 +344,7 @@ function StageFlow({
   const stage = stages[active];
 
   return (
-    <div className="my-6 rounded-lg border border-border bg-card p-4 shadow-[0_12px_30px_rgba(26,21,18,0.05)] sm:p-5">
+    <div className="my-6 rounded-xl border border-border bg-card p-4 sm:p-5">
       <LabTitle icon={icon} title={title} />
       <div className="grid gap-4 md:grid-cols-[1fr_240px]">
         <div className="grid gap-2 sm:grid-cols-2">
@@ -353,9 +353,9 @@ function StageFlow({
               key={label}
               type="button"
               onClick={() => setActive(index)}
-              className={`min-h-11 rounded-lg border px-3 py-2 text-left font-mono text-[10px] uppercase tracking-widest leading-snug transition ${
+              className={`min-h-11 rounded-lg border px-3 py-2 text-left kicker leading-snug transition ${
                 active === index
-                  ? "border-transparent bg-ink text-paper"
+                  ? "border-rubric/60 bg-rubric/15 text-white"
                   : "border-border bg-background text-ink hover:border-rubric/30"
               }`}
             >
@@ -364,7 +364,7 @@ function StageFlow({
           ))}
         </div>
         <div className="rounded-lg border border-border bg-background p-3">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">
+          <div className="kicker text-rubric">
             {stage[0]}
           </div>
           <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
@@ -407,7 +407,7 @@ function ChoiceLab({
   };
 
   return (
-    <div className="my-6 rounded-lg border border-border bg-card p-4 shadow-[0_12px_30px_rgba(26,21,18,0.05)] sm:p-5">
+    <div className="my-6 rounded-xl border border-border bg-card p-4 sm:p-5">
       <LabTitle icon={icon} title={title} />
       <div className="rounded-lg border border-border bg-background p-4">
         <div className="mb-3 flex gap-1">
@@ -420,7 +420,7 @@ function ChoiceLab({
             />
           ))}
         </div>
-        <div className="font-serif text-lg italic leading-snug text-ink">
+        <div className="font-serif font-semibold text-lg leading-snug text-ink">
           {scenario.prompt}
         </div>
         <div className="mt-4 grid gap-2 sm:grid-cols-3">
@@ -430,9 +430,11 @@ function ChoiceLab({
               type="button"
               onClick={() => setAnswer(option)}
               className={`min-h-11 rounded-lg border px-3 py-2 text-left text-sm transition ${
-                answer === option
-                  ? "border-transparent bg-ink text-paper"
-                  : "border-border bg-card text-ink hover:border-rubric/30"
+                answer !== option
+                  ? "border-border bg-card text-ink hover:border-rubric/30"
+                  : correct
+                    ? "border-success/60 bg-success/15 text-white"
+                    : "border-danger/60 bg-danger/10 text-white"
               }`}
             >
               {option}
@@ -440,13 +442,13 @@ function ChoiceLab({
           ))}
         </div>
         {answer ? (
-          <div className={`mt-3 rounded-md border p-3 text-sm leading-relaxed ${correct ? "border-[rgba(92,140,92,0.35)] bg-[rgba(92,140,92,0.1)] text-[#456b45]" : "border-rubric/30 bg-rubric/10 text-rubric"}`}>
+          <div className={`mt-3 rounded-md border p-3 text-sm leading-relaxed ${correct ? "border-[rgba(134,239,172,0.35)] bg-[rgba(134,239,172,0.1)] text-[#86efac]" : "border-danger/40 bg-danger/10 text-danger"}`}>
             {correct ? scenario.note : "Rever a distinção antes de avançar."}
           </div>
         ) : null}
       </div>
       <div className="mt-3 flex items-center justify-between gap-3">
-        <span className="font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+        <span className="kicker text-ink-fade">
           {index + 1}/{scenarios.length}
         </span>
         <Button type="button" size="sm" onClick={next} disabled={!correct} className="h-10">
@@ -477,14 +479,14 @@ function CompleteButton({ interactionId }: { interactionId: string }) {
 function LabTitle({ icon, title }: { icon: React.ReactNode; title: string }) {
   return (
     <div className="mb-4 flex items-start gap-3">
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-md border border-rubric/20 bg-rubric/10 text-rubric">
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-rubric/10 text-rubric">
         {icon}
       </span>
       <div>
-        <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">
+        <div className="kicker text-rubric">
           interação
         </div>
-        <div className="font-serif text-lg italic leading-tight text-ink">
+        <div className="font-serif font-semibold text-lg leading-tight text-ink">
           {title}
         </div>
       </div>
@@ -507,7 +509,7 @@ function Slider({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 flex justify-between font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+      <span className="mb-1 flex justify-between kicker text-ink-fade">
         <span>{label}</span>
         <span>{value}</span>
       </span>
@@ -527,10 +529,10 @@ function Slider({
 function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-border bg-background p-3">
-      <div className="font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+      <div className="kicker text-ink-fade">
         {label}
       </div>
-      <div className="mt-1 font-serif text-2xl text-ink">{value}</div>
+      <div className="mt-1 font-serif font-semibold text-2xl text-ink">{value}</div>
     </div>
   );
 }

@@ -51,10 +51,10 @@ export default function ApplicationsShowcase() {
                 <Icon size={18} className="text-rubric" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-serif italic text-base sm:text-lg text-ink mb-1">
+                <div className="font-serif font-semibold text-base sm:text-lg text-ink mb-1">
                   {app.title}
                 </div>
-                <div className="font-mono text-[10px] sm:text-[11px] text-rubric mb-2 break-words">
+                <div className="font-mono text-[11px] sm:text-[11px] text-rubric mb-2 break-words">
                   {app.example}
                 </div>
                 <p className="font-sans text-[12px] sm:text-[13px] text-muted-foreground leading-relaxed">

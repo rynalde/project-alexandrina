@@ -1,12 +1,15 @@
 import SectionHeader from "@/components/shared/SectionHeader";
 import Callout from "@/components/shared/Callout";
-import Marginalia from "@/components/shared/Marginalia";
 import Highlight from "@/components/shared/Highlight";
 import Body from "@/components/shared/Body";
 import { GitBranch, Lightbulb } from "lucide-react";
 import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 
 <SectionHeader num="04" title="Family Tree" subtitle="from dreaming agents to V-JEPA 2" vol="vol. x" />
+
+<Callout icon={Lightbulb} title="intuition first">
+  Two students take notes on the same lecture video. One tries to redraw every frame of what comes next — the pixel branch. The other writes a short summary and checks it against a summary of what came next — the representation branch. Both learn; the second never wastes ink on the lecturer's shirt pattern.
+</Callout>
 
 <LearningObjectives
   sectionId="family"
@@ -18,47 +21,58 @@ import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
 />
 
 <MobileStepScreens>
-<MobileStepScreen label="content" title="Content">
-
-<LessonStage step="1" title="Content" subtitle="Two branches. Read one at a time." />
-
-<Callout icon={Lightbulb} title="intuition first">
-  Two students take notes on the same lecture video. One tries to redraw every frame of what comes next — that is the pixel branch. The other writes a short summary and checks it against a summary of what came next — that is the representation branch. Both learn; the second never wastes ink on the lecturer's shirt pattern.
-</Callout>
+<MobileStepScreen label="learn" title="Learn">
 
 <Body>
 
-### Branch A — generative world models (predict pixels)
+### First, a recall
 
-**World Models (Ha &amp; Schmidhuber, 2018).** Three parts: V, a VAE that compresses each frame; M, a recurrent network that predicts the next compressed frame; C, a tiny controller. In VizDoom the controller was trained entirely inside the model's "dream", then transferred back to the real game. It popularised the term "world model".
+<QuickCheck
+  q="From chapter 02: which kind of target makes a video predictor blur uncertain futures?"
+  options={["Raw pixels", "Representations"]}
+  correct={0}
+  hint="Averaging two sharp pictures of a ball gives what?"
+  why="Squared error on pixels averages the futures into a ghost. Pixels vs representations is also exactly where the family tree splits."
+/>
 
-**Dreamer (Hafner et al., 2020 → DreamerV3, 2023).** Learns latent dynamics with a pixel-reconstruction loss, then learns to act by imagining futures in latent space. DreamerV3 collected diamonds in Minecraft from scratch.
+### Branch A — predict pixels
 
-**MAE (He et al., 2021).** Not a video world model, but the masking blueprint: hide 75% of image patches and reconstruct their pixels.
+**World Models (Ha &amp; Schmidhuber, 2018).** V, a VAE, compresses each frame; M, a recurrent network, predicts the next compressed frame; C, a tiny controller, acts. In VizDoom the controller trained entirely inside the model's "dream".
 
-### Branch B — joint-embedding (predict representations)
+**Dreamer (Hafner et al., 2020 → DreamerV3, 2023).** Learns latent dynamics with a pixel-reconstruction loss, then learns to act by imagining futures. DreamerV3 collected diamonds in Minecraft from scratch.
 
-**BYOL (Grill et al., 2020).** Predict one view's representation from another view's. EMA target, predictor, no negatives — the anti-collapse recipe from chapter 03.
+**MAE (He et al., 2021).** Not a video world model, but the masking blueprint: hide 75% of an image's patches and reconstruct their pixels.
 
-**data2vec (Baevski et al., 2022).** A student sees a masked input and predicts the representations an EMA teacher produces from the full input — for speech, images and text. The I-JEPA paper names it, together with Context Autoencoders, as its closest prior work.
+### Branch B — predict representations
 
-**JEPA (LeCun, 2022).** A position paper, *A Path Towards Autonomous Machine Intelligence*: predict in representation space, stack JEPAs into a hierarchy (H-JEPA), and put that world model at the centre of an agent.
+**BYOL (Grill et al., 2020).** Predict one view's representation from another's: EMA target, predictor, no negatives — chapter 03's recipe.
+
+**data2vec (Baevski et al., 2022).** A student sees a masked input and predicts the representations an EMA teacher makes of the full input, for speech, images and text. The I-JEPA paper names it as its closest prior work, with Context Autoencoders.
+
+**JEPA (LeCun, 2022).** A position paper, *A Path Towards Autonomous Machine Intelligence*: predict in representation space, stack JEPAs into a hierarchy, and put that world model at the centre of an agent.
 
 **I-JEPA (2023) → V-JEPA (2024) → V-JEPA 2 (2025).** Meta's implementations: images, then video, then video at scale with robot planning. Chapters 05–07 open each one up.
 
-### What's new, 2024–2026
+### The 2024–2026 wave
 
-The representation branch kept growing fast. Each line below was checked against the paper's abstract:
+Branch B kept growing fast: planners built on frozen features, a "surprise" test of intuitive physics, SIGReg's LeJEPA, and JEPA world models trained end to end from pixels. Branch A answered with NVIDIA's **Cosmos** (Jan 2025), open-weight models that generate future video — and DreamerV3 appeared in *Nature* in 2025.
 
-- — **DINO-WM (Nov 2024).** A world model on top of frozen DINOv2 features, trained on offline trajectories: it plans toward a goal image by searching in feature space — no reward model, no expert demonstrations, no pixel reconstruction.
-- — **Intuitive physics (Feb 2025).** Show a possible and an impossible clip; "surprise" = prediction error. V-JEPA shows object permanence and shape consistency where pixel predictors and multimodal LLMs stay closer to chance. A reality check followed: on IntPhys 2 (Jun 2025), in complex scenes most models are still near chance while humans are near-perfect.
-- — **LeJEPA (Nov 2025).** SIGReg replaces EMA and stop-gradient (chapter 03): one hyperparameter, about 50 lines of code, 79% on ImageNet with a ViT-H/14.
-- — **VL-JEPA (Dec 2025).** Predicts the *embedding* of an answer instead of generating its words: 50% fewer trainable parameters than a comparable token-predicting model.
-- — **V-JEPA 2.1 (Mar 2026).** Dense features — the loss uses visible and masked tokens — and 20 points better real-robot grasping than V-JEPA 2-AC.
-- — **LeWorldModel (Mar 2026).** An end-to-end JEPA world model from raw pixels with just two losses (next-embedding prediction + SIGReg): about 15M parameters, one GPU, a few hours.
-- — **LeVJEPA (Aug 2026).** SIGReg for video pretraining: at ViT-S/B/L scale, on the same data and epochs, it matches or beats V-JEPA 2 with 5.6–20.8× less pretraining compute.
+<details>
+<summary>Go deeper: seven papers, one line each</summary>
 
-The pixel branch did not stand still either: NVIDIA's **Cosmos** (Jan 2025) released open-weight video-generating world models — the planning baseline V-JEPA 2-AC beat on speed in chapter 07 — and DreamerV3 appeared in *Nature* in 2025.
+Each line was checked against the paper's abstract.
+
+- **DINO-WM (Nov 2024).** A world model on frozen DINOv2 features, trained on offline trajectories. It plans toward a goal image by searching in feature space — no reward model, no expert demonstrations, no pixel reconstruction.
+- **Intuitive physics (Feb 2025).** Show a possible and an impossible clip; "surprise" = prediction error. V-JEPA shows object permanence and shape consistency where pixel predictors and multimodal LLMs stay closer to chance. A reality check followed: on IntPhys 2 (Jun 2025), in complex scenes most models are still near chance while humans are near-perfect.
+- **LeJEPA (Nov 2025).** SIGReg replaces EMA and stop-gradient: one hyperparameter, about 50 lines of code, 79% on ImageNet with a ViT-H/14.
+- **VL-JEPA (Dec 2025).** Predicts the *embedding* of an answer instead of generating its words: 50% fewer trainable parameters than a comparable token-predicting model.
+- **V-JEPA 2.1 (Mar 2026).** Dense features — the loss uses visible and masked tokens — and 20 points better real-robot grasping than V-JEPA 2-AC.
+- **LeWorldModel (Mar 2026).** An end-to-end JEPA world model from raw pixels with just two losses (next-embedding prediction + SIGReg): about 15M parameters, one GPU, a few hours.
+- **LeVJEPA (Aug 2026).** SIGReg for video pretraining: at ViT-S/B/L scale, on the same data and epochs, it matches or beats V-JEPA 2 with 5.6–20.8× less pretraining compute.
+
+</details>
+
+### Sort the family
 
 <SortBuckets
   title="Which branch does each model belong to?"
@@ -77,32 +91,40 @@ The pixel branch did not stand still either: NVIDIA's **Cosmos** (Jan 2025) rele
 
 ### What JEPA inherited
 
-- — From <Highlight>World Models / Dreamer</Highlight>: the goal — a model of the world an agent can plan with.
-- — From <Highlight>MAE</Highlight>: masking as the pretext task, at scale, with ViTs.
-- — From <Highlight>BYOL</Highlight>: the EMA target + predictor that prevents collapse.
-- — From <Highlight>LeCun 2022</Highlight>: the insistence on predicting in representation space.
+- From <Highlight>World Models and Dreamer</Highlight>: the goal — a model of the world an agent can plan with.
+- From <Highlight>MAE</Highlight>: masking as the pretext task, at scale, with ViTs.
+- From <Highlight>BYOL</Highlight>: the EMA target + predictor that prevents collapse.
+- From <Highlight>LeCun 2022</Highlight>: the insistence on predicting in representation space.
 
 <QuickCheck
   q="Which ancestor contributed JEPA's anti-collapse design (EMA target + predictor, no negatives)?"
   options={["MAE", "Dreamer", "BYOL", "World Models (2018)"]}
   correct={2}
+  hint="Which of these already appeared in chapter 03's defenses?"
   why="BYOL introduced learning without negatives using an EMA target network and an online predictor. I-JEPA and V-JEPA reuse it."
+/>
+
+### Myth or fact?
+
+<SortBuckets
+  title="Sort each claim."
+  buckets={["myth", "fact"]}
+  items={[
+    { label: "Dreamer is a JEPA because it imagines in latent space", bucket: 0, why: "Myth. Its world model is still trained with pixel reconstruction." },
+    { label: "MAE masks like I-JEPA but predicts pixels", bucket: 1, why: "Fact. Same masking idea, pixel target." },
+    { label: "The 2022 JEPA paper introduced a trained model", bucket: 0, why: "Myth. It is a position paper — a proposal. I-JEPA (2023) is the first implementation." },
+    { label: "LeJEPA drops EMA and stop-gradient", bucket: 1, why: "Fact. SIGReg, an anti-collapse regularizer, does their job." },
+  ]}
 />
 
 </Body>
 
-<Callout icon={GitBranch} title="one sentence to keep">
-  Generative world models (World Models, Dreamer, Cosmos) and masked autoencoders (MAE) learn by reconstructing pixels; the joint-embedding line (BYOL → JEPA → I-JEPA → V-JEPA → V-JEPA 2 → V-JEPA 2.1) learns by predicting representations — and since 2025, LeJEPA's SIGReg offers a way to do it without EMA or stop-gradient.
+<Callout icon={GitBranch} title="one sentence to keep" screen>
+  World Models, Dreamer, MAE and Cosmos learn by reconstructing pixels; BYOL → JEPA → I-JEPA → V-JEPA 2 learn by predicting representations.
 </Callout>
 
-<Marginalia label="traps">
-  Dreamer's policy imagines in latent space, but its world model is still trained with pixel reconstruction — don't file it under JEPA. MAE masks like I-JEPA but predicts pixels. The 2022 JEPA paper is a proposal, not a trained model. LeJEPA's SIGReg is an anti-collapse regularizer, not a new architecture.
-</Marginalia>
-
 </MobileStepScreen>
-<MobileStepScreen label="interaction" title="Interaction">
-
-<LessonStage step="2" title="Interaction" subtitle="Filter the timeline by learning signal — or by what's new since 2025 — then drill the cards." />
+<MobileStepScreen label="practice" title="Practice">
 
 <FamilyTimeline />
 
@@ -124,9 +146,7 @@ The pixel branch did not stand still either: NVIDIA's **Cosmos** (Jan 2025) rele
 </MobileStepScreen>
 <MobileStepScreen label="quiz" title="Quiz">
 
-<LessonStage step="3" title="Quiz" subtitle="Close the chapter before moving on." />
-
-<SectionQuiz sectionId="family" topic="family" source={WORLD_MODELS_QUESTIONS} title="Checkpoint — family tree" />
+<SectionQuiz lang="en" sectionId="family" topic="family" source={WORLD_MODELS_QUESTIONS} title="Checkpoint — family tree" />
 
 </MobileStepScreen>
 </MobileStepScreens>
