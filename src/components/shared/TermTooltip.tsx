@@ -22,7 +22,7 @@ export default function TermTooltip({
       </button>
       <span
         role="tooltip"
-        className="pointer-events-none invisible absolute bottom-full left-0 z-20 mb-2 w-64 rounded-md border border-border bg-card p-3 text-left font-sans text-sm font-normal leading-relaxed text-ink opacity-0 shadow-lg transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+        className="pointer-events-none invisible absolute bottom-full left-0 z-20 mb-2 w-64 rounded-md border border-border bg-card p-3 text-left font-sans text-sm font-normal leading-relaxed text-ink opacity-0  transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
       >
         {definition}
       </span>

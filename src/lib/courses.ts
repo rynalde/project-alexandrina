@@ -30,7 +30,7 @@ export const COURSES: Course[] = [
     ],
     sectionCount: 9,
     questionCount: 25,
-    accent: "#c7502e",
+    accent: "#4ade80",
   },
   {
     slug: "transformer",
@@ -51,7 +51,7 @@ export const COURSES: Course[] = [
     ],
     sectionCount: 9,
     questionCount: 25,
-    accent: "#c7502e",
+    accent: "#4ade80",
   },
   {
     slug: "perceptrons-geometria",
@@ -72,7 +72,7 @@ export const COURSES: Course[] = [
     ],
     sectionCount: 9,
     questionCount: 25,
-    accent: "#c7502e",
+    accent: "#4ade80",
   },
   {
     slug: "metricas-classificacao",
@@ -93,7 +93,7 @@ export const COURSES: Course[] = [
     ],
     sectionCount: 8,
     questionCount: 20,
-    accent: "#c7502e",
+    accent: "#4ade80",
   },
   {
     slug: "simagia",
@@ -117,7 +117,7 @@ export const COURSES: Course[] = [
     ],
     sectionCount: 11,
     questionCount: 25,
-    accent: "#c7502e",
+    accent: "#4ade80",
   },
   {
     slug: "rantia",
@@ -141,6 +141,29 @@ export const COURSES: Course[] = [
     ],
     sectionCount: 15,
     questionCount: 25,
-    accent: "#c7502e",
+    accent: "#4ade80",
+  },
+  {
+    slug: "world-models",
+    vol: "vol. x",
+    title: "World Models",
+    subtitle: "Learning by predicting, not by labeling",
+    description:
+      "Self-supervised models that learn how the world behaves by predicting missing or future parts of their own input. Covers pretext vs downstream tasks, pixel vs latent prediction, representation collapse (EMA, VICReg, SIGReg), masking, the JEPA family up to V-JEPA 2.1 and LeJEPA, planning in latent space — and a verified PyTorch lab that builds a JEPA world model from scratch.",
+    topics: [
+      "Prediction vs Classification",
+      "Encoder",
+      "Predictor",
+      "Latent Space",
+      "Collapse",
+      "EMA",
+      "Masking",
+      "JEPA",
+      "Planning",
+      "PyTorch Lab",
+    ],
+    sectionCount: 11,
+    questionCount: 36,
+    accent: "#4ade80",
   },
 ];

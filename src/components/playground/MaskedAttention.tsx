@@ -34,14 +34,14 @@ export default function MaskedAttention() {
     <div className="my-6 bg-card border border-border rounded-sm p-4 sm:p-6">
       <div className="flex items-center gap-2 mb-4 flex-wrap">
         <Play size={14} className="text-rubric shrink-0" />
-        <span className="font-mono text-[10px] uppercase tracking-widest text-rubric flex-1">
+        <span className="kicker text-rubric flex-1">
           Decoder Masking — o futuro fica em -∞
         </span>
         <button
           onClick={() => setEnabled((e) => !e)}
-          className={`px-3 py-1.5 rounded-sm font-mono text-[10px] uppercase tracking-widest transition border ${
+          className={`px-3 py-1.5 rounded-sm kicker transition border ${
             enabled
-              ? "bg-rubric text-paper border-transparent"
+              ? "border-rubric/60 bg-rubric/15 text-white"
               : "bg-background border-border text-ink"
           }`}
         >
@@ -49,7 +49,7 @@ export default function MaskedAttention() {
         </button>
       </div>
 
-      <p className="font-mono text-[10px] sm:text-[11px] text-ink-fade mb-3">
+      <p className="font-mono text-[11px] sm:text-[11px] text-ink-fade mb-3">
         compare a matriz com e sem máscara causal
       </p>
 
@@ -57,13 +57,13 @@ export default function MaskedAttention() {
       <div className="overflow-x-auto -mx-4 sm:mx-0">
         <div className="inline-block px-4 sm:px-0">
           <div className="flex">
-            <div className="w-16 sm:w-20 font-mono text-[9px] text-ink-fade flex items-end pb-1">
+            <div className="w-16 sm:w-20 font-mono text-[11px] text-ink-fade flex items-end pb-1">
               q ↓ / k →
             </div>
             {TOKENS.map((w, j) => (
               <div
                 key={j}
-                className="w-12 sm:w-14 font-mono text-[9px] sm:text-[10px] text-muted-foreground text-center pb-1 truncate"
+                className="w-12 sm:w-14 font-mono text-[11px] sm:text-[11px] text-muted-foreground text-center pb-1 truncate"
               >
                 {w}
               </div>
@@ -71,7 +71,7 @@ export default function MaskedAttention() {
           </div>
           {matrix.map((row, i) => (
             <div key={i} className="flex">
-              <div className="w-16 sm:w-20 font-mono text-[10px] sm:text-[11px] text-ink pr-2 flex items-center justify-end truncate">
+              <div className="w-16 sm:w-20 font-mono text-[11px] sm:text-[11px] text-ink pr-2 flex items-center justify-end truncate">
                 {TOKENS[i]}
               </div>
               {row.map((v, j) => {
@@ -79,19 +79,18 @@ export default function MaskedAttention() {
                 return (
                   <div
                     key={j}
-                    className={`w-12 h-8 sm:w-14 sm:h-9 border border-border flex items-center justify-center font-mono text-[9px] sm:text-[10px] transition ${
+                    className={`w-12 h-8 sm:w-14 sm:h-9 border border-border flex items-center justify-center font-mono text-[11px] sm:text-[11px] transition ${
                       isMasked ? "bg-paper-dark/40" : ""
                     }`}
                     style={
                       isMasked
                         ? {
-                            background:
-                              "repeating-linear-gradient(45deg, rgba(26,21,18,0.06), rgba(26,21,18,0.06) 4px, transparent 4px, transparent 8px)",
-                            color: "rgba(26,21,18,0.3)",
+                            background: "#0a0a0b",
+                            color: "#8b8b93",
                           }
                         : {
-                            background: `rgba(199, 80, 46, ${v * 0.85})`,
-                            color: v > 0.4 ? "#f5efe3" : "rgba(26,21,18,0.6)",
+                            background: `rgba(74,222,128,${v * 0.85})`,
+                            color: v > 0.6 ? "#000000" : "#ededed",
                           }
                     }
                   >
@@ -106,20 +105,20 @@ export default function MaskedAttention() {
 
       <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="bg-background border border-border rounded-sm p-3">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-rubric mb-1">
+          <div className="kicker text-rubric mb-1">
             sem máscara
           </div>
-          <p className="font-serif italic text-[11px] text-muted-foreground">
+          <p className="font-serif text-[11px] text-muted-foreground">
             Cada query atende a TODA a sequência — incluindo o futuro. No
             treino isso é trapaça: o modelo veria a resposta antes de tê-la
             gerado.
           </p>
         </div>
         <div className="bg-background border border-border rounded-sm p-3">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-rubric mb-1">
+          <div className="kicker text-rubric mb-1">
             com máscara causal
           </div>
-          <p className="font-serif italic text-[11px] text-muted-foreground">
+          <p className="font-serif text-[11px] text-muted-foreground">
             Posições j {">"} i recebem -∞ antes do softmax → α=0. Cada
             posição só vê a si mesma e o passado. Treino e inferência se
             comportam igualmente.

@@ -1,0 +1,132 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { Brain, Lightbulb } from "lucide-react";
+import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
+
+<SectionHeader num="00" title="What a World Model Is" subtitle="learning by predicting, not by labeling" vol="vol. x" />
+
+<Callout icon={Lightbulb} title="intuition first">
+  A good hockey player skates to where the puck is going, not to where it is — Meta used this image to introduce V-JEPA 2. Nobody teaches you how pucks move; you pick it up by watching. A world model is that feel, learned by a network.
+</Callout>
+
+<LearningObjectives
+  sectionId="inicio"
+  items={[
+    "Tell a classifier apart from a world model.",
+    "Explain why prediction produces free labels.",
+    "Say what a model is forced to learn in order to predict well.",
+  ]}
+/>
+
+<MobileStepScreens>
+<MobileStepScreen label="learn" title="Learn">
+
+<Body>
+
+### Try it first
+
+Three frames of a thrown ball. Where will it be next?
+
+<NextFrameGuess />
+
+### The usual recipe: input → label
+
+A classifier learns a mapping you supervise: photo of a cat → "cat". It only knows the classes in your label set, and every example costs a human a few seconds of labeling.
+
+That is the ceiling. ImageNet took years of crowd-sourced work to label, while billions of hours of unlabeled video sit on the internet doing nothing.
+
+LeCun put a number on it in January 2024: by age four, a child has taken in about 10¹⁵ bytes through the eyes alone — by his count, some 50 times more than the text the biggest language models were trained on. Most of what we know about the world was never labeled.
+
+### The other recipe: input → what comes next
+
+A world model learns a different mapping. Show it frames 1–8 of a video and ask for frame 9. Show it an image with a hole and ask what is behind the hole.
+
+Nobody wrote a label — <Highlight>frame 9 already exists in the file</Highlight>. The data supervises itself. This is <TermTip term="self-supervised learning">the target is cut out of the input itself — no human writes it</TermTip>, and it is what unlocks all that unlabeled video.
+
+<QuickCheck
+  q="Which of these is self-supervised?"
+  options={["Training on photos a human tagged cat or dog", "Predicting the next word of a sentence from the words before it", "Grouping photos into clusters with no target at all"]}
+  correct={1}
+  hint="Ask of each option: who wrote the target — a human, the data itself, or nobody?"
+  why="The next word is already in the text, so the data supplies its own target. The first is supervised (human labels); the third is unsupervised (no target)."
+/>
+
+### Why prediction forces understanding
+
+The game you just played is the whole trick. To guess the next frame better than chance, a network has to internalize how the world behaves: objects don't teleport, a thrown ball keeps going and curves down, an arm hidden behind a torso still exists.
+
+None of that was labeled. It is simply the *only* way to reduce the prediction error. That accumulated know-how — physics, permanence, cause and effect — is what we call the <Highlight>world model</Highlight>.
+
+### The twist: we throw the prediction away
+
+<PredictReveal prompt="Training is over. The model predicts frame 9 very well. What do you think we actually keep and reuse?">
+Not the predictions. We keep the encoder — the part that turned frames into a compact description of what's happening. The predicted frames get thrown away.
+</PredictReveal>
+
+The predicted frame was never the point. The point is the representation the encoder learned in order to make it: a compact vector that captures "what is going on here". So there are always two tasks:
+
+- <Highlight>Pretext task</Highlight>: the training game (predict the missing part). Disposable.
+- <Highlight>Downstream task</Highlight>: the job you care about (classify an action, detect a fall, plan a robot's next move).
+
+### Where the name comes from
+
+Ha &amp; Schmidhuber (2018) popularised the term. They learned compressed models of two games, a racing game and VizDoom — and in VizDoom they trained the controller *entirely inside the model's own dream* before moving it back to the real game.
+
+Meta's JEPA family (2023 onward) is the modern version, scaled to real video, and that is where V-JEPA lives. Chapter 04 follows the family to 2026; in chapter 08 you build a small one yourself.
+
+<details>
+<summary>Go deeper: how old is the idea?</summary>
+
+Older than the name. Schmidhuber was already training networks to model their environment around 1990; the 2018 paper made the term stick.
+
+</details>
+
+### Myth or fact?
+
+<SortBuckets
+  title="Sort each claim."
+  buckets={["myth", "fact"]}
+  items={[
+    { label: "A world model must generate realistic pixels", bucket: 0, why: "Myth. Generating pixels is one option, not the definition — JEPA never reconstructs pixels." },
+    { label: "Self-supervised learning still has a target", bucket: 1, why: "Fact. The target is cut out of the data itself, so it is not unsupervised." },
+    { label: "The goal of pretraining is an accurate prediction", bucket: 0, why: "Myth. The prediction is thrown away; the goal is the encoder's representation." },
+    { label: "The downstream task is the job you actually care about", bucket: 1, why: "Fact. Pretext = the training game; downstream = the real job." },
+  ]}
+/>
+
+</Body>
+
+<Callout icon={Brain} title="one sentence to keep" screen>
+  A world model learns how the world behaves by predicting hidden parts of its own input — and what we keep is the encoder's representation, not the prediction.
+</Callout>
+
+</MobileStepScreen>
+<MobileStepScreen label="practice" title="Practice">
+
+<SortBuckets
+  title="Classifier or world model? Sort each step by the path it belongs to."
+  buckets={["classifier", "world model"]}
+  items={[
+    { label: "Pay humans to label every clip", bucket: 0, why: "Every example needs a human label — the cost that caps classifiers." },
+    { label: "Hide part of each clip and predict it", bucket: 1, why: "The target comes from the clip itself. No human needed." },
+    { label: "Only knows the classes in its label set", bucket: 0, why: "A classifier can't name what it was never given a label for." },
+    { label: "Learn from a million unlabeled videos", bucket: 1, why: "Unlabeled video is free, and there is a lot of it." },
+    { label: "Throw the predictions away, keep the encoder", bucket: 1, why: "The prediction was the pretext; the representation is the prize." },
+    { label: "Add a small labeled set only at the end", bucket: 1, why: "On top of a good representation, a few labels are enough for the downstream task." },
+  ]}
+/>
+
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
+<SectionQuiz lang="en"
+  sectionId="inicio"
+  topic="overview"
+  source={WORLD_MODELS_QUESTIONS}
+  title="Checkpoint — what a world model is"
+/>
+
+</MobileStepScreen>
+</MobileStepScreens>

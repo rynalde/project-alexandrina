@@ -1,0 +1,138 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { Lightbulb, ShieldAlert } from "lucide-react";
+import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
+
+<SectionHeader num="03" title="Collapse" subtitle="the zero-loss cheat, and three ways to block it" vol="vol. x" />
+
+<Callout icon={Lightbulb} title="intuition first">
+  LeCun describes a JEPA as an energy-based model: a pair (context, target) gets low "energy" when the two fit together and high energy when they don't. A useful model has hills and valleys. Collapse is the lazy landscape — flat and low everywhere, so every pair "fits" and the model tells you nothing.
+</Callout>
+
+<LearningObjectives
+  sectionId="collapse"
+  items={[
+    "Explain representation collapse and why latent prediction invites it.",
+    "Name the three families of defenses and one example of each.",
+    "Say which defense I-JEPA and V-JEPA use, and how you'd detect collapse in your own runs.",
+  ]}
+/>
+
+<MobileStepScreens>
+<MobileStepScreen label="learn" title="Learn">
+
+<Body>
+
+### The cheat
+
+<PredictReveal prompt="The prediction and the target both come out of learned encoders. What's the laziest way to make them match — for every input, forever?">
+Make the encoder output the same vector no matter what it sees, and have the predictor output that same vector. Prediction = target, always. Loss = 0. And the representation is useless, because it says nothing about the input.
+</PredictReveal>
+
+That failure has a name: <Highlight>representation collapse</Highlight>. The loss looks perfect and the model has learned nothing.
+
+<CollapseFigure />
+
+### Why pixel models never collapse
+
+Pixels are fixed data. The model can't change what frame 9 looks like, so it can't make the target trivial. Moving the target inside the model (chapter 02) is exactly what opens the door.
+
+There are three families of defenses.
+
+### Defense 1 — contrastive: push things apart
+
+Pull two views of the *same* input together, and push *different* inputs apart. Those different inputs are called **negatives**. A constant output can't push anything apart, so it is punished.
+
+Examples: SimCLR and MoCo (2020). The cost: you need lots of negatives, which usually means big batches.
+
+### Defense 2 — regularize: demand variety
+
+VICReg (Bardes, Ponce &amp; LeCun, 2022) adds three terms:
+
+- **Variance**: every embedding dimension must keep a minimum spread across the batch. A constant has zero spread.
+- **Invariance**: two views of the same input should match.
+- **Covariance**: different dimensions should not carry the same information.
+
+**SIGReg** (LeJEPA, 2025) folds this into one test: look at the cloud of embeddings along many random directions, and each 1-D "shadow" must look like a bell curve, N(0, 1). A collapsed cloud casts a spike, nothing like a bell curve.
+
+<details>
+<summary>Go deeper: why a bell curve, and who uses SIGReg</summary>
+
+The LeJEPA paper (Balestriero &amp; LeCun, 2025) argues that this Gaussian shape is the best one for downstream tasks. The method needs no EMA, no stop-gradient and a single trade-off hyperparameter. LeWorldModel (2026) and LeVJEPA (2026) build on it.
+
+</details>
+
+### Defense 3 — asymmetry: a slow teacher
+
+BYOL (2020) showed you can skip negatives entirely by making the two sides *different*:
+
+- a **predictor** sits on the online side only;
+- the target side gets a <TermTip term="stop-gradient">treat the value as a constant: no gradient flows back through it</TermTip>;
+- the target encoder is an **EMA** — a slow moving average — of the online encoder's weights.
+
+This is the defense **I-JEPA and V-JEPA use**.
+
+<details>
+<summary>Go deeper: why does asymmetry work at all?</summary>
+
+It took years to explain. SimSiam (2021) showed the EMA isn't strictly required — stop-gradient plus a predictor is enough. A 2025 paper (Ponce, Terver, Hebert &amp; Arbel) proved that, in the linear case, minimizing the same loss without stop-gradient or EMA always collapses — and that with them, training avoids collapse even though it no longer minimizes any smooth objective.
+
+</details>
+
+<QuickCheck
+  q="Your training loss drops to 0.00 in the first epoch, and the per-dimension standard deviation of your embeddings is ≈ 0. What happened?"
+  options={["A great model", "Representation collapse", "Overfitting", "A learning rate that's too low"]}
+  correct={1}
+  hint="Zero spread means every input lands on the same point. What is that called?"
+  why="Zero loss plus zero spread means every input maps to the same point. Real learning keeps the embeddings spread out."
+/>
+
+### How to catch it in your own runs
+
+Two cheap alarms, and chapter 08's lab uses both:
+
+- log the **standard deviation of each embedding dimension** across a batch — it should not sink toward 0;
+- run a quick **linear probe** now and then — stuck at chance means nothing was learned.
+
+In that lab, removing the stop-gradient and the EMA made the loss fall to 0.0001 while the spread fell from 0.35 to 0.008 — and the probe then scored *worse* than an untrained encoder.
+
+<details>
+<summary>Go deeper: dimensional collapse</summary>
+
+A milder cousin. The embeddings keep some spread but squeeze onto a few directions, leaving the other dimensions unused. A per-dimension spread can miss it; counting how many directions actually carry variance (the "dimensions in use" meter in this chapter's lab) catches it. VICReg's covariance term exists to push against it.
+
+</details>
+
+### Myth or fact?
+
+<SortBuckets
+  title="Sort each claim."
+  buckets={["myth", "fact"]}
+  items={[
+    { label: "A near-zero loss proves the model learned", bucket: 0, why: "Myth. Collapse also gives zero loss. Check the spread and a probe." },
+    { label: "Pixel-reconstruction models collapse the same way", bucket: 0, why: "Myth. Their target is fixed data; the risk comes from learned targets." },
+    { label: "BYOL and JEPA need no negatives", bucket: 1, why: "Fact. Asymmetry — predictor, stop-gradient, EMA — replaces them." },
+    { label: "SIGReg needs neither EMA nor stop-gradient", bucket: 1, why: "Fact. It demands bell-curve-shaped embeddings instead." },
+  ]}
+/>
+
+</Body>
+
+<Callout icon={ShieldAlert} title="one sentence to keep" screen>
+  With a learned target, a constant output wins the loss; negatives, variety regularizers or an asymmetric EMA teacher block that cheat — and I-JEPA and V-JEPA use the teacher.
+</Callout>
+
+</MobileStepScreen>
+<MobileStepScreen label="lab" title="Lab">
+
+<CollapseLab />
+
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
+<SectionQuiz lang="en" sectionId="collapse" topic="collapse" source={WORLD_MODELS_QUESTIONS} title="Checkpoint — collapse" />
+
+</MobileStepScreen>
+</MobileStepScreens>

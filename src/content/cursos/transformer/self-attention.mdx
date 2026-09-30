@@ -16,9 +16,9 @@ A peça central do Transformer. Em **self-attention** (também chamada de **intr
 
 Concretamente, a partir de uma sequência de embeddings de entrada, o modelo deriva três projeções:
 
-- — <Kbd>Q = X · W_Q</Kbd> (queries — "o que estou procurando?")
-- — <Kbd>K = X · W_K</Kbd> (keys — "o que cada posição oferece?")
-- — <Kbd>V = X · W_V</Kbd> (values — "qual conteúdo cada posição traz?")
+- <Kbd>Q = X · W_Q</Kbd> (queries — "o que estou procurando?")
+- <Kbd>K = X · W_K</Kbd> (keys — "o que cada posição oferece?")
+- <Kbd>V = X · W_V</Kbd> (values — "qual conteúdo cada posição traz?")
 
 E calcula <Kbd>Attention(Q, K, V) = softmax(Q · Kᵀ / √d_k) · V</Kbd>. Cada linha da matriz softmax é uma <Highlight>distribuição de probabilidade sobre toda a sequência</Highlight>.
 
@@ -32,9 +32,9 @@ A coisa mais importante a notar: <Highlight>Q, K e V vêm da mesma fonte</Highli
 
 Por que isso é poderoso? Porque resolve o gargalo das RNNs sem importar a distância:
 
-- — A relação entre o primeiro e o último token tem o mesmo custo computacional que entre dois tokens vizinhos. Não há "memória que decai".
-- — A operação é totalmente paralelizável: tudo pode ser feito em uma única multiplicação matricial gigante.
-- — A representação resultante para cada token já é contextualizada — não precisa do passo seguinte para "carregar" informação.
+- A relação entre o primeiro e o último token tem o mesmo custo computacional que entre dois tokens vizinhos. Não há "memória que decai".
+- A operação é totalmente paralelizável: tudo pode ser feito em uma única multiplicação matricial gigante.
+- A representação resultante para cada token já é contextualizada — não precisa do passo seguinte para "carregar" informação.
 
 </Body>
 

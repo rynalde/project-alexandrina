@@ -1,0 +1,138 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import { Lightbulb, Scale } from "lucide-react";
+import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
+
+<SectionHeader num="02" title="Pixel vs Latent" subtitle="why predicting pixels blurs, and predicting meaning works" vol="vol. x" />
+
+<Callout icon={Lightbulb} title="intuition first">
+  Meta's own example: if a video shows a tree, you don't care about the exact motion of every leaf. And VL-JEPA's: "the lamp is turned off" and "room will go dark" share no words, yet mean nearly the same thing. Predicting meaning gives the model one target where pixels or words would give it many.
+</Callout>
+
+<LearningObjectives
+  sectionId="pixel_latent"
+  items={[
+    "Explain why a pixel-prediction model produces blurry futures.",
+    "Explain why pixel losses waste capacity on unpredictable detail.",
+    "Describe what JEPA predicts instead, and what that costs.",
+  ]}
+/>
+
+<MobileStepScreens>
+<MobileStepScreen label="learn" title="Learn">
+
+<Body>
+
+### Two ways to grade a guess
+
+Chapter 01 ended on the big decision: what does the loss compare the prediction with?
+
+- <Highlight>Pixel target</Highlight>: predict the pixels of the hidden part, compare them with the real pixels.
+- <Highlight>Latent target</Highlight>: predict the *representation* of the hidden part, compare it with what an encoder makes of the real thing.
+
+<PixelVsLatentFigure />
+
+Pixels sound more honest. They cause two problems.
+
+### Problem 1 — the future is uncertain
+
+<PredictReveal prompt="A ball reaches a fork: 50% it goes left, 50% right. Your loss is mean squared error on pixels. Which single image gets the lowest loss on average?">
+The average of the two futures: a half-transparent ball on each side. Neither future actually happens, but that ghost is what minimises squared error. This is why pixel video predictors produce blurry futures.
+</PredictReveal>
+
+When several futures are possible, a squared-error pixel model is pushed toward their **average** — and the average of sharp images is a blurry image. The model isn't bad at its job: blur *is* the optimum of that loss.
+
+In chapter 08's lab, a real pixel network's guess four frames ahead matched the average of 2,000 simulated futures (correlation 0.92) far better than one real future (0.75).
+
+### Problem 2 — most pixels are unpredictable
+
+Leaves flickering, water rippling, sensor noise, the texture of a carpet. No model can predict these from the past, yet a pixel loss charges for every one. Capacity goes into modelling noise instead of what matters.
+
+<SortBuckets
+  title="A person walks through a park. Which details could a model reasonably predict one second ahead?"
+  buckets={["predictable", "unpredictable detail"]}
+  items={[
+    { label: "where the person will be", bucket: 0, why: "Position follows from velocity — predictable." },
+    { label: "exact shape of each leaf", bucket: 1, why: "Wind makes leaf texture essentially random frame to frame." },
+    { label: "that a dropped cup falls", bucket: 0, why: "Gravity. Very predictable." },
+    { label: "ripples on the pond", bucket: 1, why: "Fine ripple patterns are chaotic." },
+    { label: "the person is still the same person", bucket: 0, why: "Object permanence — predictable." },
+    { label: "camera sensor noise", bucket: 1, why: "Noise is, by definition, unpredictable." },
+  ]}
+/>
+
+### The latent fix
+
+In a JEPA, the target goes through an encoder too, and that encoder decides what to keep. It can drop leaf textures and sensor noise and keep "person, walking left, about to step off the curb". The predictor then only has to predict what is **predictable**.
+
+That's where the name comes from: <TermTip term="Joint-Embedding">both context and target are embedded by encoders</TermTip> Predictive Architecture — a predictor maps one embedding to the other.
+
+<details>
+<summary>Go deeper: doesn't a latent loss average too?</summary>
+
+It does — a squared-error loss averages in latent space as well. The difference is *what* gets averaged. Average two pictures of a ball and you get two ghosts. If the encoder stores the branch as one number, averaging "went up" and "went down" gives "50% up": the uncertainty survives as information instead of as smear.
+
+Nothing guarantees such a tidy encoding, though. The midpoint of two embeddings can also describe a state that never happens.
+
+</details>
+
+### Does it actually work?
+
+The V-JEPA paper trained two ViT-L/16 models with the **same data, schedule and masking**. One predicted features; the other reconstructed pixels, MAE-style. With a frozen backbone on Kinetics-400, feature prediction scored **73.7%** against **68.6%**.
+
+<details>
+<summary>Go deeper: the full comparison</summary>
+
+The feature model used V-JEPA's loss (L1 against an EMA target encoder); the pixel model used a squared-error loss on normalised pixels. Frozen evaluation:
+
+- Kinetics-400: **73.7%** vs **68.6%**
+- ImageNet: **74.8%** vs **73.3%**
+- Something-Something-v2: a tie, **66.2%** vs **66.0%**
+
+</details>
+
+<QuickCheck
+  q="In that comparison, what was held fixed between the two models?"
+  options={["Only the encoder size", "The data, the training schedule and the masking", "Nothing — everything differed", "Only the evaluation benchmark"]}
+  correct={1}
+  hint="Reread the bold words in the paragraph above."
+  why="Data, schedule and masking were shared. What changed was the target (features vs pixels) and the loss that goes with it — close to a one-variable experiment, but not exactly."
+/>
+
+### The catch
+
+If the target is produced by a learned encoder, the model can move the target. That opens the door to a cheat called **collapse** — the whole next chapter.
+
+### Myth or fact?
+
+<SortBuckets
+  title="Sort each claim."
+  buckets={["myth", "fact"]}
+  items={[
+    { label: "Blurry predictions mean the network is badly trained", bucket: 0, why: "Myth. Under uncertainty, blur is the optimum of squared error." },
+    { label: "In a JEPA the target has its own encoder", bucket: 1, why: "Fact. \"Latent\" means the target is embedded too — that is the joint embedding." },
+    { label: "Latent prediction never averages anything", bucket: 0, why: "Myth. It still averages — meaning, instead of pixels." },
+    { label: "A learned target can collapse", bucket: 1, why: "Fact. It is the price of predicting in representation space." },
+  ]}
+/>
+
+</Body>
+
+<Callout icon={Scale} title="one sentence to keep" screen>
+  Pixel losses blur uncertain futures and waste capacity on noise; predicting representations drops what can't be predicted — at the price of having to prevent collapse.
+</Callout>
+
+</MobileStepScreen>
+<MobileStepScreen label="lab" title="Lab">
+
+<BlurLab />
+
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
+<SectionQuiz lang="en" sectionId="pixel_latent" topic="pixel_latent" source={WORLD_MODELS_QUESTIONS} title="Checkpoint — pixel vs latent" />
+
+</MobileStepScreen>
+</MobileStepScreens>

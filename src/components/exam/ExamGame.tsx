@@ -275,17 +275,17 @@ function IntroScreen({ activeMetadata, activeQuestions, onStart }: { activeMetad
       <header className="px-4 sm:px-8 pt-[max(env(safe-area-inset-top),1rem)] pb-2">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest text-ink-fade hover:text-rubric transition"
+          className="inline-flex items-center gap-1.5 kicker text-ink-fade hover:text-rubric transition"
         >
-          <ArrowLeft size={12} /> voltar
+          <ArrowLeft size={12} /> Voltar
         </Link>
       </header>
 
       <div className="flex-1 px-4 sm:px-8 pt-4 pb-32 sm:pb-12 max-w-2xl mx-auto w-full">
-        <div className="font-mono text-[10px] uppercase tracking-[0.35em] text-rubric mb-3 flex items-center gap-1.5">
-          <GraduationCap size={12} /> simulado · modo prova
+        <div className="kicker text-rubric mb-3 flex items-center gap-1.5">
+          <GraduationCap size={12} /> Simulado · modo prova
         </div>
-        <h1 className="font-serif text-3xl sm:text-4xl italic text-ink leading-tight text-balance">
+        <h1 className="font-serif font-semibold text-3xl sm:text-4xl text-ink leading-tight text-balance">
           {activeMetadata.course}
         </h1>
         <p className="font-sans text-sm text-ink-fade mt-2">
@@ -294,7 +294,7 @@ function IntroScreen({ activeMetadata, activeQuestions, onStart }: { activeMetad
         </p>
 
         <section className="mt-8 bg-card border border-border rounded-sm p-5">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-rubric mb-3">
+          <div className="kicker text-rubric mb-3">
             condições da prova
           </div>
           <ul className="font-sans text-[13.5px] text-ink leading-relaxed space-y-2 list-disc pl-5">
@@ -313,7 +313,7 @@ function IntroScreen({ activeMetadata, activeQuestions, onStart }: { activeMetad
         </section>
 
         <section className="mt-4 bg-card border border-border rounded-sm p-5">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-rubric mb-3">
+          <div className="kicker text-rubric mb-3">
             ronda gamificada
           </div>
           <ul className="font-sans text-[13.5px] text-ink leading-relaxed space-y-2 list-disc pl-5">
@@ -335,11 +335,11 @@ function IntroScreen({ activeMetadata, activeQuestions, onStart }: { activeMetad
         </section>
       </div>
 
-      <div className="sticky bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t border-border px-4 sm:px-8 py-3 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
+      <div className="sticky bottom-0 left-0 right-0 bg-background border-t border-border px-4 sm:px-8 py-3 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
         <div className="max-w-2xl mx-auto">
           <Button
             onClick={onStart}
-            className="w-full h-12 font-mono text-[12px] uppercase tracking-widest"
+            className="w-full h-12 kicker"
             size="lg"
           >
             iniciar ronda <ArrowRight size={14} className="ml-2" />
@@ -409,25 +409,25 @@ function QuestionScreen({
 
       <div className="flex-1 px-4 sm:px-8 pt-5 pb-36 sm:pb-32 max-w-2xl mx-auto w-full">
         <div className="flex items-center gap-2 flex-wrap mb-3">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-rubric">
+          <span className="kicker text-rubric">
             Q{(questionIdx + 1).toString().padStart(2, "0")} / {batch.length}
           </span>
           {currentQ.multiple_answers && (
-            <span className="font-mono text-[9px] uppercase tracking-widest text-rubric border border-rubric/40 px-1.5 py-0.5 rounded-sm">
+            <span className="kicker text-rubric border border-rubric/40 px-1.5 py-0.5 rounded-sm">
               múltiplas
             </span>
           )}
           {currentQ.select === "false" && (
-            <span className="font-mono text-[9px] uppercase tracking-widest text-rubric border border-rubric/40 px-1.5 py-0.5 rounded-sm">
+            <span className="kicker text-rubric border border-rubric/40 px-1.5 py-0.5 rounded-sm">
               assinale falsas
             </span>
           )}
-          <span className="font-mono text-[10px] uppercase tracking-widest text-ink-fade ml-auto truncate">
+          <span className="kicker text-ink-fade ml-auto truncate">
             {currentQ.exam}
           </span>
         </div>
 
-        <p className="font-serif text-lg sm:text-xl italic text-ink leading-snug mb-5 text-pretty">
+        <p className="font-serif font-semibold text-lg sm:text-xl text-ink leading-snug mb-5 text-pretty">
           {currentQ.question}
         </p>
 
@@ -441,15 +441,15 @@ function QuestionScreen({
               "w-full text-left px-3 py-3.5 rounded-sm font-sans text-[14px] transition-all flex items-start gap-3 border min-h-[48px] active:scale-[0.99] ";
             if (!revealed) {
               cls += isSelected
-                ? "bg-ink text-paper border-transparent"
+                ? "border-rubric/60 bg-rubric/15 text-white"
                 : "bg-card border-border text-ink";
             } else {
               if (isCorrect && isSelected)
                 cls +=
-                  "bg-[rgba(92,140,92,0.12)] border-[rgba(92,140,92,0.5)] text-ink";
+                  "bg-[rgba(134,239,172,0.12)] border-[rgba(134,239,172,0.5)] text-ink";
               else if (isCorrect && !isSelected)
                 cls +=
-                  "bg-[rgba(92,140,92,0.06)] border-[rgba(92,140,92,0.3)] text-ink";
+                  "bg-[rgba(134,239,172,0.06)] border-[rgba(134,239,172,0.3)] text-ink";
               else if (!isCorrect && isSelected)
                 cls += "bg-rubric/10 border-rubric/50 text-ink";
               else cls += "bg-background/50 text-ink-fade border-border";
@@ -467,9 +467,9 @@ function QuestionScreen({
                     <span
                       className={
                         revealed && !isCorrect
-                          ? "text-rubric font-bold"
+                          ? "text-danger font-bold"
                           : revealed && isCorrect
-                          ? "text-[#5c8c5c] font-bold"
+                          ? "text-[#86efac] font-bold"
                           : "font-bold"
                       }
                     >
@@ -483,10 +483,10 @@ function QuestionScreen({
                 </span>
                 <span className="flex-1 leading-relaxed">{alt.text}</span>
                 {revealed && isCorrect && (
-                  <Check size={15} className="text-[#5c8c5c] mt-0.5 shrink-0" />
+                  <Check size={15} className="text-[#86efac] mt-0.5 shrink-0" />
                 )}
                 {revealed && !isCorrect && isSelected && (
-                  <X size={15} className="text-rubric mt-0.5 shrink-0" />
+                  <X size={15} className="text-danger mt-0.5 shrink-0" />
                 )}
               </button>
             );
@@ -498,9 +498,9 @@ function QuestionScreen({
         )}
       </div>
 
-      <div className="sticky bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t border-border px-4 sm:px-8 py-3 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
+      <div className="sticky bottom-0 left-0 right-0 bg-background border-t border-border px-4 sm:px-8 py-3 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
         <div className="max-w-2xl mx-auto flex items-center gap-3">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-ink-fade flex-1 min-w-0 truncate">
+          <div className="kicker text-ink-fade flex-1 min-w-0 truncate">
             {phase === "answering"
               ? selectedForCurrent.length === 0
                 ? "marque com X"
@@ -514,7 +514,7 @@ function QuestionScreen({
             <Button
               onClick={onLock}
               disabled={selectedForCurrent.length === 0}
-              className="font-mono text-[11px] uppercase tracking-widest h-11 px-5"
+              className="kicker h-11 px-5"
               size="lg"
             >
               Confirmar
@@ -522,7 +522,7 @@ function QuestionScreen({
           ) : (
             <Button
               onClick={onNext}
-              className="font-mono text-[11px] uppercase tracking-widest h-11 px-5"
+              className="kicker h-11 px-5"
               size="lg"
             >
               {isLast ? "Finalizar" : "Próxima"}
@@ -561,7 +561,7 @@ function StickyHUD({
   overTime,
 }: StickyHUDProps) {
   return (
-    <div className="sticky top-0 z-20 bg-background/95 backdrop-blur border-b border-border pt-[max(env(safe-area-inset-top),0.5rem)]">
+    <div className="sticky top-0 z-20 bg-background border-b border-border pt-[max(env(safe-area-inset-top),0.5rem)]">
       <div className="max-w-2xl mx-auto px-4 sm:px-8 py-2.5">
         <div className="grid grid-cols-4 gap-2 items-end">
           <HUDStat
@@ -576,13 +576,13 @@ function StickyHUD({
             label="tempo q"
             value={formatDuration(elapsedQuestion)}
             icon={<Clock size={10} />}
-            accent={overQuestion ? "text-rubric" : undefined}
+            accent={overQuestion ? "text-warning" : undefined}
           />
           <HUDStat
             label="resta"
             value={formatDuration(remainingRound)}
             icon={<Clock size={10} />}
-            accent={overTime || remainingRound < 60 ? "text-rubric" : undefined}
+            accent={overTime || remainingRound < 60 ? "text-warning" : undefined}
           />
         </div>
         <div className="mt-2 flex items-center gap-2">
@@ -590,7 +590,7 @@ function StickyHUD({
             value={(seenCount / poolSize) * 100}
             className="h-1 bg-card flex-1"
           />
-          <span className="font-mono text-[9px] uppercase tracking-widest text-ink-fade whitespace-nowrap">
+          <span className="kicker text-ink-fade whitespace-nowrap">
             {seenCount}/{poolSize} · {totalScore.toFixed(2)}
           </span>
         </div>
@@ -612,12 +612,12 @@ function HUDStat({
 }) {
   return (
     <div>
-      <div className="font-mono text-[8.5px] uppercase tracking-widest text-ink-fade flex items-center gap-1 leading-none">
+      <div className="kicker text-ink-fade flex items-center gap-1 leading-none">
         {icon}
         {label}
       </div>
       <div
-        className={`font-serif text-[17px] sm:text-lg text-ink mt-0.5 leading-none tabular-nums ${
+        className={`font-serif font-semibold text-[17px] sm:text-lg text-ink mt-0.5 leading-none tabular-nums ${
           accent ?? ""
         }`}
       >
@@ -650,12 +650,12 @@ function FeedbackPanel({
     <div
       className={`mt-5 p-4 rounded-sm border ${
         perfect
-          ? "bg-[rgba(92,140,92,0.08)] border-[rgba(92,140,92,0.4)]"
-          : "bg-rubric/5 border-rubric/30"
+          ? "bg-[rgba(134,239,172,0.08)] border-[rgba(134,239,172,0.4)]"
+          : "bg-warning/5 border-warning/30"
       } animate-slide-in`}
     >
       <div className="flex items-baseline justify-between gap-3 flex-wrap">
-        <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">
+        <div className={`kicker ${perfect ? "text-success" : "text-warning"}`}>
           {perfect ? "resposta perfeita" : "feedback"}
         </div>
         <div className="font-serif text-base text-ink">
@@ -684,7 +684,7 @@ function FeedbackPanel({
         </ul>
       )}
       {question.notes && (
-        <p className="mt-2 font-serif italic text-[12px] text-muted-foreground leading-relaxed">
+        <p className="mt-2 font-serif text-[12px] text-muted-foreground leading-relaxed">
           {question.notes}
         </p>
       )}
@@ -710,11 +710,11 @@ function RoundSummary({
     <div className="paper-texture min-h-[100svh] font-sans text-ink flex flex-col">
       <div className="flex-1 px-4 sm:px-8 pt-[max(env(safe-area-inset-top),1rem)] pb-32 max-w-2xl mx-auto w-full">
         <div className="bg-card border border-border rounded-sm p-5 sm:p-7 animate-fade-in">
-          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-rubric">
-            <Trophy size={12} /> ronda {result.round} concluída
+          <div className="flex items-center gap-2 kicker text-rubric">
+            <Trophy size={12} /> Ronda {result.round} concluída
           </div>
           <div className="mt-3">
-            <div className="font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+            <div className="kicker text-ink-fade">
               pontos da ronda
             </div>
             <div className="font-serif text-5xl sm:text-6xl text-ink leading-none mt-1 tabular-nums">
@@ -741,17 +741,17 @@ function RoundSummary({
           </div>
 
           <div className="mt-5 pt-4 border-t border-border">
-            <div className="font-mono text-[10px] uppercase tracking-widest text-ink-fade">
+            <div className="kicker text-ink-fade">
               score acumulado
             </div>
-            <div className="font-serif text-2xl text-ink mt-1 tabular-nums">
+            <div className="font-serif font-semibold text-2xl text-ink mt-1 tabular-nums">
               {totalScore.toFixed(2)}
             </div>
           </div>
         </div>
 
         <div className="mt-4 bg-card border border-border rounded-sm p-4">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-ink-fade mb-3">
+          <div className="kicker text-ink-fade mb-3">
             questões da ronda
           </div>
           <div className="space-y-1.5">
@@ -773,17 +773,17 @@ function RoundSummary({
           </div>
         </div>
 
-        <div className="mt-4 font-mono text-[10px] uppercase tracking-widest text-ink-fade text-center">
+        <div className="mt-4 kicker text-ink-fade text-center">
           {questionsRemaining} questões restantes no banco
         </div>
       </div>
 
-      <div className="sticky bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t border-border px-4 sm:px-8 py-3 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
+      <div className="sticky bottom-0 left-0 right-0 bg-background border-t border-border px-4 sm:px-8 py-3 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
         <div className="max-w-2xl mx-auto flex items-center gap-2">
           <Button
             variant="outline"
             onClick={onRestart}
-            className="font-mono text-[11px] uppercase tracking-widest h-11 px-4"
+            className="kicker h-11 px-4"
             size="lg"
           >
             <RotateCcw size={12} className="mr-1.5" /> recomeçar
@@ -791,7 +791,7 @@ function RoundSummary({
           <Button
             onClick={onContinue}
             disabled={questionsRemaining === 0}
-            className="flex-1 font-mono text-[11px] uppercase tracking-widest h-11"
+            className="flex-1 kicker h-11"
             size="lg"
           >
             próxima ronda <ArrowRight size={13} className="ml-1.5" />
@@ -815,7 +815,7 @@ function SummaryStat({
 }) {
   return (
     <div>
-      <div className="font-mono text-[9px] uppercase tracking-widest text-ink-fade flex items-center gap-1">
+      <div className="kicker text-ink-fade flex items-center gap-1">
         {icon}
         {label}
       </div>
@@ -823,7 +823,7 @@ function SummaryStat({
         {value}
       </div>
       {hint && (
-        <div className="font-mono text-[10px] text-ink-fade mt-1 tabular-nums">
+        <div className="font-mono text-[11px] text-ink-fade mt-1 tabular-nums">
           {hint}
         </div>
       )}
@@ -844,10 +844,10 @@ function ExhaustedState({
     <div className="paper-texture min-h-[100svh] font-sans text-ink flex items-center justify-center px-4 sm:px-8 py-10">
       <div className="bg-card border border-border rounded-sm p-8 text-center animate-fade-in max-w-md w-full">
         <Trophy size={28} className="text-rubric mx-auto mb-3" />
-        <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">
+        <div className="kicker text-rubric">
           banco completo
         </div>
-        <div className="font-serif text-3xl italic text-ink mt-2">
+        <div className="font-serif font-semibold text-3xl text-ink mt-2">
           respondeu todas as questões
         </div>
         <div className="font-mono text-[12px] text-ink-fade mt-3">
@@ -855,7 +855,7 @@ function ExhaustedState({
         </div>
         <Button
           onClick={onRestart}
-          className="mt-6 w-full h-11 font-mono text-[11px] uppercase tracking-widest"
+          className="mt-6 w-full h-11 kicker"
           size="lg"
         >
           <RotateCcw size={12} className="mr-1.5" /> recomeçar do zero

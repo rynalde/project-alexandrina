@@ -9,3 +9,6 @@ interface Props {
 export default function TransformerQuizBlock({ topic, title }: Props) {
   return <QuizBlock topic={topic} title={title} source={TRANSFORMER_QUESTIONS} />;
 }
+
+/** A quiz always gets a screen of its own (see Beats). */
+TransformerQuizBlock.screen = true;

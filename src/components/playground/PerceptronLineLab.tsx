@@ -128,7 +128,7 @@ export default function PerceptronLineLab() {
       <div className="flex items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-2">
           <SlidersHorizontal size={14} className="text-rubric shrink-0" />
-          <span className="font-mono text-[10px] uppercase tracking-widest text-rubric">
+          <span className="kicker text-rubric">
             laboratório — reta e lado positivo
           </span>
         </div>
@@ -145,7 +145,7 @@ export default function PerceptronLineLab() {
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_220px]">
         <div className="bg-background border border-border rounded-sm p-3">
           <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="w-full max-w-[420px] mx-auto block">
-            <rect x={PAD} y={PAD} width={PLOT} height={PLOT} fill="rgba(245,239,227,0.75)" />
+            <rect x={PAD} y={PAD} width={PLOT} height={PLOT} fill="rgba(0,0,0,0.75)" />
             {Array.from({ length: 11 }, (_, i) => {
               const v = -EXTENT + i;
               const startX = toSvg({ x: v, y: -EXTENT });
@@ -159,14 +159,14 @@ export default function PerceptronLineLab() {
                     y1={startX.y}
                     x2={endX.x}
                     y2={endX.y}
-                    stroke="rgba(26,21,18,0.08)"
+                    stroke="rgba(237,237,237,0.08)"
                   />
                   <line
                     x1={startY.x}
                     y1={startY.y}
                     x2={endY.x}
                     y2={endY.y}
-                    stroke="rgba(26,21,18,0.08)"
+                    stroke="rgba(237,237,237,0.08)"
                   />
                 </g>
               );
@@ -176,20 +176,20 @@ export default function PerceptronLineLab() {
               y1={SIZE / 2}
               x2={SIZE - PAD}
               y2={SIZE / 2}
-              stroke="rgba(26,21,18,0.22)"
+              stroke="rgba(237,237,237,0.22)"
             />
             <line
               x1={SIZE / 2}
               y1={PAD}
               x2={SIZE / 2}
               y2={SIZE - PAD}
-              stroke="rgba(26,21,18,0.22)"
+              stroke="rgba(237,237,237,0.22)"
             />
 
             {positivePolygon.length > 1 && (
               <polygon
                 points={positivePolygon.map((p) => `${p.x},${p.y}`).join(" ")}
-                fill="rgba(199,80,46,0.18)"
+                fill="rgba(74,222,128,0.18)"
               />
             )}
 
@@ -199,7 +199,7 @@ export default function PerceptronLineLab() {
                 y1={segment[0].y}
                 x2={segment[1].x}
                 y2={segment[1].y}
-                stroke="#1a1512"
+                stroke="#ededed"
                 strokeWidth={2.2}
                 className="animate-flow"
               />
@@ -209,10 +209,10 @@ export default function PerceptronLineLab() {
               cx={sampleSvg.x}
               cy={sampleSvg.y}
               r={7}
-              fill={output ? "#c7502e" : "#1a1512"}
+              fill={output ? "#4ade80" : "#ededed"}
               className="animate-pulse-slow"
             />
-            <circle cx={sampleSvg.x} cy={sampleSvg.y} r={12} fill="none" stroke="rgba(199,80,46,0.35)" />
+            <circle cx={sampleSvg.x} cy={sampleSvg.y} r={12} fill="none" stroke="rgba(74,222,128,0.35)" />
             <text x={sampleSvg.x + 12} y={sampleSvg.y - 10} className="fill-ink font-mono text-[11px]">
               x
             </text>
@@ -221,13 +221,13 @@ export default function PerceptronLineLab() {
 
         <div className="space-y-4">
           <div className="bg-background border border-border rounded-sm p-3">
-            <div className="font-mono text-[9px] uppercase tracking-widest text-ink-fade mb-2">
+            <div className="kicker text-ink-fade mb-2">
               equação ativa
             </div>
             <div className="font-mono text-[12px] leading-relaxed text-ink">
               {dw1.toFixed(1)}*x1 {signed(dw2)}*x2 {signed(db)} = 0
             </div>
-            <div className="font-serif italic text-[13px] text-muted-foreground mt-2">
+            <div className="font-serif text-[13px] text-muted-foreground mt-2">
               saída 1 quando {"w·x + b >= 0"}
             </div>
           </div>
@@ -235,7 +235,7 @@ export default function PerceptronLineLab() {
           <button
             type="button"
             onClick={() => setFlipped((value) => !value)}
-            className="w-full min-h-11 rounded-sm border border-rubric/40 bg-background px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-rubric hover:bg-rubric/10 transition"
+            className="w-full min-h-11 rounded-sm border border-rubric/40 bg-background px-3 py-2 kicker text-rubric hover:bg-rubric/10 transition"
           >
             trocar sinal dos pesos
           </button>
@@ -246,7 +246,7 @@ export default function PerceptronLineLab() {
             ["b", b, setB],
           ].map(([label, value, setter]) => (
             <label key={label as string} className="block">
-              <span className="flex justify-between font-mono text-[10px] uppercase tracking-widest text-ink-fade mb-1">
+              <span className="flex justify-between kicker text-ink-fade mb-1">
                 <span>{label as string}</span>
                 <span>{(value as number).toFixed(1)}</span>
               </span>
@@ -268,7 +268,7 @@ export default function PerceptronLineLab() {
               ["x2", point.y, (value: number) => setPoint((p) => ({ ...p, y: value }))],
             ].map(([label, value, setter]) => (
               <label key={label as string} className="block">
-                <span className="flex justify-between font-mono text-[10px] uppercase tracking-widest text-ink-fade mb-1">
+                <span className="flex justify-between kicker text-ink-fade mb-1">
                   <span>{label as string}</span>
                   <span>{(value as number).toFixed(1)}</span>
                 </span>
@@ -286,10 +286,10 @@ export default function PerceptronLineLab() {
           </div>
 
           <div className="bg-background border border-border rounded-sm p-3">
-            <div className="font-mono text-[9px] uppercase tracking-widest text-ink-fade">
+            <div className="kicker text-ink-fade">
               ponto-teste
             </div>
-            <div className="font-serif text-2xl text-ink mt-1">
+            <div className="font-serif font-semibold text-2xl text-ink mt-1">
               y = {output}
             </div>
             <div className="font-mono text-[11px] text-muted-foreground mt-1">

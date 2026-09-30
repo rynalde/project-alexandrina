@@ -84,7 +84,7 @@ export default function PerceptronPlane3D() {
     <div className="my-6 bg-card border border-border rounded-sm p-4 sm:p-6">
       <div className="flex items-center gap-2 mb-4">
         <Box size={14} className="text-rubric shrink-0" />
-        <span className="font-mono text-[10px] uppercase tracking-widest text-rubric">
+        <span className="kicker text-rubric">
           simulação — faixa entre dois planos 3D
         </span>
       </div>
@@ -92,20 +92,20 @@ export default function PerceptronPlane3D() {
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_240px]">
         <div className="bg-background border border-border rounded-sm p-3 overflow-hidden">
           <svg viewBox="0 0 360 320" className="w-full max-w-[560px] mx-auto block">
-            <line x1="40" y1="260" x2="310" y2="260" stroke="rgba(26,21,18,0.16)" />
-            <line x1="180" y1="300" x2="180" y2="35" stroke="rgba(26,21,18,0.16)" />
-            <line x1="70" y1="300" x2="300" y2="70" stroke="rgba(26,21,18,0.1)" />
+            <line x1="40" y1="260" x2="310" y2="260" stroke="rgba(237,237,237,0.16)" />
+            <line x1="180" y1="300" x2="180" y2="35" stroke="rgba(237,237,237,0.16)" />
+            <line x1="70" y1="300" x2="300" y2="70" stroke="rgba(237,237,237,0.1)" />
 
             <polygon
               points={polygonPoints(lowerPlane)}
-              fill="rgba(26,21,18,0.08)"
-              stroke="rgba(26,21,18,0.45)"
+              fill="rgba(237,237,237,0.08)"
+              stroke="rgba(237,237,237,0.45)"
               strokeWidth={1.5}
             />
             <polygon
               points={polygonPoints(upperPlane)}
-              fill="rgba(199,80,46,0.16)"
-              stroke="#c7502e"
+              fill="rgba(74,222,128,0.16)"
+              stroke="#4ade80"
               strokeWidth={1.8}
             />
 
@@ -119,7 +119,7 @@ export default function PerceptronPlane3D() {
                   y1={a.y}
                   x2={b.x}
                   y2={b.y}
-                  stroke="rgba(199,80,46,0.38)"
+                  stroke="rgba(74,222,128,0.38)"
                   strokeDasharray="5 5"
                   className="animate-flow"
                 />
@@ -130,22 +130,22 @@ export default function PerceptronPlane3D() {
               cx={point2.x}
               cy={point2.y}
               r={8}
-              fill={output ? "#c7502e" : "#1a1512"}
+              fill={output ? "#4ade80" : "#ededed"}
               className="animate-pulse-slow"
             />
-            <circle cx={point2.x} cy={point2.y} r={14} fill="none" stroke="rgba(199,80,46,0.35)" />
+            <circle cx={point2.x} cy={point2.y} r={14} fill="none" stroke="rgba(74,222,128,0.35)" />
             <text x={point2.x + 13} y={point2.y - 10} className="fill-ink font-mono text-[11px]">
               x
             </text>
-            <text x="38" y="277" className="fill-ink-fade font-mono text-[10px]">x1</text>
-            <text x="298" y="72" className="fill-ink-fade font-mono text-[10px]">x2</text>
-            <text x="188" y="43" className="fill-ink-fade font-mono text-[10px]">x3</text>
+            <text x="38" y="277" className="fill-ink-fade font-mono text-[11px]">x1</text>
+            <text x="298" y="72" className="fill-ink-fade font-mono text-[11px]">x2</text>
+            <text x="188" y="43" className="fill-ink-fade font-mono text-[11px]">x3</text>
           </svg>
         </div>
 
         <div className="space-y-4">
           <div className="bg-background border border-border rounded-sm p-3">
-            <div className="font-mono text-[9px] uppercase tracking-widest text-ink-fade mb-2">
+            <div className="kicker text-ink-fade mb-2">
               duas condições
             </div>
             <div className="space-y-2 font-mono text-[11px] text-ink">
@@ -165,7 +165,7 @@ export default function PerceptronPlane3D() {
           </div>
 
           <div className="bg-background border border-border rounded-sm p-3">
-            <div className="font-mono text-[9px] uppercase tracking-widest text-ink-fade mb-2">
+            <div className="kicker text-ink-fade mb-2">
               normal do plano
             </div>
             <div className="font-mono text-[11px] text-muted-foreground leading-relaxed">
@@ -177,7 +177,7 @@ export default function PerceptronPlane3D() {
           </div>
 
           <label className="block">
-            <span className="flex justify-between font-mono text-[10px] uppercase tracking-widest text-ink-fade mb-1">
+            <span className="flex justify-between kicker text-ink-fade mb-1">
               <span>ângulo</span>
               <span>{angleDeg}°</span>
             </span>
@@ -193,7 +193,7 @@ export default function PerceptronPlane3D() {
           </label>
 
           <label className="block">
-            <span className="flex justify-between font-mono text-[10px] uppercase tracking-widest text-ink-fade mb-1">
+            <span className="flex justify-between kicker text-ink-fade mb-1">
               <span>distância entre planos</span>
               <span>{width.toFixed(1)}</span>
             </span>
@@ -214,7 +214,7 @@ export default function PerceptronPlane3D() {
             ["x3", point.z, (value: number) => setPoint((p) => ({ ...p, z: value }))],
           ].map(([label, value, setter]) => (
             <label key={label as string} className="block">
-              <span className="flex justify-between font-mono text-[10px] uppercase tracking-widest text-ink-fade mb-1">
+              <span className="flex justify-between kicker text-ink-fade mb-1">
                 <span>{label as string}</span>
                 <span>{(value as number).toFixed(1)}</span>
               </span>

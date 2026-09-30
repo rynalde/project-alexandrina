@@ -65,7 +65,7 @@ export default function MultiHeadAttention() {
     <div className="my-6 bg-card border border-border rounded-sm p-4 sm:p-6">
       <div className="flex items-center gap-2 mb-4 flex-wrap">
         <Play size={14} className="text-rubric shrink-0" />
-        <span className="font-mono text-[10px] uppercase tracking-widest text-rubric flex-1">
+        <span className="kicker text-rubric flex-1">
           Multi-Head Attention — cada cabeça, um foco
         </span>
       </div>
@@ -78,7 +78,7 @@ export default function MultiHeadAttention() {
             onClick={() => setActive(i)}
             className={`px-3 py-1.5 rounded-sm font-mono text-[11px] transition border ${
               active === i
-                ? "bg-ink text-paper border-transparent"
+                ? "border-rubric/60 bg-rubric/15 text-white"
                 : "bg-background border-border text-ink hover:border-rubric/30"
             }`}
           >
@@ -88,10 +88,10 @@ export default function MultiHeadAttention() {
       </div>
 
       <div className="bg-background border border-border rounded-sm p-3 mb-4">
-        <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">
+        <div className="kicker text-rubric">
           {head.label}
         </div>
-        <div className="font-serif italic text-[12px] sm:text-[13px] text-muted-foreground mt-1">
+        <div className="font-serif text-[12px] sm:text-[13px] text-muted-foreground mt-1">
           {head.description}
         </div>
       </div>
@@ -104,7 +104,7 @@ export default function MultiHeadAttention() {
             {TOKENS.map((w, j) => (
               <div
                 key={j}
-                className="w-12 sm:w-14 font-mono text-[9px] sm:text-[10px] text-muted-foreground text-center pb-1 truncate"
+                className="w-12 sm:w-14 font-mono text-[11px] sm:text-[11px] text-muted-foreground text-center pb-1 truncate"
               >
                 {w}
               </div>
@@ -112,16 +112,16 @@ export default function MultiHeadAttention() {
           </div>
           {head.matrix.map((row, i) => (
             <div key={i} className="flex">
-              <div className="w-16 sm:w-20 font-mono text-[10px] sm:text-[11px] text-ink pr-2 flex items-center justify-end truncate">
+              <div className="w-16 sm:w-20 font-mono text-[11px] sm:text-[11px] text-ink pr-2 flex items-center justify-end truncate">
                 {TOKENS[i]}
               </div>
               {row.map((v, j) => (
                 <div
                   key={j}
-                  className="w-12 h-8 sm:w-14 sm:h-9 border border-border flex items-center justify-center font-mono text-[9px] sm:text-[10px] transition"
+                  className="w-12 h-8 sm:w-14 sm:h-9 border border-border flex items-center justify-center font-mono text-[11px] sm:text-[11px] transition"
                   style={{
-                    background: `rgba(199, 80, 46, ${v * 0.85})`,
-                    color: v > 0.4 ? "#f5efe3" : "rgba(26,21,18,0.6)",
+                    background: `rgba(74,222,128,${v * 0.85})`,
+                    color: v > 0.6 ? "#000000" : "#ededed",
                   }}
                 >
                   {v > 0.05 ? v.toFixed(2) : ""}
@@ -134,32 +134,32 @@ export default function MultiHeadAttention() {
 
       {/* Concat + projection illustration */}
       <div className="mt-5 bg-background border border-border rounded-sm p-3 sm:p-4">
-        <div className="font-mono text-[10px] uppercase tracking-widest text-rubric mb-2">
+        <div className="kicker text-rubric mb-2">
           após h cabeças
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {HEADS.map((_, i) => (
             <div
               key={i}
-              className="font-mono text-[10px] bg-card border border-border rounded-sm px-2 py-1 text-ink"
+              className="font-mono text-[11px] bg-card border border-border rounded-sm px-2 py-1 text-ink"
             >
               head_{i + 1}
             </div>
           ))}
-          <span className="font-mono text-[10px] text-ink-fade">→</span>
-          <div className="font-mono text-[10px] bg-card border border-border rounded-sm px-2 py-1 text-ink">
+          <span className="font-mono text-[11px] text-ink-fade">→</span>
+          <div className="font-mono text-[11px] bg-card border border-border rounded-sm px-2 py-1 text-ink">
             Concat
           </div>
-          <span className="font-mono text-[10px] text-ink-fade">×</span>
-          <div className="font-mono text-[10px] bg-card border border-border rounded-sm px-2 py-1 text-ink">
+          <span className="font-mono text-[11px] text-ink-fade">×</span>
+          <div className="font-mono text-[11px] bg-card border border-border rounded-sm px-2 py-1 text-ink">
             W_O
           </div>
-          <span className="font-mono text-[10px] text-ink-fade">→</span>
-          <div className="font-mono text-[10px] bg-rubric text-paper rounded-sm px-2 py-1">
+          <span className="font-mono text-[11px] text-ink-fade">→</span>
+          <div className="font-mono text-[11px] bg-rubric/15 text-white rounded-sm px-2 py-1">
             output
           </div>
         </div>
-        <p className="font-serif italic text-[11px] text-muted-foreground mt-3">
+        <p className="font-serif text-[11px] text-muted-foreground mt-3">
           MultiHead(Q,K,V) = Concat(head_1,...,head_h) · W_O. A projeção W_O
           devolve a saída para a dimensão d_model.
         </p>

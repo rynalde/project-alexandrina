@@ -9,3 +9,6 @@ interface Props {
 export default function MetricsQuizBlock({ topic, title }: Props) {
   return <QuizBlock topic={topic} title={title} source={METRICS_QUESTIONS} />;
 }
+
+/** A quiz always gets a screen of its own (see Beats). */
+MetricsQuizBlock.screen = true;

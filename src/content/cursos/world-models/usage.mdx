@@ -1,0 +1,161 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Body from "@/components/shared/Body";
+import { Crosshair, Lightbulb } from "lucide-react";
+import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
+
+<SectionHeader num="07" title="How to Use One" subtitle="probes, fine-tuning, planning, and surprise" vol="vol. x" />
+
+<Callout icon={Lightbulb} title="intuition first">
+  Three ways to use someone who has watched a lot of the world: ask them questions (probes), train them for one job (fine-tuning), or let them imagine what would happen (planning, surprise). The last two only work because the model can predict.
+</Callout>
+
+<LearningObjectives
+  sectionId="usage"
+  items={[
+    "Choose between a linear probe, an attentive probe and fine-tuning.",
+    "Explain how an attentive probe works and why V-JEPA needs one.",
+    "Explain how V-JEPA 2-AC plans robot actions in latent space, and why long tasks need sub-goals.",
+    "Explain how prediction error becomes a test of intuitive physics.",
+  ]}
+/>
+
+<MobileStepScreens>
+<MobileStepScreen label="learn" title="Learn">
+
+<Body>
+
+### Keep the encoder, usually frozen
+
+You have a pretrained encoder. Now what? Most of the time you **freeze** it. A frozen encoder is the fair test of a world model: it measures what the model learned on its own, not what a fine-tuning run taught it afterwards.
+
+### Option 1 — linear probe
+
+Average all the patch tokens into one vector and train a single linear layer on top. The cheapest possible read-out: a fast sanity check, with a lower ceiling.
+
+### Option 2 — attentive probe
+
+V-JEPA outputs one feature per tubelet — **thousands of tokens** (1,568 for a 16-frame, 224px clip) and **no "class" token**. Averaging them lets the background drown out the action.
+
+So the attentive probe learns a **query token** that cross-attends over all the tokens and picks out what matters for the task. Only the probe is trained.
+
+<AttentivePoolViz />
+
+<details>
+<summary>Go deeper: the probe's exact shape</summary>
+
+The V-JEPA paper also points out that nothing in the feature-prediction objective makes the features *linearly* separable. The probe adds the cross-attention result back to the query (a residual) and passes it through a small MLP.
+
+- **V-JEPA**: one cross-attention layer + a 2-layer MLP.
+- **V-JEPA 2**: a deeper probe — 4 transformer blocks, the last one using cross-attention with the learnable query.
+
+</details>
+
+<QuickCheck
+  q="Why is an attentive probe the standard read-out for V-JEPA?"
+  options={["It has no patch tokens", "Its features are per-patch, not guaranteed to be linearly separable, and averaging dilutes the signal", "Linear layers can't be trained on video", "Attentive probes need no labels"]}
+  correct={1}
+  hint="What happens to the action when you average it with thousands of background tokens?"
+  why="V-JEPA's features are per-patch. A learned query picks out what matters for the task; plain averaging treats background and action the same."
+/>
+
+### Option 3 — fine-tune
+
+Unfreeze everything and train on labeled data. Best accuracy, highest cost, and easy to overfit on small datasets.
+
+### Option 4 — plan with it
+
+V-JEPA 2 goes past classification. Keep the encoder frozen and train a **new**, action-conditioned predictor — V-JEPA 2-AC — on **less than 62 hours** of unlabeled robot video. It learns: given the current state and an action, what comes next?
+
+To reach a goal shown in an image, the robot runs a loop:
+
+<ConceptFlow
+  title="Planning in latent space"
+  steps={[
+    "Encode the current camera frame and the goal image.",
+    "Sample many candidate action sequences (Cross-Entropy Method).",
+    "Imagine each sequence's outcome with the predictor — in representation space, no pixels.",
+    "Score each: L1 distance between the imagined final state and the goal representation.",
+    "Execute only the first action of the optimized sequence.",
+    "Observe, then replan from the new state (receding horizon).",
+  ]}
+/>
+
+### Did it work?
+
+Zero-shot on Franka arms in two labs, it reached and picked-and-placed from image goals: **80%** success with a cup and **65%** with a box, against 15% and 10% for the Octo baseline — at about **16 seconds per action** on one RTX 4090. In the lab where the pixel world model Cosmos was also tried, Cosmos needed about **4 minutes** per action and scored 0% on pick-and-place.
+
+<details>
+<summary>Go deeper: the setup behind those numbers</summary>
+
+- The predictor has ~300M parameters and was trained on DROID robot video.
+- Success rates are averaged over both labs. For pick-and-place the robot was also given two sub-goal images along the way.
+- Planning ran one step ahead at a time: 800 sampled actions, 10 CEM refinements per step. Cosmos used 80 samples.
+
+</details>
+
+### Why long tasks need sub-goals
+
+Planning far ahead is hard: prediction errors pile up and the number of possible action sequences explodes. So V-JEPA 2-AC plans greedily, one step at a time — and a long task like pick-and-place is not greedy. Sub-goal images turn it into a chain of short, greedy hops.
+
+The planning lab in the next step shows the greedy trap with a wall. Chapter 08's lab finds a second cause: its latent distance stops tracking real distance beyond about 9–12px.
+
+<details>
+<summary>Go deeper: why short hops are easy</summary>
+
+The V-JEPA 2 paper describes its energy landscape as relatively smooth and locally convex — which should make short hops easy to plan.
+
+</details>
+
+### Option 5 — measure surprise
+
+A world model also tells you when something *doesn't* make sense. Let it predict the next frames and measure the error in representation space: that error is its **surprise**.
+
+Garrido et al. (2025) did exactly this with pairs of possible and impossible clips — objects that vanish or change shape. V-JEPA was more surprised by the impossible ones on properties like object permanence and shape consistency, while pixel predictors and multimodal LLMs stayed closer to chance. That is how "the model understands object permanence" becomes a number.
+
+<PredictReveal prompt="For your dissertation you'll use a frozen V-JEPA 2 with an attentive probe on a free Colab GPU. Why frozen instead of fine-tuned?">
+A large ViT seeing 2,048–8,192 tokens per clip (V-JEPA 2 at 256px, 16–64 frames) won't fit training gradients on a T4. Frozen, you can run the encoder once, cache the features to Drive, and train only the small probe — fast and cheap. It's also the fair, standard way to evaluate what the world model learned.
+</PredictReveal>
+
+### Myth or fact?
+
+<SortBuckets
+  title="Sort each claim."
+  buckets={["myth", "fact"]}
+  items={[
+    { label: "Frozen evaluation means nothing is trained", bucket: 0, why: "Myth. The probe on top is trained; only the encoder is frozen." },
+    { label: "An attentive probe is a kind of fine-tuning", bucket: 0, why: "Myth. Fine-tuning updates the encoder; the probe leaves it untouched." },
+    { label: "V-JEPA 2-AC plans without generating pixels", bucket: 1, why: "Fact. It imagines outcomes in representation space." },
+    { label: "Surprise is prediction error, not a classifier", bucket: 1, why: "Fact. The model is surprised when what happens is far from what it predicted." },
+  ]}
+/>
+
+</Body>
+
+<Callout icon={Crosshair} title="one sentence to keep" screen>
+  Freeze the encoder and read it out with a probe (or fine-tune for accuracy); a world model can also plan by imagining outcomes and flag the impossible by its surprise.
+</Callout>
+
+</MobileStepScreen>
+<MobileStepScreen label="plan" title="Plan">
+
+<PlanningLab />
+
+<ExamTrap title="the reveal" screen>
+  With a wall in the way the planner gets stuck: every imagined route around the wall ends farther from the goal than staying put. The fix is not a bigger model but a waypoint — exactly the sub-goal images V-JEPA 2-AC was given for pick-and-place.
+</ExamTrap>
+
+</MobileStepScreen>
+<MobileStepScreen label="practice" title="Practice">
+
+<SurpriseLab />
+
+<ProbeLab />
+
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
+<SectionQuiz lang="en" sectionId="usage" topic="usage" source={WORLD_MODELS_QUESTIONS} title="Checkpoint — how to use one" />
+
+</MobileStepScreen>
+</MobileStepScreens>

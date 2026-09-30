@@ -16,7 +16,7 @@ export default function EncDecAttention() {
     <div className="my-6 bg-card border border-border rounded-sm p-4 sm:p-6">
       <div className="flex items-center gap-2 mb-4 flex-wrap">
         <Play size={14} className="text-rubric shrink-0" />
-        <span className="font-mono text-[10px] uppercase tracking-widest text-rubric flex-1">
+        <span className="kicker text-rubric flex-1">
           Encoder-Decoder Attention — Q do decoder, K/V do encoder
         </span>
         <div className="flex gap-1">
@@ -26,7 +26,7 @@ export default function EncDecAttention() {
               onClick={() => setStage(s as 0 | 1 | 2)}
               className={`w-7 h-7 font-mono text-[11px] rounded-sm transition border ${
                 stage === s
-                  ? "bg-ink text-paper border-transparent"
+                  ? "border-rubric/60 bg-rubric/15 text-white"
                   : "bg-background border-border text-muted-foreground"
               }`}
             >
@@ -39,7 +39,7 @@ export default function EncDecAttention() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {/* Encoder side */}
         <div className="bg-background border border-border rounded-sm p-3 sm:p-4">
-          <div className="font-mono text-[9px] uppercase tracking-widest text-rubric mb-2">
+          <div className="kicker text-rubric mb-2">
             encoder · saída (K, V)
           </div>
           <div className="flex flex-wrap gap-1.5 mb-3">
@@ -52,7 +52,7 @@ export default function EncDecAttention() {
               </span>
             ))}
           </div>
-          <p className="font-serif italic text-[11px] text-muted-foreground">
+          <p className="font-serif text-[11px] text-muted-foreground">
             O encoder leu a frase em francês e produziu uma representação para
             cada posição. Esses vetores serão as Keys e Values consultadas
             pelo decoder.
@@ -61,7 +61,7 @@ export default function EncDecAttention() {
 
         {/* Decoder side */}
         <div className="bg-background border border-border rounded-sm p-3 sm:p-4">
-          <div className="font-mono text-[9px] uppercase tracking-widest text-rubric mb-2">
+          <div className="kicker text-rubric mb-2">
             decoder · estado atual (Q)
           </div>
           <div className="flex flex-wrap gap-1.5 mb-2">
@@ -77,7 +77,7 @@ export default function EncDecAttention() {
               ?
             </span>
           </div>
-          <p className="font-serif italic text-[11px] text-muted-foreground">
+          <p className="font-serif text-[11px] text-muted-foreground">
             O decoder já gerou &ldquo;{TARGET_PARTIAL.join(" ")}&rdquo;. Para
             decidir o próximo token, formula uma <em>query</em> a partir do
             seu estado interno.
@@ -89,7 +89,7 @@ export default function EncDecAttention() {
       <div className="mt-4 bg-background border border-border rounded-sm p-3 sm:p-4">
         {stage === 0 && (
           <div className="animate-fade-in">
-            <div className="font-mono text-[10px] uppercase tracking-widest text-rubric mb-2">
+            <div className="kicker text-rubric mb-2">
               passo 1 · query do decoder
             </div>
             <div className="font-sans text-[12px] sm:text-[13px] text-ink leading-relaxed">
@@ -104,7 +104,7 @@ export default function EncDecAttention() {
         )}
         {stage === 1 && (
           <div className="animate-fade-in">
-            <div className="font-mono text-[10px] uppercase tracking-widest text-rubric mb-2">
+            <div className="kicker text-rubric mb-2">
               passo 2 · scores e softmax sobre o encoder
             </div>
             <div className="space-y-1.5">
@@ -120,7 +120,7 @@ export default function EncDecAttention() {
                         className="h-full"
                         style={{
                           width: `${w * 100}%`,
-                          background: "#c7502e",
+                          background: "#4ade80",
                           opacity: 0.4 + w * 0.6,
                         }}
                       />
@@ -132,7 +132,7 @@ export default function EncDecAttention() {
                 );
               })}
             </div>
-            <p className="font-serif italic text-[11px] text-muted-foreground mt-3">
+            <p className="font-serif text-[11px] text-muted-foreground mt-3">
               Maior peso em &ldquo;<span className="text-rubric">dort</span>&rdquo; — o
               decoder identifica a palavra-fonte para gerar o verbo.
             </p>
@@ -140,7 +140,7 @@ export default function EncDecAttention() {
         )}
         {stage === 2 && (
           <div className="animate-fade-in">
-            <div className="font-mono text-[10px] uppercase tracking-widest text-rubric mb-2">
+            <div className="kicker text-rubric mb-2">
               passo 3 · context vector → próximo token
             </div>
             <div className="font-sans text-[12px] sm:text-[13px] text-ink leading-relaxed mb-3">
@@ -160,7 +160,7 @@ export default function EncDecAttention() {
                 </span>
               ))}
               <ArrowRight size={14} className="text-rubric" />
-              <span className="px-2.5 py-1.5 rounded-sm font-mono text-[12px] bg-rubric text-paper border border-rubric">
+              <span className="px-2.5 py-1.5 rounded-sm font-mono text-[12px] border border-rubric/60 bg-rubric/15 text-white">
                 {NEXT_SUGGESTION}
               </span>
             </div>
@@ -171,21 +171,21 @@ export default function EncDecAttention() {
       {/* Q/K/V provenance reminder */}
       <div className="mt-4 grid grid-cols-3 gap-2 text-center">
         <div className="bg-background border border-border rounded-sm p-2">
-          <div className="font-mono text-[9px] uppercase tracking-widest text-rubric mb-1">
+          <div className="kicker text-rubric mb-1">
             Q
           </div>
           <div className="font-sans text-[11px] text-ink">decoder</div>
           <ArrowDown size={10} className="text-ink-fade mx-auto mt-1" />
         </div>
         <div className="bg-background border border-border rounded-sm p-2">
-          <div className="font-mono text-[9px] uppercase tracking-widest text-rubric mb-1">
+          <div className="kicker text-rubric mb-1">
             K
           </div>
           <div className="font-sans text-[11px] text-ink">encoder</div>
           <ArrowDown size={10} className="text-ink-fade mx-auto mt-1" />
         </div>
         <div className="bg-background border border-border rounded-sm p-2">
-          <div className="font-mono text-[9px] uppercase tracking-widest text-rubric mb-1">
+          <div className="kicker text-rubric mb-1">
             V
           </div>
           <div className="font-sans text-[11px] text-ink">encoder</div>
@@ -193,7 +193,7 @@ export default function EncDecAttention() {
         </div>
       </div>
 
-      <p className="mt-5 font-serif italic text-[12px] sm:text-[13px] text-muted-foreground border-t border-border pt-3">
+      <p className="mt-5 font-serif text-[12px] sm:text-[13px] text-muted-foreground border-t border-border pt-3">
         Esta é a única camada onde Q vem de uma fonte e K/V vêm de outra. Em
         self-attention (no encoder ou no decoder), todos os três vêm da mesma
         sequência.

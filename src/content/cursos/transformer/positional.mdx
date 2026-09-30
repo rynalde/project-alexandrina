@@ -18,8 +18,8 @@ Isso é inaceitável para qualquer tarefa onde a ordem importa. A solução: <Hi
 
 A formulação clássica (Vaswani 2017) é sinusoidal:
 
-- — <Kbd>PE(pos, 2i) = sin(pos / 10000^(2i/d_model))</Kbd>
-- — <Kbd>PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))</Kbd>
+- <Kbd>PE(pos, 2i) = sin(pos / 10000^(2i/d_model))</Kbd>
+- <Kbd>PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))</Kbd>
 
 E então, simplesmente: <Kbd>entrada = embedding(token) + PE(posição)</Kbd>.
 
@@ -31,9 +31,9 @@ E então, simplesmente: <Kbd>entrada = embedding(token) + PE(posição)</Kbd>.
 
 Por que sinusoidais? Algumas propriedades úteis:
 
-- — Cada dimensão usa uma frequência diferente. Posições próximas têm vetores PE próximos; posições distantes, vetores distantes — em escalas múltiplas.
-- — A função permite ao modelo aprender deslocamentos relativos via combinações lineares (`PE(pos+k)` é função linear de `PE(pos)`).
-- — Generaliza para sequências mais longas que as vistas no treino — o que não acontece com PE aprendido (uma matriz de tamanho fixo).
+- Cada dimensão usa uma frequência diferente. Posições próximas têm vetores PE próximos; posições distantes, vetores distantes — em escalas múltiplas.
+- A função permite ao modelo aprender deslocamentos relativos via combinações lineares (`PE(pos+k)` é função linear de `PE(pos)`).
+- Generaliza para sequências mais longas que as vistas no treino — o que não acontece com PE aprendido (uma matriz de tamanho fixo).
 
 </Body>
 

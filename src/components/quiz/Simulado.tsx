@@ -1,48 +1,39 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Check, X, RotateCcw } from "lucide-react";
+import { useMemo, useState, type ReactNode } from "react";
+import { ChevronLeft, ChevronRight, ClipboardList, RotateCcw, Trophy } from "lucide-react";
+import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { ChoiceLetter, choiceClass, type ChoiceState } from "@/components/learning/Choice";
 import { QUESTIONS, TOPIC_LABELS, type Question } from "@/lib/data";
+import { useUiText } from "@/lib/ui-text";
+import { spring } from "@/lib/motion";
 
 interface Props {
   questions?: Question[];
   topicLabels?: Record<string, string>;
+  /** the section's title and instructions, shown on their own screen before the first question */
+  children?: ReactNode;
 }
 
-export default function Simulado({
-  questions = QUESTIONS,
-  topicLabels = TOPIC_LABELS,
-}: Props = {}) {
+type View = "intro" | "exam" | "result" | "review";
+
+/**
+ * Exam mode, one screen at a time: intro → one question per screen (no feedback until the end)
+ * → result → a paged review of every answer with its explanation.
+ */
+export default function Simulado({ questions = QUESTIONS, topicLabels = TOPIC_LABELS, children }: Props) {
+  const ui = useUiText();
+  const t = ui.exam;
   const [answers, setAnswers] = useState<Record<number, number>>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [view, setView] = useState<View>(children ? "intro" : "exam");
+  const [pos, setPos] = useState(0);
 
-  const choose = (qid: number, oidx: number) => {
-    if (submitted) return;
-    setAnswers((s) => ({ ...s, [qid]: oidx }));
-  };
-
-  const answered = Object.keys(answers).length;
   const total = questions.length;
-  const correctCount = questions.filter(
-    (q) => answers[q.id] === q.correct
-  ).length;
+  const answered = Object.keys(answers).length;
+  const correctCount = questions.filter((q) => answers[q.id] === q.correct).length;
   const pct = Math.round((correctCount / total) * 100);
-
-  const reset = () => {
-    setAnswers({});
-    setSubmitted(false);
-  };
-
-  const grade =
-    pct >= 85
-      ? "excelente"
-      : pct >= 70
-      ? "muito bom"
-      : pct >= 55
-      ? "passou, mas revise"
-      : "repita os tópicos fracos";
+  const grade = t.grades[pct >= 85 ? 0 : pct >= 70 ? 1 : pct >= 55 ? 2 : 3];
 
   const topicResults = useMemo(() => {
     const r: Record<string, { correct: number; total: number }> = {};
@@ -54,183 +45,161 @@ export default function Simulado({
     return r;
   }, [answers, questions]);
 
-  return (
-    <div>
-      {/* Sticky progress bar */}
-      <div className="sticky top-0 sm:top-0 z-20 bg-background py-3 sm:py-4 border-b border-border mt-6 sm:mt-8 mb-6 -mx-4 sm:mx-0 px-4 sm:px-0">
-        <div className="flex items-center gap-3 sm:gap-5 flex-wrap">
-          <div>
-            <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-widest text-ink-fade">
-              progresso
-            </div>
-            <div className="font-serif text-xl sm:text-2xl text-ink">
-              {answered}
-              <span className="text-ink-fade">/{total}</span>
-            </div>
+  const go = (next: View, at = 0) => {
+    setView(next);
+    setPos(at);
+  };
+
+  const reset = () => {
+    setAnswers({});
+    go("exam");
+  };
+
+  if (view === "intro") {
+    return (
+      <div>
+        {children}
+        <Button onClick={() => go("exam")} className="mt-6 h-12 w-full text-base">
+          {ui.start}
+          <ChevronRight size={18} />
+        </Button>
+      </div>
+    );
+  }
+
+  if (view === "result") {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={spring}
+        className="rounded-2xl border border-border bg-card p-5 sm:p-8"
+      >
+        <div className="text-center">
+          <Trophy size={32} className="mx-auto text-warning" />
+          <div className="mt-1 kicker text-rubric">{t.result}</div>
+          <div className="mt-1 text-6xl font-semibold leading-none text-ink tabular-nums">
+            {correctCount}
+            <span className="text-3xl text-ink-fade">/{total}</span>
           </div>
-          <div className="flex-1 min-w-[80px]">
-            <Progress
-              value={(answered / total) * 100}
-              className="h-1 bg-card"
-            />
+          <div className="mt-2 text-lg font-semibold text-ink-soft">
+            {pct}% — {grade}
           </div>
-          {!submitted ? (
-            <Button
-              onClick={() => setSubmitted(true)}
-              disabled={answered < total}
-              className="font-mono text-[10px] sm:text-[11px] uppercase tracking-widest"
-              size="sm"
-            >
-              Submeter →
-            </Button>
-          ) : (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={reset}
-              className="font-mono text-[10px] sm:text-[11px] uppercase tracking-widest"
-            >
-              <RotateCcw size={12} className="mr-1.5" /> Refazer
-            </Button>
-          )}
         </div>
+        <div className="mt-6 kicker text-ink-fade">{t.byTopic}</div>
+        <div className="mt-2 space-y-1.5">
+          {Object.entries(topicResults).map(([topic, score]) => {
+            const share = score.correct / score.total;
+            return (
+              <div key={topic} className="flex items-center gap-3 text-[13px]">
+                <span className="w-36 truncate text-ink-soft sm:w-44">{topicLabels[topic] ?? topic}</span>
+                <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-ledge">
+                  <div
+                    className={`h-full rounded-full transition-all duration-700 ${
+                      share === 1 ? "bg-success" : share >= 0.5 ? "bg-warning" : "bg-danger"
+                    }`}
+                    style={{ width: `${share * 100}%` }}
+                  />
+                </div>
+                <span className="w-10 text-right font-mono text-ink">
+                  {score.correct}/{score.total}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <Button onClick={() => go("review")} className="h-12 flex-1 text-base">
+            {t.review}
+            <ChevronRight size={18} />
+          </Button>
+          <Button variant="outline" onClick={reset} className="h-12 px-5 text-[15px]">
+            <RotateCcw size={16} />
+            {t.retry}
+          </Button>
+        </div>
+      </motion.div>
+    );
+  }
+
+  // exam and review share one card: a question per screen
+  const q = questions[pos];
+  const reviewing = view === "review";
+  const picked = answers[q.id];
+  const last = pos === total - 1;
+
+  const stateOf = (index: number): ChoiceState => {
+    if (!reviewing) return picked === index ? "selected" : "idle";
+    if (index === q.correct) return picked === index ? "correct" : "missed";
+    return picked === index ? "wrong" : "dim";
+  };
+
+  return (
+    <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
+      <div className="flex items-start gap-3">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-rubric/10 text-rubric">
+          <ClipboardList size={17} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="kicker text-rubric">{reviewing ? t.review : t.progress}</div>
+          <div className="mt-0.5 truncate text-[15px] font-semibold text-ink">{topicLabels[q.topic] ?? q.topic}</div>
+        </div>
+        <span className="shrink-0 rounded-md bg-ledge px-2 py-1 font-mono text-[12px] text-ink-soft">
+          {pos + 1}/{total}
+        </span>
+      </div>
+      <div className="mt-4 h-2 overflow-hidden rounded-full bg-ledge" aria-hidden="true">
+        <motion.div
+          className="h-full rounded-full bg-primary"
+          initial={false}
+          animate={{ width: `${((reviewing ? pos + 1 : answered) / total) * 100}%` }}
+          transition={spring}
+        />
       </div>
 
-      {/* Results */}
-      {submitted && (
-        <div className="mb-10 animate-fade-in">
-          <div className="bg-card border border-border rounded-sm p-5 sm:p-8 mb-6">
-            <div className="flex items-start gap-6 flex-wrap">
-              <div>
-                <div className="font-mono text-[10px] uppercase tracking-widest text-rubric">
-                  resultado
-                </div>
-                <div className="font-serif text-5xl sm:text-7xl text-ink mt-1 leading-none">
-                  {correctCount}
-                  <span className="text-ink-fade text-3xl sm:text-4xl">/{total}</span>
-                </div>
-                <div className="font-serif italic text-base sm:text-xl text-muted-foreground mt-2">
-                  {pct}% — {grade}
-                </div>
-              </div>
-              <div className="flex-1 min-w-full md:min-w-[220px]">
-                <div className="font-mono text-[10px] uppercase tracking-widest text-ink-fade mb-2">
-                  por tópico
-                </div>
-                <div className="space-y-1.5">
-                  {Object.entries(topicResults).map(
-                    ([topic, { correct, total }]) => {
-                      const topicPct = correct / total;
-                      const barColor =
-                        topicPct === 1
-                          ? "#5c8c5c"
-                          : topicPct >= 0.5
-                          ? "#c7502e"
-                          : "#8a3d24";
-                      return (
-                        <div
-                          key={topic}
-                          className="flex items-center gap-2 sm:gap-3 font-mono text-[11px] sm:text-[12px]"
-                        >
-                          <span className="text-muted-foreground w-32 sm:w-40 truncate">
-                            {topicLabels[topic] ?? topic}
-                          </span>
-                          <div className="flex-1 bg-background border border-border rounded-sm h-3 overflow-hidden">
-                            <div
-                              className="h-full transition-all duration-700"
-                              style={{
-                                width: `${topicPct * 100}%`,
-                                background: barColor,
-                              }}
-                            />
-                          </div>
-                          <span className="text-ink w-10 text-right">
-                            {correct}/{total}
-                          </span>
-                        </div>
-                      );
-                    }
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Questions */}
-      <div className="space-y-6 sm:space-y-8">
-        {questions.map((q) => {
-          const selected = answers[q.id];
-          const revealed = submitted;
-          return (
-            <div
-              key={q.id}
-              className="bg-card border border-border rounded-sm p-4 sm:p-6"
+      <motion.div key={`${view}-${pos}`} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={spring}>
+        <p className="mt-5 text-[17px] font-medium leading-relaxed text-ink">{q.q}</p>
+        <div className="mt-4 space-y-2.5">
+          {q.opts.map((option, index) => (
+            <button
+              key={option}
+              type="button"
+              disabled={reviewing}
+              aria-pressed={picked === index}
+              onClick={() => setAnswers((current) => ({ ...current, [q.id]: index }))}
+              className={choiceClass(stateOf(index))}
             >
-              <div className="flex items-baseline gap-2 sm:gap-3 mb-4">
-                <span className="font-mono text-[10px] sm:text-[11px] text-rubric shrink-0">
-                  {q.id.toString().padStart(2, "0")}.
-                </span>
-                <p className="text-ink font-sans text-sm sm:text-[15px] leading-relaxed flex-1">
-                  {q.q}
-                </p>
-                <span className="font-mono text-[10px] uppercase tracking-widest text-ink-fade hidden md:inline shrink-0">
-                  {topicLabels[q.topic] ?? q.topic}
-                </span>
-              </div>
-              <div className="space-y-1.5 ml-6 sm:ml-8">
-                {q.opts.map((opt, oi) => {
-                  const isCorrect = q.correct === oi;
-                  const isSel = selected === oi;
-                  let cls =
-                    "w-full text-left px-2.5 sm:px-3 py-2.5 rounded-sm font-sans text-[13px] sm:text-[14px] transition-all flex items-start gap-2 sm:gap-3 border ";
-                  if (!revealed) {
-                    cls += isSel
-                      ? "bg-ink text-paper border-transparent"
-                      : "bg-background border-border hover:bg-card hover:border-rubric/30 text-ink";
-                  } else {
-                    if (isCorrect)
-                      cls +=
-                        "bg-[rgba(92,140,92,0.1)] border-[rgba(92,140,92,0.4)] text-ink";
-                    else if (isSel)
-                      cls += "bg-rubric/8 border-rubric/40 text-ink";
-                    else cls += "bg-background/50 text-ink-fade border-border";
-                  }
-                  return (
-                    <button
-                      key={oi}
-                      onClick={() => choose(q.id, oi)}
-                      className={cls}
-                      disabled={revealed}
-                    >
-                      <span className="font-mono text-[10px] sm:text-[11px] mt-0.5 min-w-[14px]">
-                        {String.fromCharCode(97 + oi)})
-                      </span>
-                      <span className="flex-1">{opt}</span>
-                      {revealed && isCorrect && (
-                        <Check
-                          size={15}
-                          className="text-[#5c8c5c] mt-0.5 shrink-0"
-                        />
-                      )}
-                      {revealed && isSel && !isCorrect && (
-                        <X size={15} className="text-rubric mt-0.5 shrink-0" />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-              {revealed && q.exp && (
-                <div className="mt-3 ml-6 sm:ml-8 pl-3 border-l-2 border-rubric animate-slide-in">
-                  <p className="font-serif italic text-[12px] sm:text-[13px] text-muted-foreground leading-relaxed">
-                    {q.exp}
-                  </p>
-                </div>
-              )}
-            </div>
-          );
-        })}
+              <ChoiceLetter index={index} />
+              <span className="flex-1 pt-0.5">{option}</span>
+            </button>
+          ))}
+        </div>
+        {reviewing && q.exp ? (
+          <div className="mt-4 rounded-xl border border-ledge bg-paper p-4 text-[15px] leading-7 text-ink-soft">{q.exp}</div>
+        ) : null}
+      </motion.div>
+
+      <div className="mt-5 flex gap-3">
+        {pos > 0 ? (
+          <Button variant="outline" onClick={() => setPos(pos - 1)} aria-label={ui.back} className="h-12 px-4">
+            <ChevronLeft size={18} />
+          </Button>
+        ) : null}
+        {reviewing ? (
+          <Button onClick={() => (last ? go("result") : setPos(pos + 1))} className="h-12 flex-1 text-base">
+            {last ? t.toResult : t.next}
+            <ChevronRight size={18} />
+          </Button>
+        ) : (
+          <Button
+            onClick={() => (last ? go("result") : setPos(pos + 1))}
+            disabled={picked === undefined || (last && answered < total)}
+            className="h-12 flex-1 text-base"
+          >
+            {last ? t.submit : t.next}
+            {last ? null : <ChevronRight size={18} />}
+          </Button>
+        )}
       </div>
     </div>
   );

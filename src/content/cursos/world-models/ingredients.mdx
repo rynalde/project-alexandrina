@@ -1,0 +1,152 @@
+import SectionHeader from "@/components/shared/SectionHeader";
+import Callout from "@/components/shared/Callout";
+import Highlight from "@/components/shared/Highlight";
+import Body from "@/components/shared/Body";
+import Kbd from "@/components/shared/Kbd";
+import { Layers, Lightbulb } from "lucide-react";
+import { WORLD_MODELS_QUESTIONS } from "@/lib/world-models-data";
+
+<SectionHeader num="01" title="The Three Ingredients" subtitle="encoder, predictor, loss" vol="vol. x" />
+
+<Callout icon={Lightbulb} title="intuition first">
+  A crossword with a coffee stain on it. The letters you can still read are the <b>context</b>; the stained squares are the <b>target</b>; where the stain landed is the <b>mask</b>. You read (encoder), you guess (predictor), and you check your guess (loss) — against the stained squares themselves, so nobody had to write an answer key.
+</Callout>
+
+<LearningObjectives
+  sectionId="ingredients"
+  items={[
+    "Name the three parts every world model has and what each one does.",
+    "Explain context and target as two parts of the same input.",
+    "Say which part is usually kept after training, and why.",
+  ]}
+/>
+
+<MobileStepScreens>
+<MobileStepScreen label="learn" title="Learn">
+
+<Body>
+
+### One input, split in two
+
+Take one clip: 9 frames of a ball bouncing. Hide frame 9. Now you have two pieces of the **same** input:
+
+- <Highlight>Context</Highlight>: what the model may see (frames 1–8).
+- <Highlight>Target</Highlight>: what it must guess (frame 9).
+
+The rule that decides what gets hidden is the <Highlight>mask</Highlight>. Hide the future and you get "predict what's next". Hide random blocks and you get "fill in the gap". Same machine, different mask.
+
+<QuickCheck
+  q="A model hides random patches of a photo and predicts them. Where does its target come from?"
+  options={["A human labels each patch", "The hidden patches of the same photo", "A second, unrelated photo"]}
+  correct={1}
+  hint="Context and target are cut from one input. Nobody adds anything."
+  why="The mask hides part of the photo, and that hidden part is the target. No label, no second input."
+/>
+
+### The whole machine
+
+Press play, or step through it. The next three screens zoom into each part.
+
+<IngredientsFigure />
+
+### Ingredient 1 — the encoder
+
+The encoder turns raw input into a <TermTip term="representation">a list of numbers (a vector) that describes the input — similar inputs get similar vectors</TermTip>: a compact summary of what is going on.
+
+Think of the eyes plus the part of the brain that says "a ball, moving right, falling". It drops what doesn't matter (pixel noise) and keeps what does (position, velocity, identity). In notation: <Kbd>z = f(x)</Kbd>.
+
+### Ingredient 2 — the predictor
+
+The predictor takes the context's representation and guesses the target. It is the imagination: "a ball moving right and falling should be lower and further right in frame 9".
+
+It must also know **where or when** the target is, so it receives the target's position (which frame, which patch). In notation: <Kbd>ẑ = g(z_context, where)</Kbd>.
+
+### Ingredient 3 — the loss
+
+The loss compares the guess with the real target and returns one number: how wrong. Training nudges the encoder and predictor weights, millions of times, to make that number smaller.
+
+The big design decision hides here: **what exactly is "the real target"?**
+
+- The raw pixels of frame 9 → a pixel-prediction model.
+- The *representation* of frame 9 → a latent-prediction model. This is JEPA.
+
+That one choice changes everything, and it is the whole of the next chapter.
+
+<details>
+<summary>Go deeper: is there always a predictor?</summary>
+
+There is always a loss — an encoder only learns when something tells it how wrong it was. In predictive architectures like BYOL and JEPA, that loss is computed on a predictor's output. Contrastive and VICReg-style methods skip the predictor and compare two embeddings directly (chapter 03).
+
+</details>
+
+### The loop
+
+1. Mask the input → context + target.
+2. The encoder turns the context into `z_context`.
+3. The predictor guesses the target from `z_context`.
+4. The loss compares guess and target.
+5. Backpropagate, update the weights, repeat.
+
+In chapter 08 you write each line of this loop in PyTorch and run it.
+
+### Which part do you keep?
+
+<QuickCheck
+  q="Pretraining is done. Which part goes into your downstream classifier?"
+  options={["The predictor", "The encoder", "The mask", "The loss"]}
+  correct={1}
+  hint="Which part learned to turn raw input into a description of it?"
+  why="The encoder learned to see. The predictor was scaffolding for the training game."
+/>
+
+Usually the **encoder**. One nuance for later: for robot *planning*, V-JEPA 2 keeps the frozen encoder and trains a **new**, action-conditioned predictor. The pretraining predictor is still thrown away.
+
+### Myth or fact?
+
+<SortBuckets
+  title="Sort each claim."
+  buckets={["myth", "fact"]}
+  items={[
+    { label: "Context and target are the input and its label", bucket: 0, why: "Myth. They are two parts of the same input — visible and hidden." },
+    { label: "After pretraining, the encoder is usually kept", bucket: 1, why: "Fact. The predictor was scaffolding; the encoder is the prize." },
+    { label: "An encoder can learn without any loss", bucket: 0, why: "Myth. With no loss, nothing tells the weights which way to move." },
+    { label: "Pixels vs representations as the loss target is the key design choice", bucket: 1, why: "Fact. It decides between a pixel model and a JEPA — chapter 02." },
+  ]}
+/>
+
+</Body>
+
+<Callout icon={Layers} title="one sentence to keep" screen>
+  The encoder summarizes what it sees, the predictor guesses the hidden part, and the loss says how wrong the guess was — against pixels or against meaning.
+</Callout>
+
+</MobileStepScreen>
+<MobileStepScreen label="lab" title="Lab">
+
+<MaskPlayground />
+
+<MatchingDrill
+  sectionId="ingredients"
+  title="Who does what?"
+  pairs={[
+    { prompt: "Encoder", answer: "Turns raw input into a representation vector" },
+    { prompt: "Predictor", answer: "Guesses the target from the context's representation" },
+    { prompt: "Loss", answer: "Measures how far the guess is from the real target" },
+    { prompt: "Mask", answer: "Decides which part of the input is hidden" },
+    { prompt: "Context", answer: "The visible part of the input" },
+    { prompt: "Target", answer: "The hidden part the model must predict" },
+  ]}
+/>
+
+</MobileStepScreen>
+<MobileStepScreen label="quiz" title="Quiz">
+
+<SectionQuiz lang="en"
+  sectionId="ingredients"
+  topic="ingredients"
+  source={WORLD_MODELS_QUESTIONS}
+  title="Checkpoint — the three ingredients"
+/>
+
+</MobileStepScreen>
+</MobileStepScreens>
